@@ -1,0 +1,161 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-1">
+	<h1 class="h3 mb-0 text-gray-800">Invitations list</h1>
+</div>
+<div class="row" >
+	<div class="col-sm-12 col-md-6"></div>
+	<div class="col-sm-12 col-md-6" *ngIf="pages>1">
+		<nav aria-label="Table navigation">
+			<ul class="pagination justify-content-end">
+				<li class="page-item" *ngIf="currPage>1">
+				  <a class="page-link" tabindex="-1" (click)="setPage(1)"><<</a>
+				</li>
+				<li class="page-item" *ngIf="currPage>2"><a class="page-link" (click)="setPage(currPage-2)">{{currPage-2}}</a></li>
+				<li class="page-item" *ngIf="currPage>1"><a class="page-link" (click)="setPage(currPage-1)">{{currPage-1}}</a></li>
+				<li class="page-item disabled"><a class="page-link" >{{currPage}}</a></li>
+				<li class="page-item" *ngIf="currPage<pages"><a class="page-link" (click)="setPage(currPage+1)">{{currPage+1}}</a></li>
+				<li class="page-item" *ngIf="currPage<(pages-1)"><a class="page-link" (click)="setPage(currPage+2)">{{currPage+2}}</a></li>
+				<li class="page-item" *ngIf="currPage<pages">
+				  <a class="page-link" (click)="setPage(pages)">>></a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</div>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" (click)="sort('id')" [ngClass]="(invitationService.sortColumn=='id')?'sorting_'+invitationService.sortOrder:''">#</th>
+          <th scope="col" (click)="sort('email')" [ngClass]="(invitationService.sortColumn=='email')?'sorting_'+invitationService.sortOrder:''">Email</th>
+          <th scope="col" (click)="sort('admin')" [ngClass]="(invitationService.sortColumn=='admin')?'sorting_'+invitationService.sortOrder:''">Admin</th>
+          <th scope="col" (click)="sort('tutor')" [ngClass]="(invitationService.sortColumn=='tutor')?'sorting_'+invitationService.sortOrder:''">Tutor</th>
+          <th scope="col" (click)="sort('confirmed')" [ngClass]="(invitationService.sortColumn=='confirmed')?'sorting_'+invitationService.sortOrder:''">Confirmed</th>
+		  <th></th>
+        </tr>
+      </thead>
+      <thead class="thead-grey">
+        <tr>
+          <th scope="col" class="filterTable"><input type="number" [(ngModel)]="invitationService.filter.id" (keyup.enter)="reload()"/><a class="btn btn-primary" (click)="reload()"><i class="fas fa-filter"></i></a></th>
+		  <th scope="col" class="filterTable"><input type="text" [(ngModel)]="invitationService.filter.email" (keyup.enter)="reload()"/><a class="btn btn-primary" (click)="reload()"><i class="fas fa-filter"></i></a></th>
+
+		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="adminFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			{{invitationService.filter.admin}}
+		  </button>
+		  <div class="dropdown-menu" aria-labelledby="adminFilterButton">
+			<a class="dropdown-item" (click)="filterAdmin('')">Both</a>
+			<a class="dropdown-item" (click)="filterAdmin('true')">true</a>
+			<a class="dropdown-item" (click)="filterAdmin('false')">false</a>
+		  </div></th>
+		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="tutorFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			{{invitationService.filter.tutor}}
+		  </button>
+		  <div class="dropdown-menu" aria-labelledby="tutorFilterButton">
+			<a class="dropdown-item" (click)="filterTutor('')">Both</a>
+			<a class="dropdown-item" (click)="filterTutor('true')">true</a>
+			<a class="dropdown-item" (click)="filterTutor('false')">false</a>
+		  </div></th>
+		  		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="confirmedFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			{{invitationService.filter.confirmed}}
+		  </button>
+		  <div class="dropdown-menu" aria-labelledby="validFilterButton">
+			<a class="dropdown-item" (click)="filterValid('')">Both</a>
+			<a class="dropdown-item" (click)="filterValid('true')">true</a>
+			<a class="dropdown-item" (click)="filterValid('false')">false</a>
+		  </div></th>
+		  <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invitation of invitations; let i = index">
+          <td>{{ invitation.id }}</td>
+          <td>{{ invitation.email }}</td>
+          <td>
+				<a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.admin" (click)="admin(i)">
+                    <i class="fas fa-check"></i>
+				</a>
+				<a class="btn btn-warning btn-circle btn-sm" *ngIf="!invitation.admin" (click)="admin(i)">
+					<i class="fas fa-times"></i>
+				</a>
+		  </td>
+          <td><a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.tutor" (click)="tutor(i)">
+                    <i class="fas fa-check"></i>
+				</a>
+				<a class="btn btn-warning btn-circle btn-sm" *ngIf="!invitation.tutor" (click)="tutor(i)">
+                    <i class="fas fa-times"></i>
+				</a>
+		  </td>
+          <td>
+			<a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.valid">
+               <i class="fas fa-check"></i>
+			</a>
+			<a class="btn btn-warning btn-circle btn-sm" *ngIf="!invitation.valid">
+                <i class="fas fa-times"></i>
+			</a>
+		  </td>
+		  <td>
+			<a class="btn btn-danger btn-circle btn-sm" (click)="deletePopup(i)" data-toggle="modal" data-target="#deleteConfModal">
+               <i class="fas fa-trash"></i>
+            </a>
+		  </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+<div class="row">
+	<div class="col-sm-12 col-md-6">
+		<div class="form-group row">
+			<label class="col-sm-3 col-form-label">Show</label>
+			<div class="col-sm-4">
+				<select class="form-control" [(ngModel)]="perPage" (ngModelChange)="changePerPage()">
+				  <option value="10">10</option>
+				  <option value="25">25</option>
+				  <option value="50">50</option>
+				</select> 
+			</div>
+			<label class="col-sm-5 col-form-label">per page</label>
+		</div>	
+	</div>
+	<div class="col-sm-12 col-md-6" *ngIf="pages>1">
+		<nav aria-label="Table navigation">
+			<ul class="pagination justify-content-end">
+				<li class="page-item" *ngIf="currPage>1">
+				  <a class="page-link" tabindex="-1" (click)="setPage(1)"><<</a>
+				</li>
+				<li class="page-item" *ngIf="currPage>2"><a class="page-link" (click)="setPage(currPage-2)">{{currPage-2}}</a></li>
+				<li class="page-item" *ngIf="currPage>1"><a class="page-link" (click)="setPage(currPage-1)">{{currPage-1}}</a></li>
+				<li class="page-item disabled"><a class="page-link" >{{currPage}}</a></li>
+				<li class="page-item" *ngIf="currPage<pages"><a class="page-link" (click)="setPage(currPage+1)">{{currPage+1}}</a></li>
+				<li class="page-item" *ngIf="currPage<(pages-1)"><a class="page-link" (click)="setPage(currPage+2)">{{currPage+2}}</a></li>
+				<li class="page-item" *ngIf="currPage<pages">
+				  <a class="page-link" (click)="setPage(pages)">>></a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</div>
+
+	<div class="modal fade" id="deleteConfModal" tabindex="-1" role="dialog" aria-labelledby="Delete confirmation" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <h5 class="modal-title">Delete invitation</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+            </div>
+            <div class="modal-body" *ngIf="invitation!=null">
+                Are you sure you want to delete invitation for :<br>
+				<b>{{invitation.email}}</b>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" (click)="delete()" data-dismiss="modal">
+					<span class="icon text-white-50">
+						 <i class="fas fa-trash"></i>
+					</span>
+					<span class="text"> Delete</span>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>

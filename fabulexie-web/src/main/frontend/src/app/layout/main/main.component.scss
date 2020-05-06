@@ -1,0 +1,26 @@
+@import 'vars';
+
+#wrapper {
+	display:flex;
+
+	#content-wrapper {
+		background-color: #f8f9fc;
+		width: 100%;
+		overflow-x: hidden;
+		
+		#content {
+			min-height: calc(100% - 90px);
+		}
+	}
+}
+
+.icon-profile {
+	color: $primary;
+	zoom: 2;
+}
+
+img.icon-profile {
+    border-radius: 50%;
+    border: 1px solid;
+    width: 17px;
+}

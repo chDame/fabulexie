@@ -1,0 +1,63 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'org.fabulexie'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation project(':fabulexie-commons')
+	implementation project(':fabulexie-core')
+	implementation project(':fabulexie-backend')
+	
+	
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+}
+
+test {
+	useJUnitPlatform()
+}
+
+def webappDir = "$projectDir/src/main/frontend"
+
+processResources {
+	dependsOn "buildAngular"
+}
+ 
+task buildAngular(type:Exec) {
+	// installAngular should be run prior to this task
+	dependsOn "installAngular"
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	// Add task to the standard build group
+	group = BasePlugin.BUILD_GROUP
+	// ng doesn't exist as a file in windows -> ng.cmd
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+		commandLine "ng.cmd", "build"
+	} else {
+		commandLine "ng", "build"
+	}
+}
+ 
+task installAngular(type:Exec) {
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+		commandLine "npm.cmd", "install", "-g", "@angular/cli"
+	} else {
+		commandLine "npm", "install", "-g", "@angular/cli"
+	}
+}
+
+

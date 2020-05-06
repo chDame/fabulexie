@@ -1,0 +1,11 @@
+<div class="form-group">
+		<input type="text" [(ngModel)]="url" 
+			class="form-control"
+			id="inputUrl"
+			name="inputUrl"
+			placeholder="URL"
+			required minlength="6" #myUrl="ngModel" (ngModelChange)="onUrlChange()" >
+		<div *ngIf="myUrl.dirty && myUrl.invalid" class="alert alert-danger">myUrl</div>
+    </div>
+	
+	<iframe #frameBrowser id="frameBrowser" src=""></iframe>

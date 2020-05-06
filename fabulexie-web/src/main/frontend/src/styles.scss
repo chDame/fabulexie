@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'vars';
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+// Import layout styles
+//@import 'navbar';
+@import 'navs';
+@import 'sidebar';
+@import 'background';
+@import 'tables';
+@import 'components';
+@import 'maps';
+@import 'cards';

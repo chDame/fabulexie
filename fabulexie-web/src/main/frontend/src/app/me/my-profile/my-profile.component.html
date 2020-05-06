@@ -1,0 +1,116 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+	<h1 class="h3 mb-0 text-gray-800">Update my profile</h1>
+</div>
+<div class="row justify-content-center">
+	<div class="col-xl-10 col-lg-10 col-md-10 col-sm-12">
+		<div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
+		<div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>	
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<h6 class="m-0 font-weight-bold text-primary">My informations</h6>
+             </div>
+        <div class="card-body row">
+			<div class="col-xl-4 col-lg-6 col-md-4 col-sm-12">
+				<div class="preview" *ngIf="authService.user.safePhoto">
+					<img [src]="authService.user.safePhoto" class="photo"/>
+					<a class="btn btn-warning btn-circle btn-sm" (click)="deleteImg()" *ngIf="authService.user.loginSource=='standard'">
+					   <i class="fas fa-trash"></i>
+					</a>
+				</div>
+				<br/>
+				<button type="button" class="btn btn-primary btn-icon-split" (click)="fileInput.click()" *ngIf="authService.user.loginSource=='standard'">
+						<span class="icon text-white-50">
+							<i class="far fa-images"></i>
+						</span>
+						<span class="text"> Select photo</span>
+				</button>
+				
+				<br/>
+
+				<span style="visibility: hidden; position: absolute; overflow: hidden; width: 0px; height:0px;border:none;margin:0; padding:0">
+					<input type="file" ng2FileSelect [uploader]="uploader" #fileInput/>
+				</span>
+				<div *ngIf="fileItem!=null" class="detailUpload">
+					<span><strong>{{ fileItem.file.name }}</strong></span>
+					<span *ngIf="uploader.options.isHTML5" nowrap class="size">{{ fileItem.file.size | shortnumber}}b</span>
+					<div class="progress" style="margin-bottom: 0;" *ngIf="uploader.options.isHTML5" >
+						<div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': fileItem.progress + '%' }"></div>
+					</div>
+				</div>
+				
+				<br/>
+				<button type="button" class="btn btn-primary btn-icon-split" (click)="upload()" *ngIf="fileItem!=null && fileItem.progress==0" [disabled]="loading">
+						<span class="icon text-white-50">
+							<i class="fas fa-upload"></i>
+						</span>
+						<span class="text"> Upload</span>
+				</button>
+			</div>
+			<form class="user col-xl-8 col-lg-6 col-md-8 col-sm-12" #updateUserForm="ngForm" (ngSubmit)="onSubmit()">
+				<div class="form-group">
+					<input type="email" value="{{authService.user.email}}" 
+						class="form-control"
+						disabled >
+						<span class="floating-label">Email address</span>
+				</div>
+				<div class="form-group">
+					<input type="text" [(ngModel)]="authService.user.firstname" 
+						class="form-control"
+						id="inputFirstname"
+						aria-describedby="His firstname"
+						name="inputFirstname"
+						placeholder="Enter his firstname..."
+						required minlength="2" #firstname="ngModel">
+						<span class="floating-label">Firstname</span>
+					<div *ngIf="firstname.dirty && firstname.invalid" class="alert alert-danger">Firstname is required</div>
+				</div>
+				<div class="form-group">
+					<input type="text" [(ngModel)]="authService.user.lastname" 
+						class="form-control"
+						id="inputLastname"
+						aria-describedby="His lastname"
+						name="inputLastname"
+						placeholder="Enter his lastname..."
+						required minlength="2" #lastname="ngModel">
+						<span class="floating-label">Lastname</span>
+					<div *ngIf="lastname.dirty && lastname.invalid" class="alert alert-danger">Lastname is required</div>
+				</div>
+				<div class="form-group">
+				  <div class="custom-control custom-checkbox small">
+					<input type="checkbox" name="changePwd" class="custom-control-input" id="changePwd" [(ngModel)]="changePwd" >
+					<label class="custom-control-label" for="changePwd">Change my password</label>
+				  </div>
+				</div>
+				<div class="form-group" *ngIf="changePwd">
+					<input type="password" [(ngModel)]="password" 
+						class="form-control"
+						id="inputPwd"
+						name="inputPwd"
+						placeholder="Password"
+						required minlength="4" #pwd="ngModel">
+						<span class="floating-label">Password</span>
+					<div *ngIf="pwd.dirty && pwd.invalid" class="alert alert-danger">Password is required</div>
+				</div>
+				<div class="form-group" *ngIf="changePwd">
+					<input type="password" [(ngModel)]="passwordConf" 
+						class="form-control"
+						id="inputPwdConf"
+						name="inputPwdConf"
+						placeholder="Password confirmation"
+						required minlength="4" #pwdConf="ngModel">
+					<span class="floating-label">Password confirmation</span>
+					<div *ngIf="pwdConf.dirty && (pwdConf.invalid || password!=passwordConf)" class="alert alert-danger">Password is not the same</div>
+				</div>
+				<button type="submit" class="btn btn-primary btn-block btn-icon-split" [disabled]="!updateUserForm.form.valid || password!=passwordConf">
+					<span class="icon text-white-50">
+						<i class="fas fa-pen"></i>
+					</span>
+					<span class="text"> Update</span>
+				</button>
+				<div *ngIf="authService.error" class="alert alert-danger">{{authService.error}}</div>
+				  <div *ngIf="authService.info" class="alert alert-info">{{authService.info}}</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>

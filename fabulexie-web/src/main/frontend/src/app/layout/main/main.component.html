@@ -1,0 +1,214 @@
+<div id="wrapper">
+      <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion {{sideBarClass}}" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <div class="sidebar-brand d-flex align-items-center justify-content-center">
+			<div class="sidebar-brand-icon rotate-n-15"><i class="fa fa-home"></i></div>
+			<div class="sidebar-brand-text mx-3">{{title}}</div>
+      </div>
+
+      <hr class="sidebar-divider">
+
+      <!-- Divider -->
+      <div class="sidebar-heading" *ngIf="authService.user.admin">
+        Admin
+      </div>
+
+      <!-- Nav Item - Dashboard -->
+      <li [ngClass]="this.router.url === '/users'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+			<a class="nav-link" routerLink="/users" id="navLinkUserList">
+				<i class="fas fa-users"></i>
+				<span>List Users</span>
+			</a>
+      </li>
+
+      <li [ngClass]="this.router.url === '/adduser'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+			<a class="nav-link" routerLink="/adduser" >
+				<i class="fas fa-user-plus"></i>
+				<span>Add User</span>
+			</a>
+      </li>
+	  
+	        <!-- Nav Item - Dashboard -->
+      <li [ngClass]="this.router.url === '/invitations'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+			<a class="nav-link" routerLink="/invitations" >
+				<i class="fas fa-mail-bulk"></i>
+				<span>List Invitations</span>
+			</a>
+      </li>
+
+      <li [ngClass]="this.router.url === '/inviteUser'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+			<a class="nav-link" routerLink="/inviteUser" >
+				<i class="fas fa-envelope-open-text"></i>
+				<span>Send invitation</span>
+			</a>
+      </li>
+		
+      <!-- Divider -->
+      <hr class="sidebar-divider" *ngIf="authService.user.admin">
+
+      <!-- Heading -->
+      <div class="sidebar-heading"*ngIf="authService.user.admin">
+        Config
+      </div>
+
+      <li [ngClass]="this.router.url === '/config'?'nav-item active':'nav-item'"*ngIf="authService.user.admin">
+			<a class="nav-link" routerLink="/config" >
+				<i class="fas fa-cogs"></i>
+				<span>Configurations</span>
+			</a>
+      </li>
+	  
+      <!-- Divider -->
+      <hr class="sidebar-divider" *ngIf="authService.user.admin">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+			Properties
+      </div>
+
+		
+      <li [ngClass]="this.router.url === '/property/create'?'nav-item active':'nav-item'" *ngIf="authService.user.admin || authService.user.tutor">
+			<a class="nav-link" routerLink="/property/create" >
+				<i class="fas fa-map-marker-alt"></i>
+				<span>Add property</span>
+			</a>
+      </li>
+
+	  <li [ngClass]="this.router.url === '/webproxy'?'nav-item active':'nav-item'">
+			<a class="nav-link" routerLink="/webproxy" >
+				<i class="fas fa-map-marked-alt"></i>
+				<span>Web proxy</span>
+			</a>
+      </li>
+
+
+
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle" (click)="toggle()"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+	
+	<div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-2 static-top shadow">
+
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3" (click)="toggle()">
+            <i class="fa fa-bars"></i>
+          </button>
+          <!-- Topbar Search 
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+              </div>
+            </div>
+          </form>-->
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-inline text-gray-600 small">{{authService.user.firstname}} {{authService.user.lastname}}</span>
+               
+				<i class="far fa-user-circle icon-profile" *ngIf="!authService.user.safePhoto"></i>
+				<img class="icon-profile" *ngIf="authService.user.safePhoto" [src]="authService.user.safePhoto"/>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" routerLink="/profile">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a id="logoutBtn" class="dropdown-item" (click)="logout()">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+			<router-outlet></router-outlet>
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+	  <app-footer></app-footer>
+
+    </div>
+ </div> 
+  <!-- Navigation 
+  <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">Fabulexie Time Management</a>
+      <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Portfolio</a>
+          </li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
+          </li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card bg-dark my-5">
+        <div class="card-body">
+          <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
+          <ul class="text-center list-inline py-3">
+            <li class="list-inline-item">
+              <a routerLink="/users" class="btn btn-info">List Users</a>
+                </li>
+            <li class="list-inline-item">
+              <a routerLink="/adduser" class="btn btn-info">Add User</a>
+                </li>
+          </ul>
+        </div>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+-->

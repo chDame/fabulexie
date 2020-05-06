@@ -1,0 +1,45 @@
+  <div class="container bg-gradient-primary">
+
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+
+      <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+              <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <app-login *ngIf="authService.state=='login' && authService.isInitialised()"></app-login>
+                  <app-register *ngIf="authService.state=='register' || !authService.isInitialised()"></app-register>
+				  <app-forgot-pwd *ngIf="authService.state=='forgotPwd' && authService.isInitialised()"></app-forgot-pwd>
+                  <hr>
+				  <div *ngIf="authService.error" class="alert alert-danger">{{authService.error}}</div>
+				  <div *ngIf="authService.info" class="alert alert-info">{{authService.info}}</div>
+                  <div class="text-center">
+                    <a *ngIf="authService.state!='login' && authService.isInitialised()" class="small" (click)="changeState('login')" >Login</a>
+                  </div>
+                  <div class="text-center">
+                    <a *ngIf="authService.state!='forgotPwd' && authService.isInitialised()" class="small" (click)="changeState('forgotPwd')" >Forgot Password?</a>
+                  </div>
+                  <div class="text-center">
+                    <a *ngIf="authService.state!='register' && authService.isInitialised()" class="small" (click)="changeState('register')" >Create an Account!</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+<div *ngIf="!authService.isCookiesAccepted()" class="cookie_banner-container" data-allow="Accept Cookies" data-cookie-policy-type="gdpr" data-message="By clicking Accept Cookies, you agree to our use of cookies and other tracking technologies in accordance with our <a rel='nofollow' href='https://www..com/cookie-policy'>Cookie Policy</a>." data-reload="true"><div class="cookie_banner is-gdpr">
+  <div class="cookie_banner-message" data-role="message"><p>By clicking Accept Cookies, you agree to our use of cookies and other tracking technologies in accordance with our <a rel="nofollow" href="https://www..com/cookie-policy" >Cookie Policy</a>.</p><a class="btn btn-primary" (click)="authService.acceptCookies()">Accept Cookies</a></div>
+</div>
+</div>

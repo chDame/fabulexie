@@ -1,0 +1,34 @@
+# CORE SPRING CONFIGURATION
+spring:
+  profiles:
+    active: junit
+# datasource
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+# MAIL SPRING CONFIG
+  mail:
+    host: localhost
+    port: 25
+    username: login # Login used for authentication
+    password: pwd # pwd used for authentication
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: false
+          socketFactory:
+            class: 
+            fallback: true
+    test-connection: false
+
+# LOGGING    
+logging:
+  level:
+    root: INFO
+    com..mapper: DEBUG

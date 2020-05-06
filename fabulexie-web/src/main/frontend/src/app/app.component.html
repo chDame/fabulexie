@@ -1,0 +1,2 @@
+<app-welcome *ngIf="authService.user==null || authService.user.token==null"></app-welcome>
+<app-main *ngIf="authService.user!=null && authService.user.token!=null "></app-main>

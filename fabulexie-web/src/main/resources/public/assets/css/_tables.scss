@@ -1,0 +1,70 @@
+
+@import 'vars';
+
+table.table th {
+	position:relative;
+}
+
+.sorting_ASC:before,
+.sorting_DESC:before {
+     font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    font-size: 1rem;
+    position: absolute;
+    display: block;
+	right: 5px;
+}
+
+.sorting_ASC:before {
+    content: "\f0dd";
+    bottom: 1em;
+}
+
+.sorting_DESC:before {
+    content: "\f0de";
+    bottom: .5em;
+}
+
+th.filterTable input {
+    width: calc(100% - 32px);
+    display: inline-block;
+    height: 32px;
+    border: 1px solid $primary;
+    border-radius: 5px 0px 0px 5px;
+}
+
+th.filterTable a.btn.btn-primary {
+    width: 32px;
+    height: 32px;
+    border-radius: 0 5px 5px 0px;
+    display: inline-block;
+    vertical-align: top;
+    padding: 5px;
+}
+
+th.filterTable button.btn.btn-default.dropdown-toggle {
+    border: 1px solid $primary;
+    padding: 4px 0px 2px 4px;
+    min-width: 75px;
+    min-height: 32px;
+    position: relative;
+    text-align: left;
+}
+
+th.filterTable button.btn.btn-default.dropdown-toggle::after {
+    content: "\f0b0";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    border: 0;
+    margin: 0;
+    height: 30px;
+    width: 32px;
+    padding: 5px 8px;
+    background: $primary;
+    color: white;
+	vertical-align: 0;
+    right: 0;
+    top: 0;
+    position: absolute;
+    border-radius: 0 4px 4px 0;
+}

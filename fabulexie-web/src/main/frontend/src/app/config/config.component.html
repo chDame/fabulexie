@@ -1,0 +1,68 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+	<h1 class="h3 mb-0 text-gray-800">Update configurations</h1>
+</div>
+<div class="row justify-content-center">
+	<div class="col-xl-10 col-lg-10 col-md-10 col-sm-12">
+		<div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
+		<div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>	
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<h6 class="m-0 font-weight-bold text-primary">API keys</h6>
+             </div>
+        <div class="card-body">
+			<form class="user col-xl-8 col-lg-6 col-md-8 col-sm-12" #updateConfigForm="ngForm" *ngIf="config">
+
+				<div class="form-group">
+					<input type="text" [(ngModel)]="config.googleClientId" 
+						class="form-control"
+						id="inputGGCId"
+						aria-describedby="Google Client Id"
+						name="inputGGCId"
+						placeholder="Google Client Id (login)"
+						required minlength="60" #ggclientid="ngModel">
+						<span class="floating-label">Google Client Id (login)</span>
+					<div *ngIf="ggclientid.dirty && ggclientid.invalid" class="alert alert-danger">Google Client Id is required</div>
+				</div>
+				<div class="form-group">
+					<input type="text" [(ngModel)]="config.faceBookAppId" 
+						class="form-control"
+						id="inputFbAppId"
+						aria-describedby="Facebook App Id"
+						name="inputFbAppId"
+						placeholder="Facebook App Id"
+						required minlength="15" #faceBookAppId="ngModel">
+						<span class="floating-label">Facebokk App Id</span>
+					<div *ngIf="faceBookAppId.dirty && faceBookAppId.invalid" class="alert alert-danger">Facebook App Id is required</div>
+				</div>
+				<div class="form-group">
+					<input type="text" [(ngModel)]="config.faceBookAppSecret" 
+						class="form-control"
+						id="inputFbSecret"
+						name="inputFbSecret"
+						placeholder="Facebook App Secret"
+						#faceBookAppSecret="ngModel">
+						<span class="floating-label">Facebook App Secret</span>
+				</div>
+				<div class="form-group">
+					<input type="text" [(ngModel)]="config.googleMapApiKey" 
+						class="form-control"
+						id="inputGgMap"
+						name="inputGgMap"
+						placeholder="Google Map API Key"
+						required minlength="30" #ggMapKey="ngModel">
+					<span class="floating-label">Google Map API Key</span>
+					<div *ngIf="ggMapKey.dirty && ggMapKey.invalid" class="alert alert-danger">Google Map API key is required</div>
+				</div>
+				<button class="btn btn-primary btn-block btn-icon-split" [disabled]="!updateConfigForm.form.valid || password!=passwordConf" (click)="updateConfig()">
+					<span class="icon text-white-50">
+						<i class="fas fa-pen"></i>
+					</span>
+					<span class="text"> Update Config</span>
+				</button>
+				<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+				<div *ngIf="info" class="alert alert-info">{{info}}</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>

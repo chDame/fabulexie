@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:../h2/demo
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+# MAIL SPRING CONFIG
+  mail:
+    default-encoding: UTF-8
+    host: 
+    username: 
+    password: 
+    port: 465
+    test-connection: true
+
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+server:
+  port: 8443
+  ssl:
+    key-store: fabulexie.p12
+    key-store-password: toptal
+    keyStoreType: PKCS12
+    keyAlias: toptal
+  error:
+    whitelabel:
+      enabled: false 
+      
+application:
+    mailer: devntest@fabulexie.fr

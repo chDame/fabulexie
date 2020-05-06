@@ -1,0 +1,28 @@
+@import 'vars';
+
+.bg-login-image {
+	background-image: url(../../../assets/img/fabulexie.png);
+	background-size: 50%;
+	background-repeat: no-repeat;
+	background-position-x: 50%;
+    background-position-y: 50%;
+}
+
+.cookie_banner-message {
+    color: white;
+    font-size: 16px;
+    line-height: 20px;
+    align-items: center;
+    background: $gray-900;
+    bottom: 0;
+    display: -ms-flexbox;
+    display: flex;
+    font-family: Proxima Nova,Arial,"sans-serif";
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    left: 0;
+    padding: 35px 50px;
+    position: fixed;
+    right: 0;
+    z-index: 10;
+}

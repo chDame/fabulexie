@@ -1,0 +1,44 @@
+<div class="text-center">
+	<h1 class="h4 text-gray-900 mb-4">Fabulexie</h1>
+</div>
+<form class="user" #loginForm="ngForm" (ngSubmit)="onLogin()">
+    <div class="form-group">
+		<input type="email" [(ngModel)]="login.email" 
+			class="form-control"
+			id="inputEmail"
+			aria-describedby="your login is your email"
+			name="inputEmail"
+			placeholder="Enter Email Address..."
+			required emailValidator #email="ngModel">
+		<div *ngIf="email.dirty && email.invalid" class="alert alert-danger">Email is required</div>
+    </div>
+    <div class="form-group">
+		<input type="password" [(ngModel)]="login.password" 
+			class="form-control"
+			id="inputPwd"
+			name="inputPwd"
+			placeholder="Password"
+			required minlength="4" #pwd="ngModel">
+		<div *ngIf="pwd.dirty && pwd.invalid" class="alert alert-danger">Password is required</div>
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-checkbox small">
+        <input type="checkbox" name="remember" class="custom-control-input" id="customCheck" [(ngModel)]="login.remember" >
+        <label class="custom-control-label" for="customCheck">Remember Me</label>
+      </div>
+    </div>
+	<button type="submit" [disabled]="!loginForm.form.valid" 
+		class="btn btn-primary btn-user btn-block">Login</button>
+   
+    <hr>
+	<div class="row">
+		<div class="col">
+    <a class="btn btn-google btn-user btn-block" (click)="signInWithGoogle()">
+      <i class="fab fa-google fa-fw"></i> Google login  
+    </a>
+	</div><div class="col">
+    <a class="btn btn-facebook btn-user btn-block" (click)="signInWithFB()">
+      <i class="fab fa-facebook fa-fw"></i> Facebook login
+    </a></div></div>
+	
+</form>
