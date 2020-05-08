@@ -31,7 +31,8 @@ public class User extends BaseEntity<Long> {
     private Boolean valid;
     private Boolean locked;
     private String photo;
-    @OneToMany(mappedBy="user",fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToMany(mappedBy="user",fetch = FetchType.LAZY)
     private List<UserConfig> userConfigs;
     @OneToOne(fetch = FetchType.EAGER)
     private UserConfig activeConfig;

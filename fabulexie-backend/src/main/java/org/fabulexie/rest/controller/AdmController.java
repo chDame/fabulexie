@@ -9,12 +9,12 @@ import javax.transaction.Transactional;
 
 import org.fabulexie.model.Config;
 import org.fabulexie.model.User;
-import org.fabulexie.rest.auth.AuthorizationValidation;
-import org.fabulexie.rest.util.PersistenceUtil;
+import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.service.ConfigService;
 import org.fabulexie.service.InitializationService;
 import org.fabulexie.service.UserConfigService;
 import org.fabulexie.service.UserService;
+import org.fabulexie.util.PersistenceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -57,9 +56,8 @@ public class AdmController extends AbstractController {
 		}
 		
 		@PatchMapping("/config")
-		@AuthorizationValidation(admin = true)
-		public Config patchConf(@RequestHeader("Authorization") String token, 
-				@RequestBody Config config) {
+		@IsAdmin
+		public Config patchConf(@RequestBody Config config) {
 			Config currentConf = configService.get();
 			if (currentConf==null) {
 				configService.create(config);

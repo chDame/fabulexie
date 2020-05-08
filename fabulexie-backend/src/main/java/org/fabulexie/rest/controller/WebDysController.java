@@ -9,6 +9,7 @@ import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
 import org.fabulexie.model.rules.PunctuationRule;
 import org.fabulexie.rest.controller.model.Conversion;
+import org.fabulexie.security.annotation.IsAuthenticated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,8 @@ public class WebDysController extends AbstractController {
 		private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 		@GetMapping(value = "/web/{url}")
-		//@AuthorizationValidation
-		public Conversion convert(/*@RequestHeader("Authorization") String token, */@PathVariable String url) {
+		@IsAuthenticated
+		public Conversion convert(@PathVariable String url) {
 			UserConfig ac = new UserConfig();
 			ac.setLetterRules(new ArrayList<>());
 			LetterRule bRule = new LetterRule();

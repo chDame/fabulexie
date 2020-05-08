@@ -25,12 +25,12 @@ public abstract class AbstractService<T extends BaseEntity<Long>> {
 	}
 
 	public List<T> list(String query, int count, int page, String orderBy, String order) {
-		Pageable pageable = getPageable(page, count, orderBy, order);
+		Pageable pageable = getPageable(count, page, orderBy, order);
 		return getRepository().findAll(getSpecifications(query), pageable).getContent();
 	}
 	
 	public List<T> list(Specification<T> query, int count, int page, String orderBy, String order) {
-		Pageable pageable = getPageable(page, count, orderBy, order);
+		Pageable pageable = getPageable(count, page, orderBy, order);
 		return getRepository().findAll(query, pageable).getContent();
 	}
 

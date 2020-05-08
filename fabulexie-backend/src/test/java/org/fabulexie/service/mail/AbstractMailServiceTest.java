@@ -1,4 +1,4 @@
-package org.fabulexie.com.toptal.service.mail;
+package org.fabulexie.service.mail;
 
 import java.util.ArrayList;
 import java.util.List;

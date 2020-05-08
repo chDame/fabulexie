@@ -2,9 +2,11 @@ package org.fabulexie.service;
 
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
+import org.fabulexie.model.UserConfig;
+import org.fabulexie.persistence.UserConfigRepository;
 import org.fabulexie.persistence.UserRepository;
-import org.fabulexie.rest.util.SecurityUtils;
 import org.fabulexie.service.common.AbstractService;
+import org.fabulexie.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ public class UserService extends AbstractService<User> {
 	
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserConfigRepository userConfigRepository;
 	
 	@Override
 	protected UserRepository getRepository() {
@@ -39,6 +43,12 @@ public class UserService extends AbstractService<User> {
 			user.setTutor(false);
 		}
 		user.setLocked(false);
+		userRepository.save(user);
+		UserConfig config = new UserConfig();
+		config.setUser(user);
+		config.setName("default");
+		userConfigRepository.save(config);
+		user.setActiveConfig(config);
 		userRepository.save(user);
 		return user;
 	}

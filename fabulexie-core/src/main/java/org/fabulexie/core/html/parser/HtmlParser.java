@@ -1,13 +1,11 @@
 package org.fabulexie.core.html.parser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.fabulexie.core.utils.RulesUtils;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
-import org.fabulexie.model.rules.PunctuationRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

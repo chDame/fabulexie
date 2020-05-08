@@ -10,13 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.model.User;
-import org.fabulexie.rest.auth.AuthUser;
-import org.fabulexie.rest.service.mail.MailService;
-import org.fabulexie.rest.util.SecurityUtils;
+import org.fabulexie.security.AuthUser;
+import org.fabulexie.security.FabulexiePrincipal;
+import org.fabulexie.security.annotation.IsAuthenticated;
 import org.fabulexie.service.AuthenticationService;
-import org.fabulexie.service.InvitationService;
 import org.fabulexie.service.InitializationService;
+import org.fabulexie.service.InvitationService;
 import org.fabulexie.service.UserService;
+import org.fabulexie.service.mail.MailService;
+import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -64,13 +66,11 @@ public class AuthenticationController extends AbstractController {
 
 	@RequestMapping(value = "/loginWithToken", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public AuthUser loginWithToken(@RequestHeader("Authorization") String token) throws UnauthorizedException {
+	@IsAuthenticated
+	public AuthUser renewToken() throws UnauthorizedException {
+		FabulexiePrincipal connected = SecurityUtils.getConnectedUser();
 
-		Long userId = SecurityUtils.getUserId(token);
-		if (userId==null) {
-			throw new UnauthorizedException("Relogin required");
-		}
-		User user = userService.getById(userId);
+		User user = userService.getById(connected.getId());
 		return getAuthUser(user);
 
 	}
@@ -119,7 +119,7 @@ public class AuthenticationController extends AbstractController {
 			//schemaCreatorService.setEmpty(false);
 			BeanUtils.copyProperties(u, authUser);
 			//autologin first time
-			authUser.setToken(SecurityUtils.generateToken(u));
+			authUser.setToken(SecurityUtils.getJWTToken(u));
 			return authUser;
 		} 
 		
@@ -134,7 +134,7 @@ public class AuthenticationController extends AbstractController {
 				invitationService.update(invitation);
 				BeanUtils.copyProperties(u, authUser);
 				//since it's a valid invitation, the account is valid and we can autologin the user
-				authUser.setToken(SecurityUtils.generateToken(u));
+				authUser.setToken(SecurityUtils.getJWTToken(u));
 				return authUser;
 			}
 		}
@@ -164,11 +164,12 @@ public class AuthenticationController extends AbstractController {
 		AuthUser authUser = new AuthUser();
 		BeanUtils.copyProperties(user, authUser);
 		
-		authUser.setToken(SecurityUtils.generateToken(user));
+		authUser.setToken(SecurityUtils.getJWTToken(user));
 		authUser.setLoginSource("standard");
 		return authUser;
 	}
 
+		
 	@PostConstruct
 	private void checkEmpty() {
 		intializationService.checkEmpty();

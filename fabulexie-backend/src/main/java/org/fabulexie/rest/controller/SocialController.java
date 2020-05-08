@@ -12,12 +12,11 @@ import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Config;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.model.User;
-import org.fabulexie.rest.auth.AuthUser;
-import org.fabulexie.rest.util.SecurityUtils;
-import org.fabulexie.service.AuthenticationService;
+import org.fabulexie.security.AuthUser;
 import org.fabulexie.service.ConfigService;
 import org.fabulexie.service.InvitationService;
 import org.fabulexie.service.UserService;
+import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -45,8 +44,6 @@ public class SocialController extends AbstractController {
 
 	private final Logger logger = LoggerFactory.getLogger(SocialController.class);
 
-	@Autowired
-	private AuthenticationService authenticationService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -115,7 +112,7 @@ public class SocialController extends AbstractController {
 					AuthUser authUser = new AuthUser();
 					BeanUtils.copyProperties(u, authUser);
 					authUser.setPhoto(imgSrc);
-					authUser.setToken(SecurityUtils.generateToken(u));
+					authUser.setToken(SecurityUtils.getJWTToken(u));
 					authUser.setLoginSource("google");
 					return authUser;
 					
@@ -163,7 +160,7 @@ public class SocialController extends AbstractController {
 		AuthUser authUser = new AuthUser();
 		BeanUtils.copyProperties(u, authUser);
 		authUser.setPhoto(imgSrc);
-		authUser.setToken(SecurityUtils.generateToken(u));
+		authUser.setToken(SecurityUtils.getJWTToken(u));
 		authUser.setLoginSource("facebook");
 		return authUser;
 	}

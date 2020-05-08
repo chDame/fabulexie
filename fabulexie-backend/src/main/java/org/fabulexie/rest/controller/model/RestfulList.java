@@ -2,7 +2,9 @@ package org.fabulexie.rest.controller.model;
 
 import java.util.Collection;
 
-public class RestfulList<T> {
+import org.springframework.hateoas.RepresentationModel;
+
+public class RestfulList<T> extends RepresentationModel<RestfulList<T>> {
 
 	private Collection<T> items;
 	
@@ -10,7 +12,7 @@ public class RestfulList<T> {
 	
 	private Long total;
 	
-	private Links _links;
+	//private Links _links;
 
 	public Collection<T> getItems() {
 		return items;
@@ -37,11 +39,11 @@ public class RestfulList<T> {
 		this.total = total;
 	}
 
-	public Links get_links() {
-		return _links;
-	}
+	//public Links get_links() {
+	//	return _links;
+	//}
 
-	public void set_links(Links _links) {
-		this._links = _links;
-	}
+	//public void set_links(Links _links) {
+	//	this._links = _links;
+	//}
 }

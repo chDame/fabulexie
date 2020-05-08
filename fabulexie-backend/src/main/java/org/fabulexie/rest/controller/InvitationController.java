@@ -1,19 +1,21 @@
 package org.fabulexie.rest.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
-import org.fabulexie.rest.auth.AuthorizationValidation;
 import org.fabulexie.rest.controller.model.RestfulList;
-import org.fabulexie.rest.service.mail.MailService;
-import org.fabulexie.rest.util.PersistenceUtil;
+import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.service.InvitationService;
+import org.fabulexie.service.mail.MailService;
+import org.fabulexie.util.PersistenceUtil;
 import  org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,8 +45,8 @@ public class InvitationController extends AbstractController {
 	private AtomicLong count = null;
 
 	@GetMapping(value = "/invitations")
-	@AuthorizationValidation(admin = true)
-	public RestfulList<Invitation> list(@RequestHeader("Authorization") String token, @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
+	@IsAdmin
+	public RestfulList<Invitation> list(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
 		RestfulList<Invitation> result = new RestfulList<>();
 		Specification<Invitation> invitationSpec = invitationService.getSpecifications(q);
 		result.setTotal(getCount(invitationSpec));
@@ -54,15 +55,20 @@ public class InvitationController extends AbstractController {
 		}
 		result.setItems(invitationService.list(invitationSpec, count, page, orderBy, order));
 		result.setCount(Long.valueOf(result.getItems().size()));
-		result.set_links(getLinks(q,count,page,orderBy,order, result.getTotal()));
-		
+		result.add(linkTo(methodOn(InvitationController.class).list(q, count, page, orderBy, order)).withSelfRel());
+		if(page*count<result.getTotal()) {
+			result.add(linkTo(methodOn(InvitationController.class).list(q, count, page+1, orderBy, order)).withRel("next"));
+		}
+		if (page>1) {
+			result.add(linkTo(methodOn(InvitationController.class).list(q, count, page-1, orderBy, order)).withRel("prev"));
+		}
 		return result;
 	}
 
 	@PostMapping(value = "/invitations")
-	@AuthorizationValidation(admin = true)
+	@IsAdmin
 	@ResponseStatus(HttpStatus.CREATED)
-	public Invitation create(@RequestHeader("Authorization") String token, @RequestBody Invitation invitation) {
+	public Invitation create(@RequestBody Invitation invitation) {
 		if (invitation.getAdmin()!=null && invitation.getAdmin()) {
 			invitation.setRealtor(true);
 		}
@@ -75,8 +81,8 @@ public class InvitationController extends AbstractController {
 	}
 
 	@PatchMapping(value = "/invitations/{id}")
-	@AuthorizationValidation(admin = true)
-	public Invitation patch(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody Invitation invitation) {
+	@IsAdmin
+	public Invitation patch(@PathVariable Long id, @RequestBody Invitation invitation) {
 
 		Invitation existingInvit = invitationService.getById(id);
 		if (existingInvit!=null) {
@@ -97,8 +103,8 @@ public class InvitationController extends AbstractController {
 	}
 	
 	@PutMapping(value = "/invitations/{id}")
-	@AuthorizationValidation(admin = true)
-	public Invitation update(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody Invitation invitation) {
+	@IsAdmin
+	public Invitation update(@PathVariable Long id, @RequestBody Invitation invitation) {
 		invitation.setId(id);
 
 		if (invitation.getAdmin()!=null && invitation.getAdmin()) {
@@ -114,8 +120,8 @@ public class InvitationController extends AbstractController {
 	}
 
 	@DeleteMapping(value = "/invitations/{id}")
-	@AuthorizationValidation(admin = true)
-	public Map<String, Object> delete(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	@IsAdmin
+	public Map<String, Object> delete(@PathVariable Long id) {
 		Map<String, Object> ret = new HashMap<>();
 		String status = "error";
 

@@ -5,8 +5,8 @@ import java.util.Date;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.persistence.InvitationRepository;
-import org.fabulexie.rest.util.SecurityUtils;
 import org.fabulexie.service.common.AbstractService;
+import org.fabulexie.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

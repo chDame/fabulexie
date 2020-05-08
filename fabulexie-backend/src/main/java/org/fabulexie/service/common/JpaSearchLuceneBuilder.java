@@ -6,9 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -27,12 +25,9 @@ import org.fabulexie.common.exception.TechnicalException;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- * Builds a SQL query from a Lucene query.
+ * Builds a JPA Specification from a Lucene query.
  */
 public class JpaSearchLuceneBuilder<T> {
-	
-	
-	private EntityManager entitiManager;
 	
 	 private static QueryParser parser = null;
 
@@ -50,7 +45,7 @@ public class JpaSearchLuceneBuilder<T> {
      }
      
      /**
-      * Builds a SQL query from a Lucene query. 
+      * Builds a JPA Specification from a Lucene query. 
       */
      public Specification<T> getJpaSpecificationFromQuery(String luceneQuery) {
     	 if(StringUtils.isBlank(luceneQuery)) {
@@ -87,7 +82,7 @@ public class JpaSearchLuceneBuilder<T> {
      }
      
      /**
-      * Builds a SQL query from a TermQuery.
+      * Builds a JPA Specification from a TermQuery.
       */
      private Specification<T> build(TermQuery termQuery) {
          Term term = termQuery.getTerm();
@@ -98,14 +93,14 @@ public class JpaSearchLuceneBuilder<T> {
      } 
 
     /**
-     * Builds a SQL query from a WildcardQuery.
+     * Builds a JPA Specification from a WildcardQuery.
      */
     private Specification<T> buildQuery(WildcardQuery wildcardQuery) {
     	return (root, query, builder) -> builder.like(root.get(wildcardQuery.getTerm().field()), wildcardQuery.getTerm().text().replace('*', '%').replace('?', '_'));
     }
 
     /**
-     * Builds a SQL query from a TermQuery.
+     * Builds a JPA Specification from a TermQuery.
      */
     private Specification<T> buildQuery(TermQuery termQuery) {
     	return (root, query, builder) -> {
@@ -121,7 +116,7 @@ public class JpaSearchLuceneBuilder<T> {
     }
  
     /**
-     * Builds a SQL query from a TermRangeQuery.
+     * Builds a JPA Specification from a TermRangeQuery.
      */
     private Specification<T> buildQuery(TermRangeQuery rangeQuery) {
         String lowerTerm = null;
@@ -155,12 +150,11 @@ public class JpaSearchLuceneBuilder<T> {
 
     
     /**
-     * Builds a SQL query from a BooleanQuery.
+     * Builds a JPA Specification from a BooleanQuery.
      */    
     private Specification<T> build(BooleanQuery booleanQuery) {
-        //int x = 0;
-       // String query = "";
-        Specification<T> query2 = (root, query, builder) -> builder.and();
+
+        Specification<T> spec = (root, query, builder) -> builder.and();
         
         List<BooleanClause> clauses= booleanQuery.clauses();
         boolean required = clauses.get(1).isRequired();
@@ -169,53 +163,25 @@ public class JpaSearchLuceneBuilder<T> {
         clausesToProcess.add(clauses.get(0));
         clausesToProcess.add(clauses.get(1));
         if (required) {
-        	query2 = build(clauses.get(0).getQuery()).and(build(clauses.get(1).getQuery()));
+        	spec = build(clauses.get(0).getQuery()).and(build(clauses.get(1).getQuery()));
         } else {
-        	query2 = build(clauses.get(0).getQuery()).or(build(clauses.get(1).getQuery()));
+        	spec = build(clauses.get(0).getQuery()).or(build(clauses.get(1).getQuery()));
         }
         for(int i=2;i<clauses.size();i++) {
         	
         	BooleanClause clause = booleanQuery.clauses().get(i);
         	
         	if (clause.isRequired() == required) {
-        		query2.and(build(clauses.get(i).getQuery()));
-        		//clausesToProcess.add(clause);
-        		//query2 = (root, query, builder) -> builder.and(root.get(rangeQuery.getField()), upperTermQuery).;
+        		spec.and(build(clauses.get(i).getQuery()));
         	} else {
-        		query2.or(build(clauses.get(i).getQuery()));
-        		//query2 = process(query2, clausesToProcess, required);
-        		//clausesToProcess = new ArrayList<>();
-        		//clausesToProcess.add(clause);
+        		spec.or(build(clauses.get(i).getQuery()));
         	}
         }
-        //query2 = process(query2, clausesToProcess, required);
-        return query2;
+        return spec;
     }    
-    
-    private Specification<T> process(Specification<T> specif, List<BooleanClause> clauses, boolean required) {
-    	Predicate[] specClauses = null;
-    	int i=0;
-    	if (specif!=null) {
-    		specClauses = new Predicate[clauses.size()+1];
-    		specClauses[0] = (Predicate) specif;
-    		i=1;
-    	} else {
-    		specClauses = new Predicate[clauses.size()];
-    	}
-
-    	for(int j=0;j<clauses.size();j++) {
-    		specClauses[i+j] = (Predicate) build(clauses.get(j).getQuery());
-    	}
-    	final Predicate[] finalParam = specClauses;
-    	if (required) {
-    		return (root, query, builder) -> builder.and(finalParam);
-    	} else {
-    		return (root, query, builder) -> builder.or(finalParam);
-    	}
-	}
-      
+          
     /**
-     * Builds a SQL query from a PhraseQuery.
+     * Builds a JPA Specification from a PhraseQuery.
      */    
     private Specification<T> build(PhraseQuery phraseQuery) {
         int x = 0;
@@ -275,7 +241,7 @@ public class JpaSearchLuceneBuilder<T> {
     }
  
     /**
-     * Format a date to SQL format.
+     * Format a date to correct format.
      */
     private static String formatDate(Date date) {
         return "'"+sqlFormat.format(date)+"'";

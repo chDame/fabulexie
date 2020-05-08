@@ -1,4 +1,4 @@
-package org.fabulexie.rest.service.mail;
+package org.fabulexie.service.mail;
 
 import java.util.Locale;
 

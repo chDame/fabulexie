@@ -1,4 +1,4 @@
-package org.fabulexie.rest.auth;
+package org.fabulexie.security;
 
 public class AuthUser {
 	private Long id;

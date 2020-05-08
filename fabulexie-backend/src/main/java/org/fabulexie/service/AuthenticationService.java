@@ -6,7 +6,7 @@ import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
 import org.fabulexie.persistence.UserRepository;
-import org.fabulexie.rest.util.SecurityUtils;
+import org.fabulexie.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

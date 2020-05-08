@@ -1,4 +1,4 @@
-package org.fabulexie.com.toptal.service.mail;
+package org.fabulexie.service.mail;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import javax.mail.internet.MimeMessage;
 
 import org.fabulexie.model.User;
-import org.fabulexie.rest.service.mail.MailService;
+import org.fabulexie.service.mail.MailService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

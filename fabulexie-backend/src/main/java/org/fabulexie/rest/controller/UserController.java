@@ -1,22 +1,26 @@
 package org.fabulexie.rest.controller;
 
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
-import org.fabulexie.rest.auth.AuthorizationValidation;
 import org.fabulexie.rest.controller.model.RestfulList;
-import org.fabulexie.rest.service.mail.MailService;
-import org.fabulexie.rest.util.PersistenceUtil;
-import org.fabulexie.rest.util.SecurityUtils;
+import org.fabulexie.rest.controller.model.UserResource;
+import org.fabulexie.security.annotation.IsAdmin;
+import org.fabulexie.security.annotation.SelfAccessOrAdmin;
 import org.fabulexie.service.UserService;
+import org.fabulexie.service.mail.MailService;
+import org.fabulexie.util.PersistenceUtil;
+import org.fabulexie.util.SecurityUtils;
 import  org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +33,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 @RestController
 public class UserController extends AbstractController {
@@ -49,26 +50,32 @@ public class UserController extends AbstractController {
 	private AtomicLong count = null;
 
 	@GetMapping(value = "/users")
-	@AuthorizationValidation(admin = true)
-	public RestfulList<User> list(@RequestHeader("Authorization") String token, @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
+	@IsAdmin
+	public RestfulList<User> list(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
 		RestfulList<User> result = new RestfulList<>();
 		Specification<User> specifUser = userService.getSpecifications(q);
 		result.setTotal(getCount(specifUser));
 		if(count*(page-1)>result.getTotal()) {
 			page = (int) (result.getTotal() / count);
 		}
-		//userService.list(new QueryParser("id", new WhitespaceAnalyzer()).parse(q), count, page, orderBy, order));
+
 		result.setItems(userService.list(specifUser, count, page, orderBy, order));
 		result.setCount(Long.valueOf(result.getItems().size()));
-		result.set_links(getLinks(q,count,page,orderBy,order, result.getTotal()));
 
+		result.add(linkTo(methodOn(UserController.class).list(q, count, page, orderBy, order)).withSelfRel());
+		if(page*count<result.getTotal()) {
+			result.add(linkTo(methodOn(UserController.class).list(q, count, page+1, orderBy, order)).withRel("next"));
+		}
+		if (page>1) {
+			result.add(linkTo(methodOn(UserController.class).list(q, count, page-1, orderBy, order)).withRel("prev"));
+		}
 		return result;
 	}
 
 	@PostMapping(value = "/users")
-	@AuthorizationValidation(admin = true)
 	@ResponseStatus(HttpStatus.CREATED)
-	public User create(@RequestHeader("Authorization") String token, @RequestBody User u) {
+	@IsAdmin
+	public User create( @RequestBody User u) {
 		u.setPassword(SecurityUtils.generateFriendlyCode());
 		userService.create(u);
 		if (count!=null) {
@@ -79,37 +86,16 @@ public class UserController extends AbstractController {
 		return u;
 	}
 
-	@GetMapping(value = "/users/{userId}")
-	@AuthorizationValidation
-	public User getUser(@RequestHeader("Authorization") String token, @PathVariable Long userId) {
+	@GetMapping(value = "/users/{userId}", produces = "application/hal+json")
+	@SelfAccessOrAdmin
+	public UserResource get(@PathVariable Long userId) {
 
-		User user = userService.getById(userId);
-		boolean adminAccess = SecurityUtils.isAdmin(token);
-		if (adminAccess || user.getTutor()==true) {
-
-			user.setPassword(null);
-			if (!adminAccess) {
-				user.setCodeForPwdChange(null);
-				user.setLocked(null);
-				user.setValid(null);
-				user.setTutor(null);
-				user.setAdmin(null);
-			}
-			return user;
-		}
-
-		throw new UnauthorizedException("Unauthorized access");
+		return new UserResource(userService.getById(userId));
 	}
 
 	@PatchMapping(value = "/users/{userId}")
-	@AuthorizationValidation
-	public User patch(@RequestHeader("Authorization") String token, @PathVariable Long userId, @RequestBody User u) {
-		DecodedJWT decoded = SecurityUtils.decodeToken(token);
-
-		if (userId!=SecurityUtils.getUserId(decoded) && !SecurityUtils.isAdmin(decoded)) {
-			//only an admin is allowed to update user not himself
-			throw new UnauthorizedException("Action forbidden");
-		}
+	@SelfAccessOrAdmin
+	public UserResource patch(@PathVariable Long userId, @RequestBody User u) {
 		User user = userService.getById(userId);
 		if (user!=null) {
 			if (u.getPassword()!=null) {
@@ -121,22 +107,15 @@ public class UserController extends AbstractController {
 			}
 			PersistenceUtil.copyNonNullProperties(u, user);
 			userService.update(user);
-			user.setPassword(null);
-			return user;
+			return new UserResource(user);
 		}
 
 		throw new TechnicalException("User is not persisted");
 	}
 
 	@PutMapping(value = "/users/{userId}")
-	@AuthorizationValidation
-	public User update(@RequestHeader("Authorization") String token, @PathVariable Long userId, @RequestBody User u) {
-		DecodedJWT decoded = SecurityUtils.decodeToken(token);
-
-		if (userId!=SecurityUtils.getUserId(decoded) && !SecurityUtils.isAdmin(decoded)) {
-			//only an admin is allowed to update user not himself
-			throw new UnauthorizedException("Action forbidden");
-		}
+	@SelfAccessOrAdmin
+	public UserResource update(@PathVariable Long userId, @RequestBody User u) {
 		if (StringUtils.isBlank(u.getPassword())) {
 			throw new UnauthorizedException("Clear password is mandatory for full update");
 		}
@@ -147,17 +126,16 @@ public class UserController extends AbstractController {
 		}
 		User updated = userService.update(u);
 	
-		u.setPassword(null);
 		if (updated!=null) {
-			return u;
+			return new UserResource(u);
 		}
 
 		throw new TechnicalException("User is not persisted");
 	}
 
 	@DeleteMapping(value = "/users/{userId}")
-	@AuthorizationValidation(admin = true)
-	public Map<String, Object> delete(@RequestHeader("Authorization") String token, @PathVariable Long userId) {
+	@IsAdmin
+	public Map<String, Object> delete(@PathVariable Long userId) {
 		Map<String, Object> ret = new HashMap<>();
 		String status = "error";
 

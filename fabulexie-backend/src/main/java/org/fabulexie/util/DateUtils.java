@@ -1,4 +1,4 @@
-package org.fabulexie.rest.util;
+package org.fabulexie.util;
 
 import java.time.Duration;
 import java.time.LocalDate;
