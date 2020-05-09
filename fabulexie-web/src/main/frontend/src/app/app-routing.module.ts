@@ -6,6 +6,7 @@ import { UpdateUserComponent } from './user-admin/update-user/update-user.compon
 import { InviteUserComponent } from './user-admin/invite-user/invite-user.component';
 import { InvitationsListComponent } from './user-admin/invitations-list/invitations-list.component';
 import { MyProfileComponent } from './me/my-profile/my-profile.component';
+import { SettingsComponent } from './me/settings/settings.component';
 import { ConfigComponent } from './config/config.component';
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
 
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'inviteUser', component: InviteUserComponent },
   { path: 'invitations', component: InvitationsListComponent },
   { path: 'profile', component: MyProfileComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'webproxy', component: WebProxyComponent }
 ];

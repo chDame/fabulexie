@@ -23,13 +23,15 @@ import { InviteUserComponent } from './user-admin/invite-user/invite-user.compon
 import { InvitationsListComponent } from './user-admin/invitations-list/invitations-list.component';
 import { ConfigComponent } from './config/config.component';
 
-import { FooterComponent } from './layout/footer/footer.component';
 import { MainComponent } from './layout/main/main.component';
+import { FooterComponent } from './layout/footer/footer.component';
 import { LoginComponent } from './auth/login/login.component';
 import { WelcomeComponent } from './auth/welcome/welcome.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ForgotPwdComponent } from './auth/forgot-pwd/forgot-pwd.component';
+
 import { MyProfileComponent } from './me/my-profile/my-profile.component';
+import { SettingsComponent } from './me/settings/settings.component';
 
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
 
@@ -60,7 +62,8 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     InviteUserComponent,
     InvitationsListComponent,
     ConfigComponent,
-    WebProxyComponent
+    WebProxyComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

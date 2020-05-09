@@ -68,6 +68,10 @@ public class UserConfigController extends AbstractController {
 		}
 		
 		PersistenceUtil.copyNonNullProperties(config, existingConfig);
+
+		User user = new User();
+		user.setId(userId);
+		config.setUser(user);
 		userConfigService.update(existingConfig);
 		
 		return new UserConfigResource(existingConfig);
@@ -80,7 +84,9 @@ public class UserConfigController extends AbstractController {
 		if (existingConfig==null || existingConfig.getUser().getId()!=userId) {
 			return null;
 		}
-		
+		User user = new User();
+		user.setId(userId);
+		config.setUser(user);
 		userConfigService.update(config);
 		
 		return new UserConfigResource(config);

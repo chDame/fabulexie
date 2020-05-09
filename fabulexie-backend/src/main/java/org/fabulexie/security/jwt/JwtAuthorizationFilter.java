@@ -19,6 +19,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -30,7 +31,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 		try {
 			if (existeJWTToken(request, response)) {
 				Claims claims = validateToken(request);
-				if (claims.get("authorities") != null) {
+				if (claims!=null && claims.get("authorities") != null) {
 					setUpSpringAuthentication(claims);
 				} else {
 					SecurityContextHolder.clearContext();
@@ -46,7 +47,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	private Claims validateToken(HttpServletRequest request) {
 		String jwtToken = request.getHeader(HEADER).replace(SecurityUtils.PREFIX_TOKEN, "");
-		return Jwts.parser().setSigningKey(SecurityUtils.SECRET_KEY.getBytes()).parseClaimsJws(jwtToken).getBody();
+		try {
+			return Jwts.parser().setSigningKey(SecurityUtils.SECRET_KEY.getBytes()).parseClaimsJws(jwtToken).getBody();
+		} catch (SignatureException e) {
+			return null;
+		}
 	}
 
 	/**

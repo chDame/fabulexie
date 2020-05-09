@@ -16,3 +16,26 @@ export class User {
 	photo: string;
 	safePhoto: SafeUrl;
 }
+
+export class UserConfig {
+    id: number;
+    name: string;
+	letterRules: LetterRule[];
+}
+
+export class Rule {
+	
+	name: string;
+	color: string;
+	backgroundColor: string;
+	bold: boolean;
+	italic:boolean;
+	underlined: boolean;
+	upperCase: boolean;
+}
+
+export class LetterRule extends Rule {
+    id: number;
+    name: string;
+	letters: string[];	
+}

@@ -27,8 +27,8 @@ public class UserConfig extends BaseEntity<Long> {
 	@ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-	@JsonIgnore
-	@OneToMany(mappedBy="config",fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy="config",fetch = FetchType.EAGER)
     private List<LetterRule> letterRules;
     
 	public Long getId() {

@@ -16,6 +16,8 @@ public abstract class Rule extends BaseEntity<Long> {
     @JoinColumn(name="config_id", nullable=false)
     private UserConfig config;
 
+	private String name;
+	
 	private String color;
 	
 	private String backgroundColor;
@@ -27,6 +29,22 @@ public abstract class Rule extends BaseEntity<Long> {
 	private boolean underlined;
 	
 	private boolean upperCase;
+
+	public UserConfig getConfig() {
+		return config;
+	}
+
+	public void setConfig(UserConfig config) {
+		this.config = config;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getColor() {
 		return color;
