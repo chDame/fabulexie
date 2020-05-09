@@ -3,8 +3,8 @@
 </div>
 <div class="row justify-content-center">
 	<div class="col-xl-10 col-lg-10 col-md-10 col-sm-12">
-		<div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
-		<div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>	
+		<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+		<div *ngIf="info" class="alert alert-success">{{info}}</div>	
 		<div class="card shadow mb-4">
 			<div class="card-header py-3">
 				<h6 class="m-0 font-weight-bold text-primary">API keys</h6>
@@ -53,7 +53,7 @@
 					<span class="floating-label">Google Map API Key</span>
 					<div *ngIf="ggMapKey.dirty && ggMapKey.invalid" class="alert alert-danger">Google Map API key is required</div>
 				</div>
-				<button class="btn btn-primary btn-block btn-icon-split" [disabled]="!updateConfigForm.form.valid || password!=passwordConf" (click)="updateConfig()">
+				<button class="btn btn-primary btn-block btn-icon-split" [disabled]="!updateConfigForm.form.valid" (click)="updateConfig()">
 					<span class="icon text-white-50">
 						<i class="fas fa-pen"></i>
 					</span>

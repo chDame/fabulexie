@@ -17,8 +17,8 @@ export class InvitationsListComponent implements OnInit {
 	pages:number;
 	currPage:number = 1;
 	
-	constructor(private authService: AuthService,
-		private invitationService: InvitationService,
+	constructor(public authService: AuthService,
+		public invitationService: InvitationService,
 		private router: Router) {
 	}
  
@@ -26,7 +26,7 @@ export class InvitationsListComponent implements OnInit {
 		this.reload();
 	}
 	
-	private reload(): void {
+	public reload(): void {
 		this.invitationService.list(this.currPage, this.perPage).subscribe(data => {
 			this.invitations = data.items;
 			this.count = data.total;
@@ -88,6 +88,11 @@ export class InvitationsListComponent implements OnInit {
 		
 	public filterTutor(value:boolean) {
 		this.invitationService.filter.tutor = value;
+		this.reload();
+	}
+		
+	public filterConfirmed(value:boolean) {
+		this.invitationService.filter.confirmed = value;
 		this.reload();
 	}
 }

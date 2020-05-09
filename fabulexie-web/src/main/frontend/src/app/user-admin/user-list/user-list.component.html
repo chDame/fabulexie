@@ -46,33 +46,33 @@
 			{{userService.filter.valid}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="validFilterButton">
-			<a class="dropdown-item" (click)="filterValid('')">Both</a>
-			<a class="dropdown-item" (click)="filterValid('true')">true</a>
-			<a class="dropdown-item" (click)="filterValid('false')">false</a>
+			<a class="dropdown-item" (click)="filterValid(null)">Both</a>
+			<a class="dropdown-item" (click)="filterValid(true)">true</a>
+			<a class="dropdown-item" (click)="filterValid(false)">false</a>
 		  </div></th>
 		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="adminFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			{{userService.filter.admin}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="adminFilterButton">
-			<a class="dropdown-item" (click)="filterAdmin('')">Both</a>
-			<a class="dropdown-item" (click)="filterAdmin('true')">true</a>
-			<a class="dropdown-item" (click)="filterAdmin('false')">false</a>
+			<a class="dropdown-item" (click)="filterAdmin(null)">Both</a>
+			<a class="dropdown-item" (click)="filterAdmin(true)">true</a>
+			<a class="dropdown-item" (click)="filterAdmin(false)">false</a>
 		  </div></th>
 		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="tutorFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			{{userService.filter.tutor}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="tutorFilterButton">
-			<a class="dropdown-item" (click)="filterTutor('')">Both</a>
-			<a class="dropdown-item" (click)="filterTutor('true')">true</a>
-			<a class="dropdown-item" (click)="filterTutor('false')">false</a>
+			<a class="dropdown-item" (click)="filterTutor(null)">Both</a>
+			<a class="dropdown-item" (click)="filterTutor(true)">true</a>
+			<a class="dropdown-item" (click)="filterTutor(false)">false</a>
 		  </div></th>
 		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="lockedFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			{{userService.filter.locked}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="lockedFilterButton">
-			<a class="dropdown-item" (click)="filterLocked('')">Both</a>
-			<a class="dropdown-item" (click)="filterLocked('true')">true</a>
-			<a class="dropdown-item" (click)="filterLocked('false')">false</a>
+			<a class="dropdown-item" (click)="filterLocked(null)">Both</a>
+			<a class="dropdown-item" (click)="filterLocked(true)">true</a>
+			<a class="dropdown-item" (click)="filterLocked(false)">false</a>
 		  </div></th>
 		  <th></th>
         </tr>

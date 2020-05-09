@@ -11,7 +11,6 @@ import { HttpDateInterceptor } from './interceptors/httpDateInterceptor';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FileUploadModule } from 'ng2-file-upload';
-import { Ng5SliderModule } from 'ng5-slider';
 
 import { SocialLoginModule, AuthServiceConfig } from "angularx-social-login";
 import { GoogleLoginProvider, FacebookLoginProvider } from "angularx-social-login";
@@ -70,7 +69,6 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     FormsModule,
 	NgbModule,
 	FileUploadModule,
-	Ng5SliderModule,
 	SocialLoginModule
   ],
   providers: [UserService, AuthService, WebproxyService,

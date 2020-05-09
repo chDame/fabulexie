@@ -17,8 +17,8 @@ export class UserListComponent implements OnInit {
 	pages:number;
 	currPage:number = 1;
 	
-	constructor(private authService: AuthService,
-		private userService: UserService,
+	constructor(public authService: AuthService,
+		public userService: UserService,
 		private router: Router) {
 	}
  
@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
 		this.reload();
 	}
 	
-	private reload(): void {
+	public reload(): void {
 		this.userService.list(this.currPage, this.perPage).subscribe(data => {
 			this.users = data.items;
 			this.count = data.total;

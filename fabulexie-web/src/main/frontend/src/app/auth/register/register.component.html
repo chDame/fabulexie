@@ -23,13 +23,13 @@
 		<div *ngIf="pwd.dirty && pwd.invalid" class="alert alert-danger">Password is required</div>
     </div>
     <div class="form-group">
-		<input type="password" [(ngModel)]="login.passwordConf" 
+		<input type="password" [(ngModel)]="passwordConf" 
 			class="form-control"
 			id="inputPwdConf"
 			name="inputPwdConf"
 			placeholder="Password confirmation"
 			required minlength="4" #pwdConf="ngModel">
-		<div *ngIf="pwdConf.dirty && (pwdConf.invalid || login.password!=login.passwordConf)" class="alert alert-danger">Password is not the same</div>
+		<div *ngIf="pwdConf.dirty && (pwdConf.invalid || login.password!=passwordConf)" class="alert alert-danger">Password is not the same</div>
     </div>
     <div class="form-group">
 		<input type="text" [(ngModel)]="login.firstname" 

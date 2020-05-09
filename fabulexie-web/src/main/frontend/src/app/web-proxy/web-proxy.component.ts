@@ -11,7 +11,7 @@ export class WebProxyComponent implements OnInit {
 
 	public url:string;
 	private safeUrl: SafeResourceUrl;
-	@ViewChild("frameBrowser", {static: false}) frameBrowser: ElementRef;
+	@ViewChild("frameBrowser") frameBrowser: ElementRef;
 	
 	constructor(public webproxyService: WebproxyService) { }
 

@@ -12,7 +12,8 @@ export class RegisterComponent {
 
     public login:User;
 	public code:string = null;
-  
+	public passwordConf:string;
+	
 	constructor(public authService: AuthService,
 		private route: ActivatedRoute) {
 		this.login = new User();
