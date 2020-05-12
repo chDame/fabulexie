@@ -31,6 +31,7 @@ export class UserConfigService {
 	
 	
 	public save(userId:number, config: UserConfig):Observable<UserConfig> {
+		this.prepareForBackend(config);
 		if (config.id) {
 			return this.put(userId, config);
 		} else {
@@ -45,5 +46,26 @@ export class UserConfigService {
 	
 	private put(userId:number, config: UserConfig): Observable<UserConfig> {
 		return this.http.put<UserConfig>(environment.settings.backend+'/users/'+userId+'/configs/'+config.id, config, {headers: this.authService.myHttpBodyheaders});
+	}
+	
+	
+	
+	public preview(config: UserConfig): Observable<any> {
+		this.prepareForBackend(config);
+		return this.http.post<any>(environment.settings.backend+'/preview/', config, {headers: this.authService.myHttpBodyheaders});
+	}
+	
+	private prepareForBackend(config: UserConfig): UserConfig {
+		for(let i=0;i<config.letterRules.length;i++) {
+			let rule = config.letterRules[i];
+			rule.letters=[];
+			for(let u=0;u<rule.lettersString.length;u++) {
+				let letter = rule.lettersString.charAt(u);
+				if (letter.trim()!='') {
+					rule.letters.push(letter);
+				}
+			}
+		}
+		return config;
 	}
 }

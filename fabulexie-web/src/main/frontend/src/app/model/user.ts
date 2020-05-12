@@ -38,4 +38,5 @@ export class LetterRule extends Rule {
     id: number;
     name: string;
 	letters: string[];	
+	lettersString: string;
 }

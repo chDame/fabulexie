@@ -88,7 +88,6 @@ public class UserConfigController extends AbstractController {
 		user.setId(userId);
 		config.setUser(user);
 		userConfigService.update(config);
-		
 		return new UserConfigResource(config);
 	}
 

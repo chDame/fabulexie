@@ -2,14 +2,14 @@
 	<h1 class="h3 mb-0 text-gray-800">Update my reader profiles</h1>
 </div>
 <div class="row justify-content-center" >
-	<div class="col-xl-10 col-lg-10 col-md-10 col-sm-12">
+	<div class="col-xl-10 col-lg-10 col-md-10 col-xs-12">
 
 		<div class="row">
-			<div class="col-xl-10 col-lg-9 col-md-8 col-sm-6">
+			<div class="col-lg-9 col-md-8 col-sm-6 col-xs-12">
 				<div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
 				<div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>	
 			</div>
-			<div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 right">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 right">
 				<a class="btn btn-primary btn-icon-split" (click)="newUserConfig()" data-toggle="modal" data-target="#addUpdateConfig">
 					<span class="icon text-white-50">
 						<i class="fas fa-plus"></i>
@@ -28,6 +28,7 @@
 				<div class="card-body row">
 				
 					<div class="col d-flex justify-content-between justify-content-between">
+					
 						<a class="btn btn-warning btn-icon-split" (click)="setCurrentUserConfig(i)" data-toggle="modal" data-target="#addUpdateConfig">
 							<span class="icon text-white-50">
 								<i class="fas fa-edit"></i>
@@ -48,7 +49,7 @@
 </div>
 
 <div class="modal fade" id="addUpdateConfig" tabindex="-1" role="dialog" aria-labelledby="Reader profile modal" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content" *ngIf="userConfig!=null">
 			<div class="modal-header">
 				<h5 class="modal-title">{{userConfig.name}}</h5>
@@ -58,17 +59,101 @@
             </div>
             <form #userConfigForm="ngForm">
 				<div class="modal-body">
-              
-					<div class="form-group">
-						<input type="text" [(ngModel)]="userConfig.name" 
-							class="form-control"
-							id="inputConfigName"
-							aria-describedby="Name is required"
-							name="inputConfigName"
-							placeholder="Enter config name..."
-							required min-length=2 #configName="ngModel">
-							<span class="floating-label">Config name</span>
-						<div *ngIf="configName.dirty && configName.invalid" class="alert alert-danger">Name is required</div>
+					<div class="row">
+						<div class="col col-lg-7 col-md-8 col-xs-12">
+							<div class="form-group">
+								<input type="text" [(ngModel)]="userConfig.name" 
+									class="form-control"
+									id="inputConfigName"
+									aria-describedby="Name is required"
+									name="inputConfigName"
+									placeholder="Enter config name..."
+									required min-length=2 #configName="ngModel">
+									<span class="floating-label">Profile name</span>
+								<div *ngIf="configName.dirty && configName.invalid" class="alert alert-danger">Name is required</div>
+							</div>
+							<div class="card shadow mb-4" *ngFor="let rule of userConfig.letterRules; let i = index">
+								<a href="#letterRule{{i}}" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true">
+									<h6 class="m-0 font-weight-bold text-primary">Letter rule {{rule.lettersString}}</h6>
+								</a>
+								<div class="collapse show" id="letterRule{{i}}">
+									<div class="card-body">
+										<div class="form-group">
+											<input type="text" [(ngModel)]="rule.lettersString" 
+												class="form-control"
+												id="inputLetters{{i}}"
+												aria-describedby="Letters are required"
+												name="inputLetters{{i}}"
+												placeholder="Enter letters..."
+												required #inputLetters="ngModel">
+												<span class="floating-label">letters</span>
+											<div *ngIf="inputLetters.dirty && inputLetters.invalid" class="alert alert-danger">Letters are required</div>
+										</div>
+										<div class=" btn-group mb-2 ml-1">
+											<button class="btn btn-primary" [ngClass]="rule.bold?'active':''" (click)="toggleRule(rule, 'bold')">
+												<i class="fas fa-bold"></i>
+											</button>
+											<button class="btn btn-primary " [ngClass]="rule.italic?'active':''" (click)="toggleRule(rule, 'italic')">
+												<i class="fas fa-italic"></i>
+											</button>
+											<button class="btn btn-primary " [ngClass]="rule.underlined?'active':''" (click)="toggleRule(rule, 'underlined')">
+												<i class="fas fa-underline"></i>
+											</button>
+											<button class="btn btn-primary" [ngClass]="rule.upperCase?'active':''" (click)="toggleRule(rule, 'upperCase')">
+												UPPERCASE
+											</button>
+											<button class="btn btn-default" [style.color]="rule.color" [style.background]="rule.backgroundColor" [(colorPicker)]="rule.color">
+												<i class="fas fa-pen-fancy"></i>
+											</button>
+											<button class="btn btn-default" [style.color]="rule.color" [style.background]="rule.backgroundColor" [(colorPicker)]="rule.backgroundColor">
+												<i class="fas fa-fill"></i>
+											</button>
+											<button type="button" class="btn btn-danger" (click)="deleteRule(i)">
+												<i class="fas fa-trash"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="col col-lg-5 col-md-4 col-xs-12">
+							<a class="btn btn-primary btn-icon-split" (click)="preview()">
+								<span class="icon text-white-50">
+									<i class="fas fa-eye"></i>
+								</span>
+								<span class="text"> Preview</span>
+							</a><br/>
+							<span [innerHTML]="example"></span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<a class="btn btn-primary btn-icon-split" (click)="addLetterRule()">
+								<span class="icon text-white-50">
+									<i class="fas fa-plus"></i>
+								</span>
+								<span class="text"> Add letter rule</span>
+							</a>
+							<a class="btn btn-primary btn-icon-split" (click)="addVoyelRule()">
+								<span class="icon text-white-50">
+									<i class="fas fa-plus"></i>
+								</span>
+								<span class="text"> Voyels</span>
+							</a>
+							<a class="btn btn-primary btn-icon-split" (click)="addPunctuationRule()">
+								<span class="icon text-white-50">
+									<i class="fas fa-plus"></i>
+								</span>
+								<span class="text"> Ponctuation Marks</span>
+							</a>
+							<a class="btn btn-primary btn-icon-split" (click)="addUppercaseRule()">
+								<span class="icon text-white-50">
+									<i class="fas fa-plus"></i>
+								</span>
+								<span class="text"> Uppercase</span>
+							</a>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">

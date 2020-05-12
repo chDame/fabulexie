@@ -6,7 +6,7 @@ import java.util.Map;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
 import org.fabulexie.security.annotation.SelfAccessOrTutor;
-import org.fabulexie.service.UserConfigService;
+import org.fabulexie.service.LetterRuleService;
 import  org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserRuleController extends AbstractController {
+public class LetterRuleController extends AbstractController {
 
-	private final Logger logger = LoggerFactory.getLogger(UserRuleController.class);
+	private final Logger logger = LoggerFactory.getLogger(LetterRuleController.class);
 
 	@Autowired
-	private UserConfigService userConfigService;
+	private LetterRuleService letterRuleService;
 
 	
 	@GetMapping(value = "/users/{userId}/configs/{configId}/rules")
 	@SelfAccessOrTutor
 	public List<LetterRule> all(@PathVariable Long userId, @PathVariable Long configId) {
-		UserConfig config = userConfigService.getById(configId);
-		return config.getLetterRules();
+		return letterRuleService.findByConfigId(configId);
 	}
 
 	@PostMapping(value = "/users/{userId}/configs/{configId}/rules")

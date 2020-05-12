@@ -25,6 +25,7 @@
     "bootstrap": "^4.4.1",
     "jquery": "^3.5.1",
     "ng2-file-upload": "^1.4.0",
+    "ngx-color-picker": "^9.1.0",
     "rxjs": "~6.5.5",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
