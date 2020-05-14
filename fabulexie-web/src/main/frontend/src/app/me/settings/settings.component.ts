@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { UserConfigService } from '../../service/user-config.service';
+import { UserService } from '../../service/user.service';
 import { User, Rule, UserConfig, LetterRule } from '../../model/user';
 import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
@@ -20,6 +21,7 @@ export class SettingsComponent implements OnInit {
 	
   constructor(public authService: AuthService,
 		public userConfigService: UserConfigService,
+		public userService: UserService,
 		private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
@@ -35,6 +37,13 @@ export class SettingsComponent implements OnInit {
   public setCurrentUserConfig(index:number) {
 	this.userConfig = Object.assign({}, this.userConfigService.userConfigs[index]);
 	this.currentIdx=index;
+  }
+  
+  public assignUserConfig(index:number) {
+	  let config = this.userConfigService.userConfigs[index];
+	  this.userService.assignConfig(this.authService.user, config).subscribe(data => {
+		  this.authService.user.activeConfig = config
+	  });
   }
 
   public saveConfig() {

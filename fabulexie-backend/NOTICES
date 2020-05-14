@@ -1,0 +1,50 @@
+Copyright 2017-2020 Christophe Dame
+
+Fabulexie is built using Gradle. This process will automatically pull in dependencies. We list Fabulexie dependencies,
+and their licenses, below. For information on the dependencies of these dependencies, see the websites of the
+projects below
+
+org.springframework.boot:spring-boot-starter-web
+- Apache License, Version 2.0
+
+org.springframework.boot:spring-boot-starter-security
+- Apache License, Version 2.0
+
+org.springframework.boot:spring-boot-starter-data-jpa
+- Apache License, Version 2.0
+
+org.springframework.boot:spring-boot-starter-hateoas
+- Apache License, Version 2.0
+	
+io.jsonwebtoken:jjwt:0.9.1
+- Apache License, Version 2.0
+
+org.springdoc:springdoc-openapi-ui:1.3.9
+- Apache License, Version 2.0
+	    
+org.apache.commons:commons-lang3:3.8.1
+- Apache License, Version 2.0
+    
+org.apache.commons:commons-text:1.8
+- Apache License, Version 2.0
+    
+org.springframework.boot:spring-boot-starter-mail
+- Apache License, Version 2.0
+
+org.springframework.boot:spring-boot-starter-thymeleaf
+- Apache License, Version 2.0
+
+com.google.api-client:google-api-client:1.30.7
+- Apache License, Version 2.0
+
+org.springframework.social:spring-social-facebook:2.0.3.RELEASE
+- Apache License, Version 2.0
+
+org.apache.lucene:lucene-queryparser:8.5.0
+- Apache License, Version 2.0
+
+org.apache.lucene:lucene-analyzers-common:8.5.0
+- Apache License, Version 2.0
+
+org.jsoup:jsoup:1.13.1
+- MIT License

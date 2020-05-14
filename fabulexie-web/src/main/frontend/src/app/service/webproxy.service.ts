@@ -14,7 +14,9 @@ export class WebproxyService {
 	}
 	
 	public translate(url:string): Observable<any> {
-		let params = encodeURI(encodeURIComponent(url));
-		return this.http.get<any>(environment.settings.backend+'/web/'+params, {headers: this.authService.myHttpheaders});
+		let headers = this.authService.myHttpheaders;
+		headers = headers.set('url', url);
+		//let params = encodeURI(encodeURIComponent(url));
+		return this.http.get<any>(environment.settings.backend+'/web/', {headers: headers});
 	}
 }

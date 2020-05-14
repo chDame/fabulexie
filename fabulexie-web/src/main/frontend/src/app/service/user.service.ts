@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { User } from '../model/user';
+import { User, UserConfig } from '../model/user';
  
 @Injectable()
 export class UserService {
@@ -58,12 +58,20 @@ export class UserService {
 		return this.patch(u);
 	}
 	
+	public assignConfig(user: User, config: UserConfig): Observable<User> {
+		let u = new User();
+		u.id = user.id;
+		u.activeConfig = config;
+		return this.patch(u);
+	}
+	
 	public updateUser(): Observable<User> {
 		return this.patch(this.userToUpdate);
 	}
 	
 	public patch(user:User): Observable<User> {
-			return this.http.patch<User>(environment.settings.backend+'/users/'+user.id, user, {headers: this.authService.myHttpBodyheaders});
+		console.log('pouet');
+		return this.http.patch<User>(environment.settings.backend+'/users/'+user.id, user, {headers: this.authService.myHttpBodyheaders});
 	}
 	
 	public delete(userId:number): Observable<any> {

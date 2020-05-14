@@ -1,0 +1,15 @@
+Copyright 2017-2020 Christophe Dame
+
+Fabulexie is built using Gradle. This process will automatically pull in dependencies. We list Fabulexie dependencies,
+and their licenses, below. For information on the dependencies of these dependencies, see the websites of the
+projects below
+
+org.springframework.boot:spring-boot-starter-web
+- Apache License, Version 2.0
+	    
+org.apache.commons:commons-lang3:3.8.1
+- Apache License, Version 2.0
+    
+org.apache.commons:commons-text:1.8
+- Apache License, Version 2.0
+ 

@@ -1,23 +1,45 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.fabulexie.rest.controller;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 import org.fabulexie.core.html.parser.HtmlParser;
+import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
-import org.fabulexie.model.rules.LetterRule;
-import org.fabulexie.model.rules.PunctuationRule;
 import org.fabulexie.rest.controller.model.Conversion;
 import org.fabulexie.security.annotation.IsAuthenticated;
+import org.fabulexie.service.UserService;
+import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author christophe.dame
+ */
 @RestController
 public class WebDysController extends AbstractController {
 
@@ -29,8 +51,11 @@ public class WebDysController extends AbstractController {
 		
 				"<p>Other types of reading are not speech based writing systems, such as music notation or pictograms. The common link is the interpretation of symbols to extract the meaning from the visual notations or tactile signals (as in the case of Braille).</p>" +
 				"<p>Letters : abcdefghijklmnopqrstuvwxyz</p>"+
-				"<p>Upper letters : ABCDEFGHIJKLMNIOPQRST</p>"+
+				"<p>Upper letters : ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>"+
 				"<p>Numbers : 0123456789</p>";
+		
+		@Autowired
+		private UserService userService;
 		
 		@PostMapping(value = "/preview")
 		@IsAuthenticated
@@ -50,24 +75,12 @@ public class WebDysController extends AbstractController {
 			return c;
 		}
 		
-		@GetMapping(value = "/web/{url}")
+		@GetMapping(value = "/web/")
 		@IsAuthenticated
-		public Conversion convert(@PathVariable String url) {
-			UserConfig ac = new UserConfig();
-			ac.setLetterRules(new ArrayList<>());
-			LetterRule bRule = new LetterRule();
-			bRule.setLetters(new ArrayList<>());
-			bRule.getLetters().add('b');
-			bRule.setColor("#FF00FF");
-			ac.getLetterRules().add(bRule);
-			LetterRule dRule = new LetterRule();
-			dRule.setLetters(new ArrayList<>());
-			dRule.getLetters().add('d');
-			dRule.setColor("#FF0000");
-			dRule.setBold(true);
-			ac.getLetterRules().add(dRule);
-			//ac.getLetterRules().add(new VowelRule());
-			ac.getLetterRules().add(new PunctuationRule());
+		public Conversion convert(@RequestHeader("url") String url) {
+			Long userId = SecurityUtils.getConnectedUser().getId();
+			User u = userService.getById(userId);
+			UserConfig ac = u.getActiveConfig();
 			Conversion c = new Conversion();
 			c.setStartTime(System.currentTimeMillis());
 			try {
@@ -82,7 +95,7 @@ public class WebDysController extends AbstractController {
 			}
 			return c;
 		}
-
+		
 		@Override
 		public Logger getLogger() {
 			return logger;

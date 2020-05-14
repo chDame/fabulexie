@@ -15,6 +15,7 @@ export class User {
 	loginSource: string;
 	photo: string;
 	safePhoto: SafeUrl;
+	activeConfig: UserConfig;
 }
 
 export class UserConfig {
