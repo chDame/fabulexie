@@ -40,9 +40,9 @@ dependencies {
 	
 	
 
-	implementation project(':fabulexie-model')
-	implementation project(':fabulexie-commons')
-	implementation project(':fabulexie-core')
+	compile project(':fabulexie-model')
+	compile project(':fabulexie-commons')
+	compile project(':fabulexie-core')
 	
 	//dev db
 	runtime 'com.h2database:h2'

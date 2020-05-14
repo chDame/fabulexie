@@ -24,8 +24,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.jsoup:jsoup:1.13.1'
 	
-	implementation project(':fabulexie-model')
-	implementation project(':fabulexie-commons')
+	compile project(':fabulexie-model')
+	compile project(':fabulexie-commons')
 	
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
