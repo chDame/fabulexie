@@ -63,7 +63,7 @@ public class WebDysController extends AbstractController {
 			Conversion c = new Conversion();
 			c.setStartTime(System.currentTimeMillis());
 			try {
-				c.setResult(HtmlParser.transformHtml(PREVIEW_SRC, config));
+				c.setResult(HtmlParser.transformHtml(PREVIEW_SRC, config, true));
 				c.setStatus(true);
 				c.setEndTime(System.currentTimeMillis());
 				c.setStatusMessage("conversion in "+(c.getEndTime()-c.getStartTime()+" milliseconds"));

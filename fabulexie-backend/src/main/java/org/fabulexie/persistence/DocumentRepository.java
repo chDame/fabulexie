@@ -16,27 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.security.jwt;
+package org.fabulexie.persistence;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.List;
+
+import org.fabulexie.model.document.Document;
+import org.fabulexie.persistence.common.FabulexieRepository;
 
 /**
  * @author christophe.dame
  */
-@Configuration
-public class JwtSecurityConfig 
-  extends WebSecurityConfigurerAdapter  {
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-			.formLogin().disable()
-			.addFilterAfter(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-			.authorizeRequests()
-			.antMatchers("/").permitAll() ;
-		http.headers().frameOptions().disable();
-	}
+public interface DocumentRepository extends FabulexieRepository<Document> {
+
+	List<Document> findByOwnerId(Long userId);
 }

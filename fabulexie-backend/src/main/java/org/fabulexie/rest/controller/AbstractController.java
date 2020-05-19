@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
@@ -81,7 +82,15 @@ public abstract class AbstractController {
     }
     
     
-    private HttpServletRequest getHttpServletRequest() {
+    protected HttpServletRequest getHttpServletRequest() {
     	return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    }
+    
+    protected void allowFrames() {
+    	//getHttpServletResponse().setHeader("X-Frame-Options", "SAMEORIGIN");
+    }
+    
+    protected HttpServletResponse getHttpServletResponse() {
+    	return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
     }
 }

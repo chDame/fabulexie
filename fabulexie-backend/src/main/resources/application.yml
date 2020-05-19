@@ -43,7 +43,13 @@ server:
     keyAlias: toptal
   error:
     whitelabel:
-      enabled: false 
-      
+      enabled: false      
+    
+logging:
+  level:
+    root: INFO
+    org.docx4j: ERROR 
+    com.plutext.demo.diagnosticscom.plutext.demo.diagnostics: ERROR
+
 application:
     mailer: devntest@fabulexie.fr

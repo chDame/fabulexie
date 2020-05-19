@@ -4,7 +4,6 @@ import { UserService } from '../../service/user.service';
 import { User } from '../../model/user';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
-import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 
 @Component({
   selector: 'app-my-profile',

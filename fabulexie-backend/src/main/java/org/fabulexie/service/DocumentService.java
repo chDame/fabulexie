@@ -16,27 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.security.jwt;
+package org.fabulexie.service;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.List;
+
+import org.fabulexie.model.document.Document;
+import org.fabulexie.persistence.DocumentRepository;
+import org.fabulexie.service.common.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author christophe.dame
  */
-@Configuration
-public class JwtSecurityConfig 
-  extends WebSecurityConfigurerAdapter  {
+@Service
+public class DocumentService extends AbstractService<Document> {
+	
+	@Autowired
+	private DocumentRepository documentRepository;
 	
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-			.formLogin().disable()
-			.addFilterAfter(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-			.authorizeRequests()
-			.antMatchers("/").permitAll() ;
-		http.headers().frameOptions().disable();
+	protected DocumentRepository getRepository() {
+		return documentRepository;
+	}
+	
+	public List<Document> findByOwnerId(Long userId) {
+		return documentRepository.findByOwnerId(userId);
 	}
 }

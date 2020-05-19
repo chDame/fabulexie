@@ -68,11 +68,17 @@
 			Properties
       </div>
 
-		
-      <li [ngClass]="this.router.url === '/property/create'?'nav-item active':'nav-item'" *ngIf="authService.user.admin || authService.user.tutor">
-			<a class="nav-link" routerLink="/property/create" >
-				<i class="fas fa-map-marker-alt"></i>
-				<span>Add property</span>
+	  <li [ngClass]="this.router.url === '/docs'?'nav-item active':'nav-item'">
+			<a class="nav-link" routerLink="/docs" >
+				<i class="fas fa-map-marked-alt"></i>
+				<span>Manage Documents</span>
+			</a>
+      </li>
+
+	  <li [ngClass]="this.router.url === '/readdocs'?'nav-item active':'nav-item'">
+			<a class="nav-link" routerLink="/readdocs" >
+				<i class="fas fa-map-marked-alt"></i>
+				<span>See Documents</span>
 			</a>
       </li>
 
@@ -82,8 +88,6 @@
 				<span>Web proxy</span>
 			</a>
       </li>
-
-
 
 
       <!-- Divider -->

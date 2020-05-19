@@ -40,6 +40,7 @@ What are some features of Fabulexie?
 - Manage multiple users (you need to configure the SMTP)
 - Each users can manager multiple reader profile
 - Web pages adaptation
+- Adapt Docx documents
 - more to come
 
 How can I get started?

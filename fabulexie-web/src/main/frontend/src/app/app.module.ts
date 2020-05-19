@@ -10,7 +10,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpDateInterceptor } from './interceptors/httpDateInterceptor';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FileUploadModule } from 'ng2-file-upload';
 import { ColorPickerModule } from 'ngx-color-picker';
 
 import { SocialLoginModule, AuthServiceConfig } from "angularx-social-login";
@@ -35,6 +34,8 @@ import { MyProfileComponent } from './me/my-profile/my-profile.component';
 import { SettingsComponent } from './me/settings/settings.component';
 
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
+import { DocManagerComponent } from './doc/doc-manager/doc-manager.component';
+import { DocReaderComponent } from './doc/doc-reader/doc-reader.component';
 
 import { UserService } from './service/user.service';
 import { AuthService } from './service/auth.service';
@@ -64,7 +65,9 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     InvitationsListComponent,
     ConfigComponent,
     WebProxyComponent,
-    SettingsComponent
+    SettingsComponent,
+    DocManagerComponent,
+    DocReaderComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +75,6 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     HttpClientModule,
     FormsModule,
 	NgbModule,
-	FileUploadModule,
 	SocialLoginModule,
 	ColorPickerModule
   ],

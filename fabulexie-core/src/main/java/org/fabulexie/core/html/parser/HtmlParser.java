@@ -18,7 +18,9 @@
  */
 package org.fabulexie.core.html.parser;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.fabulexie.core.utils.RulesUtils;
@@ -40,33 +42,57 @@ public class HtmlParser {
 	public static String transformFromUrl(String url, UserConfig ac) throws IOException {
 		Document doc = Jsoup.connect(url).get();
 		// doc.charset(Charset.forName("UTF-8"));
-		return transform(doc, ac);
+		return transformToHtml(doc, ac);
 	}
 
-	public static String transformHtml(String html, UserConfig ac) {
+	public static String transformHtml(String html, UserConfig ac, boolean relink) {
 		Document doc = Jsoup.parse(html);
-		return transform(doc, ac);
+		return transformToHtml(doc, ac, relink);
 	}
 	
-	public static String transform(Document doc, UserConfig ac) {
-		Elements imports = doc.head().select("link[href]");
-		for (Element elImport : imports) {
-			elImport.attr("href", elImport.absUrl("href"));
+	public static void transformFromFile(Path sourceFile, Path targetFile, UserConfig ac) throws IOException {
+		Document doc = transformFromFile(sourceFile, ac);
+		try(FileOutputStream os = new FileOutputStream(targetFile.toFile())) {
+			os.write(doc.html().getBytes());
 		}
-		Elements imgs = doc.body().select("img[src]");
-		for (Element img : imgs) {
-			 img.attr("src", img.absUrl("src"));
-		}
-		Elements links = doc.body().select("a[href]");
-		for (Element link : links) {
-			link.attr("href", link.absUrl("href"));
+	}
+	
+	public static Document transformFromFile(Path filePath, UserConfig ac) throws IOException {
+		Document doc = Jsoup.parse(filePath.toFile(), "UTF-8");
+		doc.outputSettings().syntax( Document.OutputSettings.Syntax.xml);
+		return transformToDoc(doc, ac, false);
+	}
+	
+	public static String transformToHtml(Document doc, UserConfig ac) {
+		return transformToDoc(doc, ac).html();
+	}
+	public static String transformToHtml(Document doc, UserConfig ac, boolean relink) {
+		return transformToDoc(doc, ac, relink).html();
+	}
+	public static Document transformToDoc(Document doc, UserConfig ac) {
+		return transformToDoc(doc, ac, true);
+	}
+	public static Document transformToDoc(Document doc, UserConfig ac, boolean relink) {
+		if (relink) {
+			Elements imports = doc.head().select("link[href]");
+			for (Element elImport : imports) {
+				elImport.attr("href", elImport.absUrl("href"));
+			}
+			Elements imgs = doc.body().select("img[src]");
+			for (Element img : imgs) {
+				 img.attr("src", img.absUrl("src"));
+			}
+			Elements links = doc.body().select("a[href]");
+			for (Element link : links) {
+				link.attr("href", link.absUrl("href"));
+			}
 		}
 		for (LetterRule rule : ac.getLetterRules()) {
 			applyRules(doc, rule);
 		}
 	
 		
-		return doc.html();
+		return doc;
 	}
 
 	private static void applyRules(Element paragraph, LetterRule rule) {

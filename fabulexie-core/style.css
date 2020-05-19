@@ -1,0 +1,13 @@
+.DocDefaults {display:block;margin-top: 0in;margin-bottom: 0in;line-height: 100%;vertical-align: baseline;font-size: 12.0pt;}
+.TitreOeuvre {display:block;text-align: center;font-size: 26.0pt;}
+.Textecenter {display:block;text-align: center;}
+.Standard {display:block;text-align: justify;position: relative; text-indent: 0.2in;font-size: 10.5pt;}
+.Heading {display:block;page-break-after: avoid;margin-top: 4mm;margin-bottom: 0.08in;font-size: 14.0pt;}
+.Titre3 {display:block;text-align: center;margin-top: 0.79in;margin-bottom: 0.39in;font-weight: bold;}
+.SousChapitre {display:block;position: relative; text-indent: 0in;}
+.Titre2 {display:block;text-align: center;margin-top: 1.18in;margin-bottom: 15mm;font-weight: bold;font-size: 16.0pt;}
+.Chapitre {display:block;position: relative; text-indent: 0in;page-break-before: always;}
+.Pieddepage {display:block;text-align: center;position: relative; text-indent: 0in;}
+.Licence {display:block;text-align: center;margin-top: 0.2in;font-size: 9.0pt;}
+.Textejustify {display:block;text-align: justify;position: relative; text-indent: 0.2in;}
+.Normal {display:block;}

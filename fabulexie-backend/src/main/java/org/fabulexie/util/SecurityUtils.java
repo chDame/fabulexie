@@ -19,6 +19,7 @@
 package org.fabulexie.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.fabulexie.model.User;
 import org.fabulexie.security.FabulexiePrincipal;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 /*
 import javax.crypto.BadPaddingException;
@@ -96,6 +98,18 @@ public final class SecurityUtils {
 		return new FabulexiePrincipal(userId.longValue(), email);
 	}
 
+	
+	public static boolean isAdmin() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		for(GrantedAuthority authority : authorities) {
+			if (authority.getAuthority().equals("ROLE_ADMIN")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static String generateFriendlyCode() {
 		String[] consonant = { "b", "c", "d", "f", "g", "j", "k", "l", "m", "n", "p", "r", "s", "t", "v" };
 		String[] vowels = { "a", "e", "i", "o", "u", "ou", "oi", "ui" };
