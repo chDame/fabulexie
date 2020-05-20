@@ -171,7 +171,6 @@ public class DocumentController extends AbstractController {
 		
 		@GetMapping(value = "/documents/{docToken}/html", produces = "text/html")
 		public String getHtml(@PathVariable String docToken) {
-			allowFrames();
 			Long docId = docTokens.getIfPresent(docToken);
 			if (docId==null) {
 				throw new UnauthorizedException("Forbidden access");
@@ -218,7 +217,6 @@ public class DocumentController extends AbstractController {
 		
 		@GetMapping(value = "/documents/{docToken}/adapt/html", produces = "text/html")
 		public String getAdaptedHtml(@PathVariable String docToken) {
-			allowFrames();
 			Long docId = docTokens.getIfPresent(docToken);
 			if (docId==null) {
 				throw new UnauthorizedException("Forbidden access");

@@ -1,0 +1,44 @@
+iframe.onlinereading {
+	width:100%;
+    display: block;
+    margin: auto;
+	height:700px;
+	max-height:100vh;
+	max-width:550px;
+	color:#40200B;
+	background:#f9f5eb;
+	border:1px solid #bcac9a;
+}
+
+.reader a.btn {
+	position:absolute;
+	top: 5px;
+	right:30px;
+}
+
+a.btn.hidden {
+	display: none;
+}
+
+.reader.expanded {
+	position: fixed;
+	top:0px;
+	left:0px;
+	width:100vw;
+	height:100vh;
+	z-index:999;
+	background: rgba(0,0,0,0.5);
+}
+.btn-group-prepend .input-file-text {
+    width: 180px;
+	height:38px;
+    border-top: 1px solid gray;
+    border-radius: 5px 0px 0px 5px;
+    border-bottom: 1px solid gray;
+    border-left: 1px solid gray;
+    background: #eee;
+    padding: 5px;
+}
+.progress {
+	width:100%;
+}

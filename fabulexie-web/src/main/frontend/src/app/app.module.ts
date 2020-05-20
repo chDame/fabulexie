@@ -34,7 +34,6 @@ import { MyProfileComponent } from './me/my-profile/my-profile.component';
 import { SettingsComponent } from './me/settings/settings.component';
 
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
-import { DocManagerComponent } from './doc/doc-manager/doc-manager.component';
 import { DocReaderComponent } from './doc/doc-reader/doc-reader.component';
 
 import { UserService } from './service/user.service';
@@ -66,7 +65,6 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     ConfigComponent,
     WebProxyComponent,
     SettingsComponent,
-    DocManagerComponent,
     DocReaderComponent
   ],
   imports: [

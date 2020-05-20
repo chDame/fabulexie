@@ -19,9 +19,7 @@ export class MyProfileComponent implements OnInit {
 	globalError: string = '';
 	globalInfo: string = '';
 	
-	public uploader:FileUploader;
 	loading:boolean;
-	fileItem: FileItem;
 
 	constructor(public authService: AuthService,
 		private userService: UserService,
@@ -30,7 +28,6 @@ export class MyProfileComponent implements OnInit {
 	ngOnInit() {
 		this.authService.info='';
 		this.authService.error='';
-		this.buildUploader(this.authService.user.id);
 	}
   
 	public onSubmit() {
@@ -46,41 +43,5 @@ export class MyProfileComponent implements OnInit {
 		});
 	}
 	
-	buildUploader(id:number) {
-		this.uploader = new FileUploader({url: environment.settings.backend+'/users/'+id+'/photo', allowedMimeType: ['image/png', 'image/jpeg'], disableMultipart: true});
-			
-		let authHeader = [{name: 'Authorization' , value: this.authService.user.token}];
-		
-		const uploadOptions = <FileUploaderOptions>{headers : authHeader, isHTML5: true, removeAfterUpload: true};
-		this.uploader.setOptions(uploadOptions);
-
-		this.uploader.onAfterAddingFile = (item: FileItem) => {
-			this.fileItem = item;
-		}
-		this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
-			this.authService.user.safePhoto = this.sanitizer.bypassSecurityTrustUrl(response);
-			this.fileItem = null;
-			this.loading = false;
-        };
-		this.uploader.onErrorItem = (item:any, response:any, status:any, headers:any) => {
-			this.globalError = JSON.parse(response)["message"]+'. Retry?';
-			this.fileItem = null;
-			this.loading = false;
-        };
-	}
-	
-	upload() {
-		this.loading = true
-		this.fileItem.method = "POST";
-		this.fileItem.withCredentials=false;
-		this.fileItem.upload();
-	}
-	
-	deleteImg() {
-		this.userService.deleteImg(this.authService.user.id).subscribe(data => {
-			this.globalInfo = 'Profile photo deleted';
-			this.authService.user.photo = null;
-		});
-	}
 
 }

@@ -9,7 +9,6 @@ import { MyProfileComponent } from './me/my-profile/my-profile.component';
 import { SettingsComponent } from './me/settings/settings.component';
 import { ConfigComponent } from './config/config.component';
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
-import { DocManagerComponent } from './doc/doc-manager/doc-manager.component';
 import { DocReaderComponent } from './doc/doc-reader/doc-reader.component';
 
 const routes: Routes = [
@@ -22,8 +21,7 @@ const routes: Routes = [
   { path: 'settings', component: SettingsComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'webproxy', component: WebProxyComponent },
-  { path: 'docs', component: DocManagerComponent },
-  { path: 'readdocs', component: DocReaderComponent }
+  { path: 'docs', component: DocReaderComponent }
 ];
 
 @NgModule({
