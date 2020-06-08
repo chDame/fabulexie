@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -92,6 +93,18 @@ public class DocumentController extends AbstractController {
 		private Cache<String, Long> userTokens = CacheBuilder.newBuilder()
 			       .expireAfterWrite(30, TimeUnit.MINUTES)
 			       .build();
+		
+		private static String pagedJs = null;
+		
+		private static synchronized String getPagedJs() {
+			if (pagedJs!=null) {
+				return pagedJs;
+			}
+			Scanner s =  new Scanner(DocumentController.class.getClassLoader().getResourceAsStream("./readerjs/paged.js"), "UTF-8");
+			pagedJs = s.useDelimiter("\\A").next();
+			s.close();
+			return pagedJs;
+		}
 		
 		@GetMapping(value = "/documents")
 		@IsAuthenticated
@@ -265,6 +278,64 @@ public class DocumentController extends AbstractController {
 			}
 	    }
 		
+		@GetMapping(value = "/documents/{docToken}/adapt/pdf/", produces = "application/octet-stream")
+	    @ResponseBody
+	    public ResponseEntity<InputStreamResource> getAdaptedPdf(@PathVariable String docToken) {
+			Long docId = docTokens.getIfPresent(docToken);
+			if (docId==null) {
+				throw new UnauthorizedException("Forbidden access");
+			}
+			Long userId = userTokens.getIfPresent(docToken);
+			Document doc = documentService.getById(docId);
+			if (doc.getOwnerId() != userId) {
+				throw new UnauthorizedException("Access forbidden");
+			}
+			
+			try {
+				/*User connected = userService.getById(userId);
+				UserConfig ac = connected.getActiveConfig();
+				
+				File adapted = DocxParser.adaptDocument(doc, ac);
+				*/
+				InputStream is = new FileInputStream("contratTravail.pdf");
+				return ResponseEntity.ok()
+					.header("content-disposition", "inline; filename=\"mon.pdf\"")
+		            .contentLength(is.available())
+		            .contentType(MediaType.APPLICATION_PDF)
+	                .body(new InputStreamResource(is));
+			} catch (IOException e) {
+				throw new TechnicalException("File could not be adapted", e);
+			}
+	    }
+		
+		@GetMapping(value = "/documents/{docToken}/adapt/reader/{width}/{height}", produces = "text/html")
+		public String getAdaptedReader(@PathVariable String docToken, @PathVariable Double width, @PathVariable Double height) {
+			width = width-2;
+			height = height - 12;
+			Long docId = docTokens.getIfPresent(docToken);
+			if (docId==null) {
+				throw new UnauthorizedException("Forbidden access");
+			}
+			Long userId = userTokens.getIfPresent(docToken);
+			Document doc = documentService.getById(docId);
+			if (doc.getOwnerId() != userId) {
+				throw new UnauthorizedException("Access forbidden");
+			}
+			try {
+				String html = FileUtils.readFileToString(new File(doc.getHtmlPath()), "UTF-8");
+				User connected = userService.getById(userId);
+				UserConfig ac = connected.getActiveConfig();
+				String adapted = HtmlParser.transformHtml(html, ac, width, height);
+				return adapted.replace("<head>", "<head><style type=\"text/css\">@page {\n" + 
+						"	size: "+width+"px "+height+"px;\n" + 
+						"	margin: 0;\n" + 
+						"} body,html {margin: 0;\n" + 
+						"    padding: 0;\n" + 
+						"    overflow: hidden;} </style><script>"+getPagedJs()+"</script>");
+			} catch (IOException e) {
+				throw new TechnicalException("Document could not be adapted", e);
+			}	
+		}
 
 		private long getCount(Specification<Document> spec) {
 			if (spec != null) {

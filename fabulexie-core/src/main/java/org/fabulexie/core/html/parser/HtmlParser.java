@@ -47,7 +47,12 @@ public class HtmlParser {
 
 	public static String transformHtml(String html, UserConfig ac, boolean relink) {
 		Document doc = Jsoup.parse(html);
-		return transformToHtml(doc, ac, relink);
+		return transformToHtml(doc, ac, relink, null, null);
+	}
+	
+	public static String transformHtml(String html, UserConfig ac, Double width, Double height) {
+		Document doc = Jsoup.parse(html);
+		return transformToHtml(doc, ac, false, width, height);
 	}
 	
 	public static void transformFromFile(Path sourceFile, Path targetFile, UserConfig ac) throws IOException {
@@ -60,19 +65,19 @@ public class HtmlParser {
 	public static Document transformFromFile(Path filePath, UserConfig ac) throws IOException {
 		Document doc = Jsoup.parse(filePath.toFile(), "UTF-8");
 		doc.outputSettings().syntax( Document.OutputSettings.Syntax.xml);
-		return transformToDoc(doc, ac, false);
+		return transformToDoc(doc, ac, false, null, null);
 	}
 	
 	public static String transformToHtml(Document doc, UserConfig ac) {
 		return transformToDoc(doc, ac).html();
 	}
-	public static String transformToHtml(Document doc, UserConfig ac, boolean relink) {
-		return transformToDoc(doc, ac, relink).html();
+	public static String transformToHtml(Document doc, UserConfig ac, boolean relink, Double width, Double height) {
+		return transformToDoc(doc, ac, relink, width, height).html();
 	}
 	public static Document transformToDoc(Document doc, UserConfig ac) {
-		return transformToDoc(doc, ac, true);
+		return transformToDoc(doc, ac, true, null, null);
 	}
-	public static Document transformToDoc(Document doc, UserConfig ac, boolean relink) {
+	public static Document transformToDoc(Document doc, UserConfig ac, boolean relink, Double width, Double height) {
 		if (relink) {
 			Elements imports = doc.head().select("link[href]");
 			for (Element elImport : imports) {
@@ -81,10 +86,19 @@ public class HtmlParser {
 			Elements imgs = doc.body().select("img[src]");
 			for (Element img : imgs) {
 				 img.attr("src", img.absUrl("src"));
+				 
 			}
 			Elements links = doc.body().select("a[href]");
 			for (Element link : links) {
 				link.attr("href", link.absUrl("href"));
+			}
+		} 
+		if (width!=null && height!=null){
+			//pure html to be displayed
+			Elements imgs = doc.body().select("img");
+			for (Element img : imgs) {
+				 img.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
+				 
 			}
 		}
 		for (LetterRule rule : ac.getLetterRules()) {
