@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +63,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -93,6 +96,11 @@ public class DocumentController extends AbstractController {
 		private Cache<String, Long> userTokens = CacheBuilder.newBuilder()
 			       .expireAfterWrite(30, TimeUnit.MINUTES)
 			       .build();
+		
+		private Cache<String, String> renderedReader = CacheBuilder.newBuilder()
+			       .expireAfterWrite(1, TimeUnit.MINUTES)
+			       .build();
+
 		
 		private static String pagedJs = null;
 		
@@ -326,15 +334,39 @@ public class DocumentController extends AbstractController {
 				User connected = userService.getById(userId);
 				UserConfig ac = connected.getActiveConfig();
 				String adapted = HtmlParser.transformHtml(html, ac, width, height);
-				return adapted.replace("<head>", "<head><style type=\"text/css\">@page {\n" + 
+				return adapted
+						.replace("<head>", "<head><style type=\"text/css\">@page {\n" + 
 						"	size: "+width+"px "+height+"px;\n" + 
 						"	margin: 0;\n" + 
 						"} body,html {margin: 0;\n" + 
 						"    padding: 0;\n" + 
 						"    overflow: hidden;} </style><script>"+getPagedJs()+"</script>");
+				
 			} catch (IOException e) {
 				throw new TechnicalException("Document could not be adapted", e);
 			}	
+		}
+		
+		@PostMapping(value = "/documents/{docToken}/adapt/reader/{width}/{height}", produces = MediaType.APPLICATION_JSON_VALUE)
+		public Map<String, String> savedAdaptedReader(@PathVariable String docToken, @PathVariable Double width, @PathVariable Double height, @RequestBody Map<String, String> html) throws IOException {
+			Map<String, String> result = new HashMap<>();
+			Long docId = docTokens.getIfPresent(docToken);
+			if (docId==null) {
+				throw new UnauthorizedException("Forbidden access");
+			}
+			String htmlContent = HtmlParser.clean(html.get("html"));
+			renderedReader.put(docToken, htmlContent);
+			result.put(docToken, "success");
+			return result;
+		}
+		
+		@GetMapping(value = "/documents/{docToken}/saved/reader/{width}/{height}", produces = MediaType.TEXT_XML_VALUE)
+		public String savedAdaptedReader(@PathVariable String docToken, @PathVariable Double width, @PathVariable Double height) {
+			Long docId = docTokens.getIfPresent(docToken);
+			if (docId==null) {
+				throw new UnauthorizedException("Forbidden access");
+			}
+			return renderedReader.getIfPresent(docToken);
 		}
 
 		private long getCount(Specification<Document> spec) {

@@ -29,6 +29,7 @@ import org.fabulexie.model.rules.LetterRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Parser;
@@ -38,7 +39,15 @@ import org.jsoup.select.Elements;
  * @author christophe.dame
  */
 public class HtmlParser {
-
+	
+	public static String clean(String html) {
+		Document doc = Jsoup.parse(html);
+		doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+		doc.outputSettings().escapeMode(EscapeMode.xhtml); //This will ensure the validity
+		doc.outputSettings().charset("UTF-8");
+		return doc.html();
+	}
+ 
 	public static String transformFromUrl(String url, UserConfig ac) throws IOException {
 		Document doc = Jsoup.connect(url).get();
 		// doc.charset(Charset.forName("UTF-8"));

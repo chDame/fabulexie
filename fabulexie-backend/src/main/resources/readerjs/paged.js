@@ -5,14 +5,65 @@ function openPage(i) {
 	document.getElementById('page-'+i).style.display='block';
 	currentPage = i;
 }
+function pingReader(progress) {
+	if (window && window.ReactNativeWebView) {
+		window.ReactNativeWebView.postMessage(progress);
+	} else {
+		console.log(progress);
+	}
+}
 function completed(total) {
 	nbPages = total;
+	console.log('pouet');
+	console.log(total);
+	let script = "<script>let nbPages = "+nbPages+"; let currentPage = 1; if (window.ReactNativeWebView) {window.ReactNativeWebView.postMessage(nbPages);} function openPage(i) { document.getElementById('page-'+currentPage).style.display='none'; document.getElementById('page-'+i).style.display='block'; currentPage = i;}<"+"/script>";
+	let pagedSize = "<style>.pagedjs_pagebox .pagedjs_area {grid-column: center;grid-row: page;width: 100%;height: 100%;}<"+"/style>";
+	console.log(script);
+	let htmlcontent = new XMLSerializer().serializeToString(document).replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+	htmlcontent = htmlcontent.replace(/<template\b[^<]*(?:(?!<\/template>)<[^<]*)*<\/template>/gi, "");
+	htmlcontent = htmlcontent.replace(/data-ref=\"[^<]*\"/gi, "");
+	htmlcontent = htmlcontent.replace(/style=\"column-width:[^<]*\"/gi, "");
+	htmlcontent = htmlcontent.replace(/data-page-number=\"[0-9]*\"/gi, "");
+	htmlcontent = htmlcontent.replace("</head>",script+pagedSize+"</head>");
+	sendData({'html': htmlcontent}, pushCompleted);
 	if (window && window.ReactNativeWebView) {
 		window.ReactNativeWebView.postMessage(nbPages);
 	} else {
 		console.log(nbPages);
 	}
 }
+function pushCompleted() {
+	if (window && window.ReactNativeWebView) {
+		window.ReactNativeWebView.postMessage('completed');
+	} else {
+		console.log('completed')
+	}
+}
+function sendData( data, callback ) {
+	  console.log( 'Sending data' );
+
+	  const xhr = new XMLHttpRequest();
+
+	// listen for `load` event
+	  xhr.onload = () => {
+
+	      if (xhr.status >= 200 && xhr.status < 300) {
+
+	          callback();
+	      }
+	  };
+
+	  // open request
+	  xhr.open('POST', window.location.href);
+
+	  // set `Content-Type` header
+	  xhr.setRequestHeader('Content-Type', 'application/json');
+	  xhr.setRequestHeader('Charset', 'UTF-8');
+	  
+
+	  xhr.send(JSON.stringify(data));
+}
+
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -1893,7 +1944,9 @@ function completed(total) {
 			let index = pgnum + 1;
 
 			let id = `page-${index}`;
-
+			if (index % 20 == 0) {
+				pingReader(index);
+			}
 			this.id = id;
 
 			// page.dataset.pageNumber = index;
@@ -2375,71 +2428,82 @@ function completed(total) {
 	const TEMPLATE = `
 <div class="pagedjs_page">
 	<div class="pagedjs_sheet">
-		<div class="pagedjs_bleed pagedjs_bleed-top">
-			<div class="pagedjs_marks-crop"></div>
-			<div class="pagedjs_marks-middle">
-				<div class="pagedjs_marks-cross"></div>
-			</div>
-			<div class="pagedjs_marks-crop"></div>
-		</div>
-		<div class="pagedjs_bleed pagedjs_bleed-bottom">
-			<div class="pagedjs_marks-crop"></div>
-			<div class="pagedjs_marks-middle">
-				<div class="pagedjs_marks-cross"></div>
-			</div>		<div class="pagedjs_marks-crop"></div>
-		</div>
-		<div class="pagedjs_bleed pagedjs_bleed-left">
-			<div class="pagedjs_marks-crop"></div>
-			<div class="pagedjs_marks-middle">
-				<div class="pagedjs_marks-cross"></div>
-			</div>		<div class="pagedjs_marks-crop"></div>
-		</div>
-		<div class="pagedjs_bleed pagedjs_bleed-right">
-			<div class="pagedjs_marks-crop"></div>
-			<div class="pagedjs_marks-middle">
-				<div class="pagedjs_marks-cross"></div>
-			</div>
-			<div class="pagedjs_marks-crop"></div>
-		</div>
 		<div class="pagedjs_pagebox">
-			<div class="pagedjs_margin-top-left-corner-holder">
-				<div class="pagedjs_margin pagedjs_margin-top-left-corner"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-top">
-				<div class="pagedjs_margin pagedjs_margin-top-left"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-top-center"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-top-right"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-top-right-corner-holder">
-				<div class="pagedjs_margin pagedjs_margin-top-right-corner"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-right">
-				<div class="pagedjs_margin pagedjs_margin-right-top"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-right-middle"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-right-bottom"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-left">
-				<div class="pagedjs_margin pagedjs_margin-left-top"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-left-middle"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-left-bottom"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-bottom-left-corner-holder">
-				<div class="pagedjs_margin pagedjs_margin-bottom-left-corner"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-bottom">
-				<div class="pagedjs_margin pagedjs_margin-bottom-left"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-bottom-center"><div class="pagedjs_margin-content"></div></div>
-				<div class="pagedjs_margin pagedjs_margin-bottom-right"><div class="pagedjs_margin-content"></div></div>
-			</div>
-			<div class="pagedjs_margin-bottom-right-corner-holder">
-				<div class="pagedjs_margin pagedjs_margin-bottom-right-corner"><div class="pagedjs_margin-content"></div></div>
-			</div>
 			<div class="pagedjs_area">
 				<div class="pagedjs_page_content"></div>
 			</div>
 		</div>
 	</div>
 </div>`;
+	/*
+	const TEMPLATE = `
+		<div class="pagedjs_page">
+			<div class="pagedjs_sheet">
+				<div class="pagedjs_bleed pagedjs_bleed-top">
+					<div class="pagedjs_marks-crop"></div>
+					<div class="pagedjs_marks-middle">
+						<div class="pagedjs_marks-cross"></div>
+					</div>
+					<div class="pagedjs_marks-crop"></div>
+				</div>
+				<div class="pagedjs_bleed pagedjs_bleed-bottom">
+					<div class="pagedjs_marks-crop"></div>
+					<div class="pagedjs_marks-middle">
+						<div class="pagedjs_marks-cross"></div>
+					</div>		<div class="pagedjs_marks-crop"></div>
+				</div>
+				<div class="pagedjs_bleed pagedjs_bleed-left">
+					<div class="pagedjs_marks-crop"></div>
+					<div class="pagedjs_marks-middle">
+						<div class="pagedjs_marks-cross"></div>
+					</div>		<div class="pagedjs_marks-crop"></div>
+				</div>
+				<div class="pagedjs_bleed pagedjs_bleed-right">
+					<div class="pagedjs_marks-crop"></div>
+					<div class="pagedjs_marks-middle">
+						<div class="pagedjs_marks-cross"></div>
+					</div>
+					<div class="pagedjs_marks-crop"></div>
+				</div>
+				<div class="pagedjs_pagebox">
+					<div class="pagedjs_margin-top-left-corner-holder">
+						<div class="pagedjs_margin pagedjs_margin-top-left-corner"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-top">
+						<div class="pagedjs_margin pagedjs_margin-top-left"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-top-center"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-top-right"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-top-right-corner-holder">
+						<div class="pagedjs_margin pagedjs_margin-top-right-corner"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-right">
+						<div class="pagedjs_margin pagedjs_margin-right-top"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-right-middle"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-right-bottom"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-left">
+						<div class="pagedjs_margin pagedjs_margin-left-top"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-left-middle"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-left-bottom"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-bottom-left-corner-holder">
+						<div class="pagedjs_margin pagedjs_margin-bottom-left-corner"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-bottom">
+						<div class="pagedjs_margin pagedjs_margin-bottom-left"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-bottom-center"><div class="pagedjs_margin-content"></div></div>
+						<div class="pagedjs_margin pagedjs_margin-bottom-right"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_margin-bottom-right-corner-holder">
+						<div class="pagedjs_margin pagedjs_margin-bottom-right-corner"><div class="pagedjs_margin-content"></div></div>
+					</div>
+					<div class="pagedjs_area">
+						<div class="pagedjs_page_content"></div>
+					</div>
+				</div>
+			</div>
+		</div>`;*/
 
 	/**
 	 * Chop up text into flows
@@ -25849,17 +25913,7 @@ function completed(total) {
 	justify-content: center;
 }
 
-.pagedjs_marks-cross {
-	display: var(--pagedjs-mark-cross-display);
-	background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIzMi41MzdweCIgaGVpZ2h0PSIzMi41MzdweCIgdmlld0JveD0iMC4xMDQgMC4xMDQgMzIuNTM3IDMyLjUzNyIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwLjEwNCAwLjEwNCAzMi41MzcgMzIuNTM3IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMy4zODkzIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGQ9Ik0yOS45MzEsMTYuMzczYzAsNy40ODktNi4wNjgsMTMuNTYtMTMuNTU4LDEzLjU2Yy03LjQ4MywwLTEzLjU1Ny02LjA3Mi0xMy41NTctMTMuNTZjMC03LjQ4Niw2LjA3NC0xMy41NTQsMTMuNTU3LTEzLjU1NEMyMy44NjIsMi44MTksMjkuOTMxLDguODg3LDI5LjkzMSwxNi4zNzN6Ii8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjMuMzg5MyIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiB4MT0iMC4xMDQiIHkxPSIxNi4zNzMiIHgyPSIzMi42NDIiIHkyPSIxNi4zNzMiLz48bGluZSBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMy4zODkzIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHgxPSIxNi4zNzMiIHkxPSIwLjEwNCIgeDI9IjE2LjM3MyIgeTI9IjMyLjY0MiIvPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzLjM4OTMiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgZD0iTTI0LjUwOCwxNi4zNzNjMCw0LjQ5Ni0zLjYzOCw4LjEzNS04LjEzNSw4LjEzNWMtNC40OTEsMC04LjEzNS0zLjYzOC04LjEzNS04LjEzNWMwLTQuNDg5LDMuNjQ0LTguMTM1LDguMTM1LTguMTM1QzIwLjg2OSw4LjIzOSwyNC41MDgsMTEuODg0LDI0LjUwOCwxNi4zNzN6Ii8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjAuNjc3OCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBkPSJNMjkuOTMxLDE2LjM3M2MwLDcuNDg5LTYuMDY4LDEzLjU2LTEzLjU1OCwxMy41NmMtNy40ODMsMC0xMy41NTctNi4wNzItMTMuNTU3LTEzLjU2YzAtNy40ODYsNi4wNzQtMTMuNTU0LDEzLjU1Ny0xMy41NTRDMjMuODYyLDIuODE5LDI5LjkzMSw4Ljg4NywyOS45MzEsMTYuMzczeiIvPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIwLjY3NzgiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgeDE9IjAuMTA0IiB5MT0iMTYuMzczIiB4Mj0iMzIuNjQyIiB5Mj0iMTYuMzczIi8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjAuNjc3OCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiB4MT0iMTYuMzczIiB5MT0iMC4xMDQiIHgyPSIxNi4zNzMiIHkyPSIzMi42NDIiLz48cGF0aCBkPSJNMjQuNTA4LDE2LjM3M2MwLDQuNDk2LTMuNjM4LDguMTM1LTguMTM1LDguMTM1Yy00LjQ5MSwwLTguMTM1LTMuNjM4LTguMTM1LTguMTM1YzAtNC40ODksMy42NDQtOC4xMzUsOC4xMzUtOC4xMzVDMjAuODY5LDguMjM5LDI0LjUwOCwxMS44ODQsMjQuNTA4LDE2LjM3MyIvPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIwLjY3NzgiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgeDE9IjguMjM5IiB5MT0iMTYuMzczIiB4Mj0iMjQuNTA4IiB5Mj0iMTYuMzczIi8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjAuNjc3OCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiB4MT0iMTYuMzczIiB5MT0iOC4yMzkiIHgyPSIxNi4zNzMiIHkyPSIyNC41MDgiLz48L3N2Zz4=);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: var(--pagedjs-cross-size);
 
-  z-index: 2147483647;
-	width: var(--pagedjs-cross-size);
-	height: var(--pagedjs-cross-size);
-}
 
 .pagedjs_pagebox {
 	box-sizing: border-box;
@@ -28127,7 +28181,7 @@ img {
 				}
 			}
 
-			// check center
+			/* check center
 			["top", "bottom"].forEach((loc) => {
 				let marginGroup = page.element.querySelector(".pagedjs_margin-" + loc);
 				let center = page.element.querySelector(".pagedjs_margin-" + loc + "-center");
@@ -28354,7 +28408,7 @@ img {
 
 
 
-			});
+			});*/
 			if (page.id!='page-1') {
 				page.element.style.display='none';
 			}
@@ -29994,7 +30048,7 @@ img {
 			let { matches, selectors } = this.sortDisplayedSelectors(content, this.displayRules);
 
 			// Find matching elements that have display styles
-			for (let i = 0; i < matches.length; i++) {
+			/*for (let i = 0; i < matches.length; i++) {
 				let element = matches[i];
 				let selector = selectors[i];
 				let displayValue = selector[selector.length-1].value;
@@ -30010,7 +30064,7 @@ img {
 				if (this.removable(element)) {
 					element.dataset.undisplayed = "undisplayed";
 				}
-			}
+			}*/
 		}
 
 		sorter(a, b) {
