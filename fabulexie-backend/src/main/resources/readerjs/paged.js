@@ -9,16 +9,14 @@ function pingReader(progress) {
 	if (window && window.ReactNativeWebView) {
 		window.ReactNativeWebView.postMessage(progress);
 	} else {
-		console.log(progress);
+		top.postMessage('nbPages:'+progress, '*');
 	}
 }
 function completed(total) {
 	nbPages = total;
-	console.log('pouet');
-	console.log(total);
 	let script = "<script>let nbPages = "+nbPages+"; let currentPage = 1; if (window.ReactNativeWebView) {window.ReactNativeWebView.postMessage(nbPages);} function openPage(i) { document.getElementById('page-'+currentPage).style.display='none'; document.getElementById('page-'+i).style.display='block'; currentPage = i;}<"+"/script>";
 	let pagedSize = "<style>.pagedjs_pagebox .pagedjs_area {grid-column: center;grid-row: page;width: 100%;height: 100%;}<"+"/style>";
-	console.log(script);
+	
 	let htmlcontent = new XMLSerializer().serializeToString(document).replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
 	htmlcontent = htmlcontent.replace(/<template\b[^<]*(?:(?!<\/template>)<[^<]*)*<\/template>/gi, "");
 	htmlcontent = htmlcontent.replace(/data-ref=\"[^<]*\"/gi, "");
@@ -29,7 +27,7 @@ function completed(total) {
 	if (window && window.ReactNativeWebView) {
 		window.ReactNativeWebView.postMessage(nbPages);
 	} else {
-		console.log(nbPages);
+		top.postMessage('nbPages:'+nbPages, '*');
 	}
 }
 function pushCompleted() {
@@ -39,6 +37,14 @@ function pushCompleted() {
 		console.log('completed')
 	}
 }
+
+window.addEventListener('message', event => {
+    if (event.data.startsWith('openPage:')) {
+		openPage(event.data.substring('openPage:'.length)*1);
+    }
+});
+
+
 function sendData( data, callback ) {
 	  console.log( 'Sending data' );
 

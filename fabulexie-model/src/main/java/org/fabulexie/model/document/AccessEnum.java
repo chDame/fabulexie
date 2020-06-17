@@ -16,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.persistence;
-
-import java.util.List;
-
-import org.fabulexie.model.document.Document;
-import org.fabulexie.persistence.common.FabulexieRepository;
+package org.fabulexie.model.document;
 
 /**
  * @author christophe.dame
  */
-public interface DocumentRepository extends FabulexieRepository<Document> {
+public enum AccessEnum {
 
-	List<Document> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
+	ADMIN,
+	WRITER,
+	READER
+	
 }

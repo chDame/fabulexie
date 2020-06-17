@@ -18,15 +18,13 @@
  */
 package org.fabulexie.persistence;
 
-import java.util.List;
-
-import org.fabulexie.model.document.Document;
+import org.fabulexie.model.document.Space;
 import org.fabulexie.persistence.common.FabulexieRepository;
 
 /**
  * @author christophe.dame
  */
-public interface DocumentRepository extends FabulexieRepository<Document> {
+public interface SpaceRepository extends FabulexieRepository<Space> {
 
-	List<Document> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
+	
 }

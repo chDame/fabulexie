@@ -38,7 +38,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * @author christophe.dame
  */
-@CrossOrigin(origins = { "*" })
 public abstract class AbstractController {
 
     public abstract Logger getLogger();

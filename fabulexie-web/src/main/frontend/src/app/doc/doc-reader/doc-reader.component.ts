@@ -1,143 +1,104 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+
+//import * as $ from 'jquery';
+
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../service/auth.service';
 import { DocService } from '../../service/doc.service';
 
-import { Document } from '../../model/document';
+import { Document, Directory } from '../../model/document';
 
 @Component({
   selector: 'app-doc-reader',
   templateUrl: './doc-reader.component.html',
   styleUrls: ['./doc-reader.component.scss']
 })
-export class DocReaderComponent implements OnInit {
+export class DocReaderComponent implements AfterViewInit, OnInit {
 	
 	/*reading*/
+	@ViewChild('readerFrame', {static: false})
+	readerFrame: ElementRef<HTMLElement>;
+	
 	frameSrc: SafeResourceUrl = null;
-	documents: Array<Document>;
 	readerExpanded: boolean;
 	
-	/*adding file*/
-	globalError: string = '';
-	globalInfo: string = '';
+	nbPages:number;
+	currentPage:number=1;
 	
-	authHeader: Array<{
-			name: string;
-			value: string;}> = [];
-	fileNameHeader = {
-			name: 'filename',
-			value: 'filename'};
-	directoryHeader = {
-		name: 'directoryId',
-		value: '0'};	
-	  
-	file=null;
-	progress: number = 0;
-	
-  constructor(public authService: AuthService,
-		public documentService: DocService,
+	constructor(public authService: AuthService,
+		public docService: DocService,
 		private sanitizer: DomSanitizer,
-		private http: HttpClient) { }
+		private http: HttpClient,
+		private route: ActivatedRoute,
+		public router: Router) { }
 
-  ngOnInit(): void {
-	this.reload();
-	this.authHeader.push({name: 'Authorization' , value: this.authService.user.token});
-	this.authHeader.push(this.fileNameHeader);
-	this.authHeader.push(this.directoryHeader);
-  }
-  
-  reload():void {
-	this.documentService.list(1,50).subscribe(data => {
-	  this.documents = data.items;
-	});  
-  }
-
-  loadAdaptedHtml(token:string): void {
-	  this.frameSrc = this.sanitizer.bypassSecurityTrustResourceUrl(environment.settings.backend+'/documents/'+token+'/adapt/html');
-  }
-  
-  getAdaptedDocxUrl(token:string): string {
-	  return environment.settings.backend+'/documents/'+token+'/adapt/docx/';
-  }
-  
-  loadHtml(token:string): void {
+	ngAfterViewInit(): void {
+		if (this.docService.currentDoc) {
+			this.loadAdaptedReader(this.docService.currentDoc.accessToken);
+		}
+	}
+	
+	ngOnInit(): void {
+		this.frameSrc = this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/fabulexie.png');
+		if (!this.docService.currentDoc) {
+			this.router.navigate(['/browse']);
+		}
+	}
+	
+	moveTo(dir:Directory): void {
+		this.docService.setCurrentDirectory(dir);
+		this.router.navigate(['/browse']);
+	}
 	  
-	  this.frameSrc = this.sanitizer.bypassSecurityTrustResourceUrl(environment.settings.backend+'/documents/'+token+'/html');
-  }
+	@HostListener('window:message', ['$event'])
+	onMessage(event) {
+		let message:string = event.data;
+		if (message.startsWith('nbPages:')) {
+			this.nbPages = Number(message.substring('nbPages:'.length));
+		}
+	}
   
-  getDocxUrl(token:string): string {
-	  return environment.settings.backend+'/documents/'+token+'/docx/';
-  }
-  expandReader() {
-	  this.readerExpanded = true;
-  }
-  reduceReader() {
-	  this.readerExpanded = false;
-  }
-  
-  /*adding files*/
-  selectFile(event) {
-    this.file = (event.target as HTMLInputElement).files[0];
-  }
-  
-  uploadFile() {
-	this.fileNameHeader.value = this.file.name;
-    this.addFile(this.file).subscribe((event: HttpEvent<any>) => {
-      switch (event.type) {
-        case HttpEventType.Sent:
-          console.log('Request has been made!');
-          break;
-        case HttpEventType.ResponseHeader:
-          console.log('Response header has been received!');
-          break;
-        case HttpEventType.UploadProgress:
-          this.progress = Math.round(event.loaded / event.total * 100);
-		  if (this.progress<100) {
-			this.globalInfo=`Uploaded! ${this.progress}%`;
-		  } else {
-			this.globalInfo='Uploading complete! File is being processed. You can continue working';
-		  }
-          break;
-        case HttpEventType.Response:
-          this.globalInfo='File successfully added!';
-          setTimeout(() => {
-            this.progress = 0;
-			this.globalInfo=null;
-			this.globalError=null;
-			this.reload();
-          }, 3000);
+	loadAdaptedReader(token:string): void {
+		let width = this.readerFrame.nativeElement.clientWidth;
+		let height = this.readerFrame.nativeElement.clientHeight;
+		setTimeout(() => {
+			this.frameSrc = this.sanitizer.bypassSecurityTrustResourceUrl(environment.settings.backend+'/documents/'+token+'/adapt/reader/'+width+'/'+height);
+		});
+	}
 
-      }
-    });
-  }
+	getAdaptedHtml(): string {
+		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/adapt/html';
+	}
   
-  addFile(myDocx: File): Observable<any> {
-    let postheaders = this.authService.myHttpBodyheaders.set('directoryId','0');
-	postheaders = postheaders.set('filename', myDocx.name);
-    return this.http.post(environment.settings.backend+'/documents/',myDocx, {
-      'headers': postheaders,
-	  reportProgress: true,
-      observe: 'events'
-    }).pipe(
-      catchError(this.fileErrorMgmt)
-    );
-  }
-  fileErrorMgmt(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      // Get client-side error
-      this.globalError = error.error.message;
-    } else {
-      // Get server-side error
-      this.globalError = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    return throwError(this.globalError);
-  }
+	getAdaptedDocxUrl(): string {
+		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/adapt/docx/';
+	}
+  
+	getHtml(): string {
+		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/html';
+	}
+  
+	getDocxUrl(): string {
+	  return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/docx/';
+	}
+
+	nextPage():void {
+	  if (this.currentPage<this.nbPages) {
+		  this.currentPage++;
+		  eval('document.getElementById("reader").contentWindow.postMessage("openPage:'+this.currentPage+'", "*")');
+	  }
+	}
+	previousPage():void {
+	  if (this.currentPage>1) {
+		  this.currentPage--;
+		  eval('document.getElementById("reader").contentWindow.postMessage("openPage:'+this.currentPage+'", "*")');
+	  }
+	}
 }

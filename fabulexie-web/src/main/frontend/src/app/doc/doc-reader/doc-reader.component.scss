@@ -1,44 +1,50 @@
-iframe.onlinereading {
-	width:100%;
-    display: block;
-    margin: auto;
-	height:700px;
-	max-height:100vh;
-	max-width:550px;
-	color:#40200B;
-	background:#f9f5eb;
-	border:1px solid #bcac9a;
-}
+div.mainReaderPage {
+	position: relative;
+	div.readerContainer {
+		width:100%;
+		max-width:400px;
+		height: calc(100vh - 300px);
+		max-height:700px;
+		display: block;
+		margin: auto;
+		color:#40200B;
+		background:#f9f5eb;
+		border:1px solid #bcac9a;
+		padding:0px 20px;
 
-.reader a.btn {
-	position:absolute;
-	top: 5px;
-	right:30px;
-}
+		iframe.onlinereading {
+			width:100%;
+			height:100%;
+			margin:0;
+			border:0;
+		}
+	}
 
-a.btn.hidden {
-	display: none;
-}
-
-.reader.expanded {
-	position: fixed;
-	top:0px;
-	left:0px;
-	width:100vw;
-	height:100vh;
-	z-index:999;
-	background: rgba(0,0,0,0.5);
-}
-.btn-group-prepend .input-file-text {
-    width: 180px;
-	height:38px;
-    border-top: 1px solid gray;
-    border-radius: 5px 0px 0px 5px;
-    border-bottom: 1px solid gray;
-    border-left: 1px solid gray;
-    background: #eee;
-    padding: 5px;
-}
-.progress {
-	width:100%;
+	div.readerPagination {
+		width:100%;
+		max-width:400px;
+		display: block;
+		margin: auto;
+		background: #d7c3a7;
+		color: #553322;
+		i.navBtn {
+			width: 25%;
+			text-align: center;
+			font-size: 2em;
+		}
+		span.pages {
+			width: 50%;
+			text-align: center;
+			font-size: 1em;
+			display: inline-block;
+			vertical-align: super;
+		}
+	}
+	
+	div.options {
+	    position: absolute;
+		right: 0px;
+		width: 40px;
+		top: 0px;
+	}
 }

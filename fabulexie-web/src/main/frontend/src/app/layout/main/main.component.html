@@ -65,14 +65,13 @@
 
       <!-- Heading -->
       <div class="sidebar-heading">
-			Properties
+			Documents
       </div>
 
-
-	  <li [ngClass]="this.router.url === '/docs'?'nav-item active':'nav-item'">
-			<a class="nav-link" routerLink="/docs" >
+	  <li *ngFor="let space of docService.spaces" [ngClass]="(this.router.url === '/browse' && docService.currentSpace && docService.currentSpace.space.id == space.space.id)?'nav-item active':'nav-item'">
+			<a class="nav-link" (click)="openSpace(space)" >
 				<i class="fas fa-book-reader"></i>
-				<span>Documents</span>
+				<span>{{space.space.name}}</span>
 			</a>
       </li>
 

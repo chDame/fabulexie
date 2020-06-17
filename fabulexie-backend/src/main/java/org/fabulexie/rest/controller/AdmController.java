@@ -27,9 +27,12 @@ import javax.transaction.Transactional;
 
 import org.fabulexie.model.Config;
 import org.fabulexie.model.User;
+import org.fabulexie.model.document.AccessEnum;
+import org.fabulexie.model.document.Space;
 import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.service.ConfigService;
-import org.fabulexie.service.InitializationService;
+import org.fabulexie.service.InitializationFacade;
+import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserConfigService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.util.PersistenceUtil;
@@ -55,16 +58,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Transactional
 public class AdmController extends AbstractController {
 
-	    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+	    private final Logger logger = LoggerFactory.getLogger(AdmController.class);
 
 	    @Autowired
-	    private InitializationService schemaCreatorService;
+	    private InitializationFacade schemaCreatorService;
 	    @Autowired
 	    private UserConfigService userConfigService;
 	    @Autowired
 	    private UserService userService;
 	    @Autowired
 	    private ConfigService configService;
+	    @Autowired
+	    private SpaceService spaceService;
 	    
 	    @GetMapping("/config")
 	    public Config getConf()  {
@@ -106,18 +111,34 @@ public class AdmController extends AbstractController {
 	    	
 	    	userConfigService.deleteAll();
 	    	userService.deleteAll();
+	    	Space publicSpace = new Space();
+	    	publicSpace.setName("Public");
+	    	publicSpace.setOwnerId(1L);
+	    	
+	    	spaceService.create(publicSpace);
 	    	Map<String, Object> result = new HashMap<>();
 
-	    	result.put("users", buildSampleUsers());
+	    	result.put("users", buildSampleUsers(publicSpace));
 	    	
-	    	result.put("tutors", buildSampleTutors());
+	    	result.put("tutors", buildSampleTutors(publicSpace));
 	    	
-	    	result.put("admins", buildSampleAdmins());
+	    	result.put("admins", buildSampleAdmins(publicSpace));
 
 	    	schemaCreatorService.setEmpty(false);
 	    	return result;
 	    }
-		public List<String> buildSampleUsers() {
+	    
+	    private void createPrivateSpace(User u) {
+
+	    	Space privateSpace = new Space();
+	    	privateSpace.setName("My space");
+	    	privateSpace.setOwnerId(u.getId());
+	    	spaceService.create(privateSpace);
+    		spaceService.grantAccess(u, privateSpace, AccessEnum.ADMIN);
+	    	
+	    }
+	    
+		public List<String> buildSampleUsers(Space publicSpace) {
 	    	List<String> users = new ArrayList<>();
 	    	for(int i=1;i<20;i++) {
 	    		User u = new User();
@@ -128,12 +149,14 @@ public class AdmController extends AbstractController {
 	    		u.setValid(true);
 	    		u.setLocked(false);
 	    		u = userService.create(u);
+	    		spaceService.grantAccess(u, publicSpace, AccessEnum.READER);
+	    		createPrivateSpace(u);
 	    		users.add(u.getEmail()+" / test");
 	    	}
 	    	return users;
 	    }
 
-	    public List<String> buildSampleTutors() {
+	    public List<String> buildSampleTutors(Space publicSpace) {
 	    	List<String> tutors = new ArrayList<>();
 	    	for(int i=1;i<5;i++) {
 	    		User u = new User();
@@ -144,12 +167,14 @@ public class AdmController extends AbstractController {
 	    		u.setValid(true);
 	    		u.setEmail("tutor"+i+"@fabulexie.fr");
 	    		u = userService.create(u);
+	    		spaceService.grantAccess(u, publicSpace, AccessEnum.WRITER);
+	    		createPrivateSpace(u);
 	    		tutors.add(u.getEmail()+" / test");
 	    	}
 	    	return tutors;
 	    }
 
-	    public List<String> buildSampleAdmins() {
+	    public List<String> buildSampleAdmins(Space publicSpace) {
 	    	List<String> admins = new ArrayList<>();
 	    	for(int i=1;i<5;i++) {
 	    		User u = new User();
@@ -161,6 +186,8 @@ public class AdmController extends AbstractController {
 	    		u.setValid(true);
 	    		u.setEmail("admin"+i+"@fabulexie.fr");
 	    		u = userService.create(u);
+	    		spaceService.grantAccess(u, publicSpace, AccessEnum.ADMIN);
+	    		createPrivateSpace(u);
 	    		admins.add(u.getEmail()+" / test");
 	    	}
 	    	return admins;

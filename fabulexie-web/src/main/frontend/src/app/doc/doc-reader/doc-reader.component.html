@@ -1,79 +1,37 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-	<h1 class="h3 mb-0 text-gray-800">My documents</h1>
+	<h1 class="h3 mb-0 text-gray-800">{{docService.currentDoc.title}}</h1>
 </div>
-<div class="row justify-content-center" >
-	<div class="col-xl-12 col-lg-12 col-md-12 col-xs-12">
-		<div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
-		<div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>	
-		<div class="row mb-2">
-			<!-- Progress Bar -->
-			<div class="progress" *ngIf="progress > 0">
-				<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" [style.width.%]="progress"></div>
-			</div>
-		</div>
-		<div class="row  mb-2">
-			<div class="btn-group">
-				<div class="btn-group-prepend">
-				  <div class="input-file-text" readonly (click)="fileInput.click()"><strong *ngIf="file">{{ file.name }}</strong></div>
-				</div>
-				<button type="button" class="btn btn-primary btn-icon-split" (click)="fileInput.click()">
-					<span class="icon text-white-50">
-						<i class="fas fa-file-import"></i>
-					</span>
-					<span class="text"> Add file</span>
-				</button>
-				<button *ngIf="file!=null" type="button" class="btn btn-primary btn-icon-split" (click)="uploadFile()" [disabled]="progress>0">
-					<span class="icon text-white-50">
-						<i class="fas fa-upload"></i>
-					</span>
-					<span class="text"> Upload</span>
-				</button>
-			</div>
-			
-			<div style="visibility: hidden; position: absolute; overflow: hidden; width: 0px; height:0px;border:none;margin:0; padding:0">
-				<input type="file" (change)="selectFile($event)" #fileInput>
-			</div>
-			
-		</div>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+	<li class="breadcrumb-item" *ngFor="let dir of docService.breadcrumb" (click)="moveTo(dir)">
+		<a (click)="moveTo(dir)">{{dir.name}}</a> 
+	</li>
+
+	<li class="breadcrumb-item active" >
+		<span>{{docService.currentDoc.title}}</span> 
+	</li>
+  </ol>
+</nav>
+<div class="mainReaderPage">
+	<div class="readerContainer">
+		<iframe id="reader" #readerFrame [src]="frameSrc" class="onlinereading"></iframe>
 	</div>
-	<div class="col-xl-4 col-lg-4 col-md-6 col-xs-12">
-		
-		<div class="row">
-		<table>
-			<tr *ngFor="let doc of documents; let i = index">
-				<td><b>{{doc.name}}</b><br/>
-					{{doc.description}}
-				</td>
-				<td>	
-					<button type="button" class="btn btn-primary btn-circle" (click)="loadAdaptedHtml(doc.accessToken)">
-						<i class="fas fa-book-reader"></i>
-					</button>
-				</td><td>	
-					<a class="btn btn-primary btn-circle" [href]="getAdaptedDocxUrl(doc.accessToken)" target="_blank">
-						<i class="fas fa-file-word"></i>
-					</a>
-				</td><td>	
-					<button type="button" class="btn btn-secondary btn-circle" (click)="loadHtml(doc.accessToken)">
-						<i class="fas fa-book-reader"></i>
-					</button>
-				</td><td>	
-					<a class="btn btn-secondary btn-circle" [href]="getDocxUrl(doc.accessToken)" target="_blank">
-						<i class="fas fa-file-word"></i>
-					</a>
-				</td>
-			</tr>
-		</table>
-		</div>
+	<div class="readerPagination">
+		<i class="navBtn fas fa-chevron-left" (click)="previousPage()"></i> <span class="pages">page {{currentPage}} / {{nbPages}}</span> <i class="navBtn fas fa-chevron-right" (click)="nextPage()"></i>
 	</div>
-	<div class="col-xl-8 col-lg-8 col-md-6 col-xs-12">
-		<div *ngIf="frameSrc" [ngClass]="readerExpanded?'reader expanded':'reader'">
-			<a class="btn btn-primary btn-circle" (click)="expandReader()" [ngClass]="readerExpanded?'hidden':'visible'">
-				<i class="fas fa-expand"></i>
-			</a>
-			<a class="btn btn-secondary btn-circle" (click)="reduceReader()" [ngClass]="readerExpanded?'visible':'hidden'">
-				<i class="fas fa-times"></i>
-			</a>
-			<iframe [src]="frameSrc" class="onlinereading"></iframe>
-		</div>
-	</div>
+	<div class="options">	
+		<a class="btn btn-primary btn-circle" [href]="getAdaptedHtml()" target="_blank">
+			<i class="fab fa-html5"></i>
+		</a>
+		<a class="btn btn-primary btn-circle" [href]="getAdaptedDocxUrl()" target="_blank">
+			<i class="fas fa-file-word"></i>
+		</a>
+		<a class="btn btn-secondary btn-circle" [href]="getHtml()" target="_blank">
+			<i class="fab fa-html5"></i>
+		</a>
+		<a class="btn btn-secondary btn-circle" [href]="getDocxUrl()" target="_blank">
+			<i class="fas fa-file-word"></i>
+		</a>
+	</div>			
 </div>

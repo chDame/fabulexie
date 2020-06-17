@@ -96,7 +96,7 @@ public class UserController extends AbstractController {
 	@PostMapping(value = "/users")
 	@ResponseStatus(HttpStatus.CREATED)
 	@IsAdmin
-	public User create( @RequestBody User u) {
+	public User create(@RequestBody User u) {
 		u.setPassword(SecurityUtils.generateFriendlyCode());
 		userService.create(u);
 		if (count!=null) {

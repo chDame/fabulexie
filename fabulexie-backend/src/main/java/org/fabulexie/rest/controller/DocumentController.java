@@ -26,12 +26,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
@@ -45,11 +46,16 @@ import org.fabulexie.core.html.parser.HtmlParser;
 import org.fabulexie.core.utils.docx.DocxParser;
 import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
+import org.fabulexie.model.document.AccessEnum;
+import org.fabulexie.model.document.Directory;
 import org.fabulexie.model.document.Document;
+import org.fabulexie.model.document.Space;
 import org.fabulexie.rest.controller.model.RestfulList;
 import org.fabulexie.security.FabulexiePrincipal;
 import org.fabulexie.security.annotation.IsAuthenticated;
+import org.fabulexie.security.annotation.SelfAccessOrAdmin;
 import org.fabulexie.service.DocumentService;
+import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
@@ -79,22 +85,23 @@ import com.google.common.cache.CacheBuilder;
 @RestController
 public class DocumentController extends AbstractController {
 
-		private final Logger logger = LoggerFactory.getLogger(UserController.class);
+		private final Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
 		private static final String FILE_PATH = "../../fabulexieFiles/";
 		@Autowired
 		private DocumentService documentService;
 		@Autowired
 		private UserService userService;
-
-		private AtomicLong count = null;
+		
+		@Autowired
+		private SpaceService spaceService;
 	
 		private Cache<String, Long> docTokens = CacheBuilder.newBuilder()
-			       .expireAfterWrite(30, TimeUnit.MINUTES)
+			       .expireAfterWrite(4, TimeUnit.HOURS)
 			       .build();
 
 		private Cache<String, Long> userTokens = CacheBuilder.newBuilder()
-			       .expireAfterWrite(30, TimeUnit.MINUTES)
+			       .expireAfterWrite(4, TimeUnit.HOURS)
 			       .build();
 		
 		private Cache<String, String> renderedReader = CacheBuilder.newBuilder()
@@ -114,9 +121,9 @@ public class DocumentController extends AbstractController {
 			return pagedJs;
 		}
 		
-		@GetMapping(value = "/documents")
+		@GetMapping(value = "/documents/search")
 		@IsAuthenticated
-	    public RestfulList<Document> all(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
+	    public RestfulList<Document> search(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
 			RestfulList<Document> result = new RestfulList<>();
 			FabulexiePrincipal connected = SecurityUtils.getConnectedUser();
 	        Long userId = connected.getId();
@@ -128,7 +135,7 @@ public class DocumentController extends AbstractController {
 	        	}
 	        }
 			Specification<Document> invitationSpec = documentService.getSpecifications(q);
-			result.setTotal(getCount(invitationSpec));
+			result.setTotal(documentService.count(invitationSpec));
 			if(count*(page-1)>result.getTotal()) {
 				page = (int) (result.getTotal() / count);
 			}
@@ -140,49 +147,126 @@ public class DocumentController extends AbstractController {
 			}
 			
 			result.setCount(Long.valueOf(result.getItems().size()));
-			result.add(linkTo(methodOn(DocumentController.class).all(q, count, page, orderBy, order)).withSelfRel());
+			result.add(linkTo(methodOn(DocumentController.class).search(q, count, page, orderBy, order)).withSelfRel());
 			if(page*count<result.getTotal()) {
-				result.add(linkTo(methodOn(DocumentController.class).all(q, count, page+1, orderBy, order)).withRel("next"));
+				result.add(linkTo(methodOn(DocumentController.class).search(q, count, page+1, orderBy, order)).withRel("next"));
 			}
 			if (page>1) {
-				result.add(linkTo(methodOn(DocumentController.class).all(q, count, page-1, orderBy, order)).withRel("prev"));
+				result.add(linkTo(methodOn(DocumentController.class).search(q, count, page-1, orderBy, order)).withRel("prev"));
 			}
 	        
 			return result;
 	    }
 		
-		@PostMapping(value = "/documents")
-	    @ResponseStatus(HttpStatus.CREATED)
-	    @IsAuthenticated
-	    public Document createDoc(@RequestHeader Long directoryId,
-	            @RequestHeader String filename,
-	            HttpServletRequest request) {
-	        FabulexiePrincipal connected = SecurityUtils.getConnectedUser();
-	        
-	        try {
-	            //byte[] content = IOUtils.toByteArray(request.getInputStream());
-
-	            //request.getInputStream().close();
-	            String displayedName = filename;
-	            if (filename.indexOf(' ') >= 0) {
-	                filename = filename.trim().replaceAll(" ", "");
-	            }
-	            String targetPath = FILE_PATH+filename;
-	            File target = Paths.get(targetPath).toFile();
-	            FileUtils.copyInputStreamToFile(request.getInputStream(), target);
-	            String htmlPath = FILE_PATH+filename+".html";
-	            File htmlTarget = Paths.get(htmlPath).toFile();
-	            DocxParser.convertDocxToHtml(target, htmlTarget);
-	            Document doc = new Document();
-	            doc.setName(displayedName);
-	            doc.setOriginalPath(targetPath);
-	            doc.setHtmlPath(htmlPath);
-	            doc.setOwnerId(connected.getId());
-	            documentService.create(doc);
-	            doc.setAccessToken(UUID.randomUUID().toString());
+		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/documents")
+		@SelfAccessOrAdmin
+	    public List<Document> directories(@PathVariable Long userId, @PathVariable Long spaceId) {
+			spaceService.checkSpaceAccess(userId, spaceId);
+	
+	        List<Document> docs = documentService.findByParentIdAndSpaceId(null, spaceId);
+	   
+	        for(Document doc : docs) {
+				doc.setAccessToken(UUID.randomUUID().toString());
 				docTokens.put(doc.getAccessToken(), doc.getId());
-				userTokens.put(doc.getAccessToken(), connected.getId());
-	            return doc;
+				userTokens.put(doc.getAccessToken(), userId);
+			}
+	        return docs;
+		}
+		
+		
+		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/directories/{parentId}/documents")
+		@SelfAccessOrAdmin
+	    public List<Document> SubDirectories(@PathVariable Long userId, @PathVariable Long spaceId, @PathVariable Long parentId) {
+			spaceService.checkSpaceAccess(userId, spaceId);
+			
+			List<Document> docs = documentService.findByParentIdAndSpaceId(parentId, spaceId);
+
+	        for(Document doc : docs) {
+				doc.setAccessToken(UUID.randomUUID().toString());
+				docTokens.put(doc.getAccessToken(), doc.getId());
+				userTokens.put(doc.getAccessToken(), userId);
+			}
+	        return docs; 
+	    }
+		
+		
+		private Document buildDoc(String name, String title, String description, String author, Long ownerId, Long spaceId) {
+			String displayedName = name;
+            if (name.indexOf(' ') >= 0) {
+                name = name.trim().replaceAll(" ", "");
+            }
+            String targetPath = FILE_PATH+name;
+            String htmlPath = FILE_PATH+name+".html";
+			Document doc = new Document();
+			doc.setName(displayedName);
+            doc.setTitle(title);
+            doc.setDescription(description);
+            doc.setAuthor(author);
+            doc.setOriginalPath(targetPath);
+            doc.setHtmlPath(htmlPath);
+            doc.setOwnerId(ownerId);
+			doc.setSpace(new Space());
+			doc.getSpace().setId(spaceId);
+            return doc;
+		}
+		
+		private Document createDoc(Document doc, InputStream content) throws IOException, Docx4JException {
+			File target = Paths.get(doc.getOriginalPath()).toFile();
+	        FileUtils.copyInputStreamToFile(content, target);
+	           
+	        File htmlTarget = Paths.get(doc.getHtmlPath()).toFile();
+	        DocxParser.convertDocxToHtml(target, htmlTarget);
+	            
+	        documentService.create(doc);
+	        doc.setAccessToken(UUID.randomUUID().toString());
+			docTokens.put(doc.getAccessToken(), doc.getId());
+			userTokens.put(doc.getAccessToken(), doc.getOwnerId());
+	        return doc;
+
+		}
+		
+		@PostMapping(value = "/users/{userId}/spaces/{spaceId}/documents")
+	    @ResponseStatus(HttpStatus.CREATED)
+		@SelfAccessOrAdmin
+	    public Document createRootDoc(@PathVariable Long userId, @PathVariable Long spaceId, 
+	            @RequestHeader String name,
+	            @RequestHeader String title,
+	            @RequestHeader String description,
+	            @RequestHeader String author,
+	            HttpServletRequest request) {
+			spaceService.checkSpaceAccess(userId, spaceId, Arrays.asList(AccessEnum.WRITER, AccessEnum.ADMIN));
+			FabulexiePrincipal connected = SecurityUtils.getConnectedUser();
+	        
+			Document doc = buildDoc(name, title, description, author, connected.getId(), spaceId);
+
+			try {
+				return createDoc(doc, request.getInputStream());
+	        } catch (IOException e) {
+	            throw new TechnicalException("Document upload failed", e);
+	        } catch (Docx4JException e) {
+	        	throw new TechnicalException("Document parsing failed", e);
+			}
+	    }
+		
+		@PostMapping(value = "/users/{userId}/spaces/{spaceId}/directories/{directoryId}/documents")
+	    @ResponseStatus(HttpStatus.CREATED)
+		@SelfAccessOrAdmin
+	    public Document createDoc(@PathVariable Long userId, @PathVariable Long spaceId, 
+	    		@PathVariable Long directoryId,
+	            @RequestHeader String name,
+	            @RequestHeader String title,
+	            @RequestHeader String description,
+	            @RequestHeader String author,
+	            HttpServletRequest request) {
+			spaceService.checkSpaceAccess(userId, spaceId, Arrays.asList(AccessEnum.WRITER, AccessEnum.ADMIN));
+			FabulexiePrincipal connected = SecurityUtils.getConnectedUser();
+	        
+			Document doc = buildDoc(name, title, description, author, connected.getId(), spaceId);
+			doc.setParent(new Directory());
+			doc.getParent().setId(directoryId);
+
+			try {
+				return createDoc(doc, request.getInputStream());
 	        } catch (IOException e) {
 	            throw new TechnicalException("Document upload failed", e);
 	        } catch (Docx4JException e) {
@@ -367,16 +451,6 @@ public class DocumentController extends AbstractController {
 				throw new UnauthorizedException("Forbidden access");
 			}
 			return renderedReader.getIfPresent(docToken);
-		}
-
-		private long getCount(Specification<Document> spec) {
-			if (spec != null) {
-				return documentService.count(spec);
-			}
-			if (count==null) {
-				count = new AtomicLong(documentService.count());
-			}
-			return count.get();
 		}
 		
 		@Override

@@ -16,17 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.persistence;
+package org.fabulexie.service;
 
 import java.util.List;
 
-import org.fabulexie.model.document.Document;
-import org.fabulexie.persistence.common.FabulexieRepository;
+import org.fabulexie.model.document.Directory;
+import org.fabulexie.persistence.DirectoryRepository;
+import org.fabulexie.service.common.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author christophe.dame
  */
-public interface DocumentRepository extends FabulexieRepository<Document> {
-
-	List<Document> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
+@Service
+public class DirectoryService extends AbstractService<Directory> {
+	
+	@Autowired
+	private DirectoryRepository directoryRepository;
+	
+	@Override
+	protected DirectoryRepository getRepository() {
+		return directoryRepository;
+	}
+	
+	public List<Directory> findByParentIdAndSpaceId(Long parentId, Long spaceId) {
+		return directoryRepository.findByParentIdAndSpaceId(parentId, spaceId);
+	}
 }

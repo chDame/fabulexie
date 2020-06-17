@@ -18,10 +18,16 @@
  */
 package org.fabulexie.security.jwt;
 
+import java.util.Arrays;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * @author christophe.dame
@@ -34,9 +40,19 @@ public class JwtSecurityConfig
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.formLogin().disable()
+			.cors().and()
 			.addFilterAfter(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
 			.antMatchers("/").permitAll() ;
 		http.headers().frameOptions().disable();
 	}
+	
+	@Bean
+	protected CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedMethods(Arrays.asList("PUT", "POST", "PATCH", "GET"));
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

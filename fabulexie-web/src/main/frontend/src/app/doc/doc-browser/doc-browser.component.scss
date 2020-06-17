@@ -1,0 +1,37 @@
+.browserIcon {
+	font-size:2em;
+	margin-right:1em;
+}
+.fileBrowser {
+	width:100%;
+	margin-top: 10px;
+	background: #333;
+	padding: 4px;
+	border-radius: 5px;
+	tr {
+		margin:1px;
+		border-radius: 5px;
+		td {
+			padding: 3px 25px;
+		}
+	}
+}
+tr.directory {
+	background: rgba(204,204,255,1);
+}
+tr.file {
+	background: white;
+}
+.btn-group-prepend .input-file-text {
+    width: 180px;
+	height:38px;
+    border-top: 1px solid gray;
+    border-radius: 5px 0px 0px 5px;
+    border-bottom: 1px solid gray;
+    border-left: 1px solid gray;
+    background: #eee;
+    padding: 5px;
+}
+.progress {
+	width:100%;
+}

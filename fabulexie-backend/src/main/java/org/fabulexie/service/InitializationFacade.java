@@ -18,11 +18,9 @@
  */
 package org.fabulexie.service;
 
-import java.util.List;
-
-import org.fabulexie.model.document.Document;
-import org.fabulexie.persistence.DocumentRepository;
-import org.fabulexie.service.common.AbstractService;
+import org.fabulexie.model.User;
+import org.fabulexie.model.document.AccessEnum;
+import org.fabulexie.model.document.Space;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,17 +28,42 @@ import org.springframework.stereotype.Service;
  * @author christophe.dame
  */
 @Service
-public class DocumentService extends AbstractService<Document> {
+public class InitializationFacade {
+	
+	private boolean empty = false;
 	
 	@Autowired
-	private DocumentRepository documentRepository;
+	private UserService userService;
+    @Autowired
+    private SpaceService spaceService;
 	
-	@Override
-	protected DocumentRepository getRepository() {
-		return documentRepository;
+	public void checkEmpty() {
+		empty = userService.count()==0;
+	}
+	
+	public boolean isEmpty() {
+		return empty;
 	}
 
-	public List<Document> findByParentIdAndSpaceId(Long parentId, Long spaceId) {
-		return documentRepository.findByParentIdAndSpaceId(parentId, spaceId);
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}
+
+	public void initialise(User u) {
+		u.setAdmin(true);
+		u.setValid(true);
+		userService.create(u);
+		
+		createAdminSpace(u, "Public");
+		createAdminSpace(u, "My space");
+		this.empty = false;
+	}
+	
+	private void createAdminSpace(User u, String spaceName) {
+		Space privateSpace = new Space();
+    	privateSpace.setName(spaceName);
+    	privateSpace.setOwnerId(u.getId());
+    	spaceService.create(privateSpace);
+		spaceService.grantAccess(u, privateSpace, AccessEnum.ADMIN);
 	}
 }

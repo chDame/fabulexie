@@ -25,36 +25,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 import org.fabulexie.model.BaseEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * @author christophe.dame
  */
 @Entity
-public class Document extends BaseEntity<Long> {
+public class Directory extends BaseEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
 	private Long ownerId;
-	private String title;
 	private String name;
-	private String description;
-	private String author;
-	@JsonIgnore
-	private String originalPath;
-	@JsonIgnore
-	private String htmlPath;
-	@JsonInclude()
-	@Transient
-	private String accessToken;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent_id")
     private Directory parent;
@@ -76,53 +63,11 @@ public class Document extends BaseEntity<Long> {
 	public void setOwnerId(Long ownerId) {
 		this.ownerId = ownerId;
 	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getAuthor() {
-		return author;
-	}
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-	public String getOriginalPath() {
-		return originalPath;
-	}
-	public void setOriginalPath(String originalPath) {
-		this.originalPath = originalPath;
-	}
-	public String getHtmlPath() {
-		return htmlPath;
-	}
-	public void setHtmlPath(String htmlPath) {
-		this.htmlPath = htmlPath;
-	}
-	public String getAccessToken() {
-		return accessToken;
-	}
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-	public Directory getParent() {
-		return parent;
-	}
-	public void setParent(Directory parent) {
-		this.parent = parent;
 	}
 	public Space getSpace() {
 		return space;
@@ -130,6 +75,11 @@ public class Document extends BaseEntity<Long> {
 	public void setSpace(Space space) {
 		this.space = space;
 	}
-	
+	public Directory getParent() {
+		return parent;
+	}
+	public void setParent(Directory parent) {
+		this.parent = parent;
+	}
 	
 }

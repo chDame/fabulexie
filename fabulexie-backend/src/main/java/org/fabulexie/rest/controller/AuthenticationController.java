@@ -32,7 +32,7 @@ import org.fabulexie.security.AuthUser;
 import org.fabulexie.security.FabulexiePrincipal;
 import org.fabulexie.security.annotation.IsAuthenticated;
 import org.fabulexie.service.AuthenticationService;
-import org.fabulexie.service.InitializationService;
+import org.fabulexie.service.InitializationFacade;
 import org.fabulexie.service.InvitationService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.service.mail.MailService;
@@ -66,7 +66,7 @@ public class AuthenticationController extends AbstractController {
 	@Autowired
 	private InvitationService invitationService;
 	@Autowired
-	private InitializationService intializationService;
+	private InitializationFacade intializationService;
 	@Autowired
 	private MailService mailService;
 
@@ -133,10 +133,9 @@ public class AuthenticationController extends AbstractController {
 	public AuthUser register(@RequestBody User u, @RequestHeader(required = false, defaultValue = "") String code) {
 		AuthUser authUser = new AuthUser();
 		if (intializationService.isEmpty()) {
-			//first user is a super admin
-			u.setAdmin(true);
-			u.setValid(true);
-			userService.create(u);
+			//create eveyrthing required for the platform to be usable (public space, admin)
+			intializationService.initialise(u);
+			
 			//schemaCreatorService.setEmpty(false);
 			BeanUtils.copyProperties(u, authUser);
 			//autologin first time

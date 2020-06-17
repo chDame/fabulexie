@@ -16,34 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.service;
+package org.fabulexie.model.document;
 
-import org.fabulexie.persistence.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.fabulexie.model.BaseEntity;
 
 /**
  * @author christophe.dame
  */
-@Service
-public class InitializationService {
-	
-	private boolean empty = false;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	public void checkEmpty() {
-		empty = userRepository.count()==0;
+@Entity
+public class Space extends BaseEntity<Long> {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private Long ownerId;
+	private String name;
+	public Long getId() {
+		return id;
 	}
-	
-	public boolean isEmpty() {
-		return empty;
+	public void setId(Long id) {
+		this.id = id;
 	}
-
-	public void setEmpty(boolean empty) {
-		this.empty = empty;
+	public Long getOwnerId() {
+		return ownerId;
 	}
-	
-	
+	public void setOwnerId(Long ownerId) {
+		this.ownerId = ownerId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 }
