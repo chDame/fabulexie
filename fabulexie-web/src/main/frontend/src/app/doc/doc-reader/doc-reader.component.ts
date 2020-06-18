@@ -7,8 +7,6 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
-//import * as $ from 'jquery';
-
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../service/auth.service';
 import { DocService } from '../../service/doc.service';

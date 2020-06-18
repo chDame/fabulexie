@@ -1,6 +1,12 @@
 .browserIcon {
-	font-size:2em;
-	margin-right:1em;
+	font-size:3em;
+    color: #f2ebe6;
+    text-shadow: 0 0 5px #333;
+    padding: 5px;
+}
+.fileCover {
+    max-height: 80px;
+    box-shadow: 0 0 6px #333;
 }
 .fileBrowser {
 	width:100%;

@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBException;
 
@@ -35,7 +34,6 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.Styles;
 import org.fabulexie.core.html.parser.HtmlParser;
 import org.fabulexie.model.UserConfig;
-import org.fabulexie.model.document.Document;
 
 
 
@@ -61,9 +59,8 @@ public class DocxParser {
 	}
 	
 
-	public static File adaptDocument(Document doc, UserConfig ac) throws Docx4JException, IOException, JAXBException {
-		Path htmlOriginal = Paths.get(doc.getHtmlPath());
-		Path docOriginal = Paths.get(doc.getOriginalPath());
+	public static File adaptDocument(Path htmlOriginal, Path docOriginal, UserConfig ac) throws Docx4JException, IOException, JAXBException {
+
 		Path targetPath = docOriginal.getParent().resolve("adapted/"+ac.getId()+"/"+ac.getName()+".docx");
 		File targetDir = targetPath.getParent().toFile();
 		if (!targetDir.exists()) {

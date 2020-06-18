@@ -45,6 +45,9 @@ public class HtmlParser {
 		doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 		doc.outputSettings().escapeMode(EscapeMode.xhtml); //This will ensure the validity
 		doc.outputSettings().charset("UTF-8");
+		Elements pages = doc.body().select("div.pagedjs_page");
+
+		pages.attr("style", "display:none");
 		return doc.html();
 	}
  
@@ -105,10 +108,10 @@ public class HtmlParser {
 		if (width!=null && height!=null){
 			//pure html to be displayed
 			Elements imgs = doc.body().select("img");
-			for (Element img : imgs) {
+			imgs.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
+			/*for (Element img : imgs) {
 				 img.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
-				 
-			}
+			}*/
 		}
 		for (LetterRule rule : ac.getLetterRules()) {
 			applyRules(doc, rule);

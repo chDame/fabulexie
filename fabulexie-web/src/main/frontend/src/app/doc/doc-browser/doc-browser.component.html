@@ -39,16 +39,16 @@
 		<table class="fileBrowser">
 			<tr *ngFor="let dir of docService.subDirs; let i = index" (click)="moveTo(dir)" class="directory">
 				<td>
-					<i class="browserIcon far fa-folder"></i>
+					<i class="browserIcon fas fa-folder"></i>
 				</td>
 				<td><b>{{dir.name}}</b></td>
 			</tr>
 		
-			<tr *ngFor="let doc of docService.docs; let i = index" class="file">
+			<tr *ngFor="let doc of docService.docs; let i = index" class="file" (click)="openFile(doc)">
 				<td>
-					<i class="browserIcon far fa-file"></i>
+					<img [src]="getCover(doc)" class="fileCover"/>
 				</td>
-				<td (click)="openFile(doc)"><b *ngIf="doc.title">{{doc.title}}</b><b *ngIf="!doc.title">{{doc.name}}</b><br/>
+				<td ><b *ngIf="doc.title">{{doc.title}}</b><b *ngIf="!doc.title">{{doc.name}}</b><br/>
 					{{doc.description}}
 				</td>
 				<!--

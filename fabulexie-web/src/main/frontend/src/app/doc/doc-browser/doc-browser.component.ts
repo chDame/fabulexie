@@ -11,6 +11,9 @@ import { DocService } from '../../service/doc.service';
 
 import { Document, Directory } from '../../model/document';
 
+import { environment } from '../../../environments/environment';
+import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+
 @Component({
   selector: 'app-doc-browser',
   templateUrl: './doc-browser.component.html',
@@ -36,7 +39,8 @@ export class DocBrowserComponent implements OnInit {
 		public docService: DocService,
 		private http: HttpClient,
 		private route: ActivatedRoute,
-		private router: Router) { }
+		private router: Router,
+		private sanitizer: DomSanitizer) { }
 
 	ngOnInit(): void {
 	}
@@ -47,6 +51,10 @@ export class DocBrowserComponent implements OnInit {
 	} else {
 		this.globalError = 'Directory name should at least count 3 characters';
 	}		
+  }
+  
+  getCover(doc: Document): SafeResourceUrl {
+	  return this.sanitizer.bypassSecurityTrustResourceUrl(environment.settings.backend+'/documents/'+doc.accessToken+'/cover.png');
   }
   
   moveTo(dir:Directory): void {
