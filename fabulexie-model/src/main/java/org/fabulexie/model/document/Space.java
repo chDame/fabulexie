@@ -35,6 +35,8 @@ public class Space extends BaseEntity<Long> {
 	private Long id;
 	private Long ownerId;
 	private String name;
+	private boolean grandPublic;
+	
 	public Long getId() {
 		return id;
 	}
@@ -52,5 +54,11 @@ public class Space extends BaseEntity<Long> {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public boolean getGrandPublic() {
+		return grandPublic;
+	}
+	public void setGrandPublic(boolean grandPublic) {
+		this.grandPublic = grandPublic;
 	}
 }

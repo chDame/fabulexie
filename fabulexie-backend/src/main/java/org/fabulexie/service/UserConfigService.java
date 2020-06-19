@@ -45,7 +45,7 @@ public class UserConfigService extends AbstractService<UserConfig> {
 	}
 	
 	public List<UserConfig> findByUserId(Long userId) {
-		return userConfigRepository.findByUser_id(userId);
+		return userConfigRepository.findByUserId(userId);
 	}
 
 	@Override
@@ -77,5 +77,13 @@ public class UserConfigService extends AbstractService<UserConfig> {
 			}
 		}
 		return config;
+	}
+
+	public void deleteConfigs(Long userId) {
+		List<UserConfig> configs = findByUserId(userId);
+		for (UserConfig config : configs) {
+			letterRuleRepository.deleteByConfigId(config.getId());
+		}
+		userConfigRepository.deleteByUserId(userId);
 	}
 }

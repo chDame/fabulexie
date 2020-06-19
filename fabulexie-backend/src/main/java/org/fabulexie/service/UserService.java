@@ -21,6 +21,11 @@ package org.fabulexie.service;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
+import org.fabulexie.model.document.AccessEnum;
+import org.fabulexie.model.document.Space;
+import org.fabulexie.model.document.SpaceAccess;
+import org.fabulexie.persistence.SpaceAccessRepository;
+import org.fabulexie.persistence.SpaceRepository;
 import org.fabulexie.persistence.UserConfigRepository;
 import org.fabulexie.persistence.UserRepository;
 import org.fabulexie.service.common.AbstractService;
@@ -38,6 +43,10 @@ public class UserService extends AbstractService<User> {
 	private UserRepository userRepository;
 	@Autowired
 	private UserConfigRepository userConfigRepository;
+	@Autowired 
+	private SpaceRepository spaceRepository;
+	@Autowired 
+	private SpaceAccessRepository spaceAccessRepository;
 	
 	@Override
 	protected UserRepository getRepository() {
@@ -65,14 +74,35 @@ public class UserService extends AbstractService<User> {
 		}
 		user.setLocked(false);
 		userRepository.save(user);
-		UserConfig config = new UserConfig();
+		
+		//default config
+		addDefaultConfig(user);
+
+		//private space
+		addPrivateSpace(user);
+		return user;
+	}
+    
+    private void addDefaultConfig(User user) {
+    	UserConfig config = new UserConfig();
 		config.setUser(user);
 		config.setName("default");
 		userConfigRepository.save(config);
 		user.setActiveConfig(config);
 		userRepository.save(user);
-		return user;
-	}
+    }
+    
+    private void addPrivateSpace(User user) {
+		Space s = new Space();
+    	s.setName("My space");
+    	s.setOwnerId(user.getId());
+    	spaceRepository.save(s);
+    	SpaceAccess sa = new SpaceAccess();
+		sa.setUser(user);
+		sa.setSpace(s);
+		sa.setRight(AccessEnum.ADMIN);
+		spaceAccessRepository.save(sa);
+    }
 
     @Override
 	public User update(User u) {

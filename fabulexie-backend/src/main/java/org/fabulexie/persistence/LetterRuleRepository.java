@@ -30,4 +30,6 @@ import org.fabulexie.persistence.common.FabulexieRepository;
 public interface LetterRuleRepository extends FabulexieRepository<LetterRule> {
 
 	List<LetterRule> findByConfig_id(Long configId);
+
+	Long deleteByConfigId(Long id);
 }

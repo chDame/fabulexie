@@ -28,5 +28,8 @@ import org.fabulexie.persistence.common.FabulexieRepository;
  */
 public interface UserConfigRepository extends FabulexieRepository<UserConfig> {
 
-	List<UserConfig> findByUser_id(Long userId);
+	List<UserConfig> findByUserId(Long userId);
+	
+
+	Long deleteByUserId(Long userId);
 }

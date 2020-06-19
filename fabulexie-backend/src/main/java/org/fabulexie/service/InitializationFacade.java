@@ -54,16 +54,16 @@ public class InitializationFacade {
 		u.setValid(true);
 		userService.create(u);
 		
-		createAdminSpace(u, "Public");
-		createAdminSpace(u, "My space");
+		createPublicSpace(u, "Public");
 		this.empty = false;
 	}
 	
-	private void createAdminSpace(User u, String spaceName) {
-		Space privateSpace = new Space();
-    	privateSpace.setName(spaceName);
-    	privateSpace.setOwnerId(u.getId());
-    	spaceService.create(privateSpace);
-		spaceService.grantAccess(u, privateSpace, AccessEnum.ADMIN);
+	private void createPublicSpace(User u, String spaceName) {
+		Space s = new Space();
+    	s.setName(spaceName);
+    	s.setOwnerId(u.getId());
+    	s.setGrandPublic(true);
+    	spaceService.create(s);
+		spaceService.grantAccess(u, s, AccessEnum.ADMIN);
 	}
 }

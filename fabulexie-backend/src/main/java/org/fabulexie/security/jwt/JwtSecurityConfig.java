@@ -51,7 +51,7 @@ public class JwtSecurityConfig
 	protected CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
-        configuration.setAllowedMethods(Arrays.asList("PUT", "POST", "PATCH", "GET"));
+        configuration.setAllowedMethods(Arrays.asList("PUT", "POST", "PATCH", "GET", "DELETE"));
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

@@ -34,6 +34,7 @@ import org.fabulexie.security.annotation.IsAuthenticated;
 import org.fabulexie.service.AuthenticationService;
 import org.fabulexie.service.InitializationFacade;
 import org.fabulexie.service.InvitationService;
+import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.service.mail.MailService;
 import org.fabulexie.util.SecurityUtils;
@@ -63,6 +64,8 @@ public class AuthenticationController extends AbstractController {
 	private AuthenticationService authenticationService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private SpaceService spaceService;
 	@Autowired
 	private InvitationService invitationService;
 	@Autowired
@@ -150,6 +153,7 @@ public class AuthenticationController extends AbstractController {
 				u.setTutor(invitation.getRealtor());
 				u.setValid(true);
 				userService.create(u);
+				spaceService.grantPublicSpaceAccess(u);
 				invitation.setConfirmed(true);
 				invitationService.update(invitation);
 				BeanUtils.copyProperties(u, authUser);

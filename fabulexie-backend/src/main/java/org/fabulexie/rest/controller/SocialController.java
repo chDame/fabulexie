@@ -33,6 +33,7 @@ import org.fabulexie.model.User;
 import org.fabulexie.security.AuthUser;
 import org.fabulexie.service.ConfigService;
 import org.fabulexie.service.InvitationService;
+import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
@@ -71,6 +72,8 @@ public class SocialController extends AbstractController {
 	private InvitationService invitationService;
 	@Autowired
 	private ConfigService configService;
+	@Autowired
+	private SpaceService spaceService;
 
 	private FacebookConnectionFactory factory =null;
 	
@@ -125,6 +128,7 @@ public class SocialController extends AbstractController {
 							invitationService.update(invitation);
 						}
 						userService.create(u);
+						spaceService.grantPublicSpaceAccess(u);
 					} else {
 						u.setPhoto(imgSrc);
 						userService.update(u);
@@ -173,6 +177,7 @@ public class SocialController extends AbstractController {
 				invitationService.update(invitation);
 			}
 			userService.create(u);
+			spaceService.grantPublicSpaceAccess(u);
 		} else {
 			u.setPhoto(imgSrc);
 			userService.update(u);

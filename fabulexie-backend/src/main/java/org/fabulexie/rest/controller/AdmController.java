@@ -114,7 +114,7 @@ public class AdmController extends AbstractController {
 	    	Space publicSpace = new Space();
 	    	publicSpace.setName("Public");
 	    	publicSpace.setOwnerId(1L);
-	    	
+	    	publicSpace.setGrandPublic(true);
 	    	spaceService.create(publicSpace);
 	    	Map<String, Object> result = new HashMap<>();
 

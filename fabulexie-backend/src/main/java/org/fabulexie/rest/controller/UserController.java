@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
@@ -35,6 +37,8 @@ import org.fabulexie.rest.controller.model.RestfulList;
 import org.fabulexie.rest.controller.model.UserResource;
 import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.security.annotation.SelfAccessOrAdmin;
+import org.fabulexie.service.SpaceService;
+import org.fabulexie.service.UserConfigService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.service.mail.MailService;
 import org.fabulexie.util.PersistenceUtil;
@@ -65,6 +69,10 @@ public class UserController extends AbstractController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserConfigService userConfigService;
+	@Autowired
+	private SpaceService spaceService;
 	@Autowired
 	private MailService mailService;
 
@@ -97,12 +105,15 @@ public class UserController extends AbstractController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@IsAdmin
 	public User create(@RequestBody User u) {
-		u.setPassword(SecurityUtils.generateFriendlyCode());
+		String password = SecurityUtils.generateFriendlyCode();
+		u.setPassword(password);
+		u.setValid(true);
 		userService.create(u);
+		spaceService.grantPublicSpaceAccess(u);
 		if (count!=null) {
 			count.incrementAndGet();
 		}
-		mailService.mailUserCreated(u, u.getPassword(), getServerHost(), Locale.ENGLISH);
+		mailService.mailUserCreated(u, password, getServerHost(), Locale.ENGLISH);
 
 		return u;
 	}
@@ -156,10 +167,12 @@ public class UserController extends AbstractController {
 
 	@DeleteMapping(value = "/users/{userId}")
 	@IsAdmin
+	@Transactional
 	public Map<String, Object> delete(@PathVariable Long userId) {
 		Map<String, Object> ret = new HashMap<>();
 		String status = "error";
-
+		spaceService.deleteSpaces(userId);
+		userConfigService.deleteConfigs(userId);
 		if (userService.delete(userId)) {
 			status = "success";
 			if (count!=null) {

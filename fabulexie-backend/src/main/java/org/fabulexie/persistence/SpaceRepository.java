@@ -18,6 +18,8 @@
  */
 package org.fabulexie.persistence;
 
+import java.util.List;
+
 import org.fabulexie.model.document.Space;
 import org.fabulexie.persistence.common.FabulexieRepository;
 
@@ -26,5 +28,7 @@ import org.fabulexie.persistence.common.FabulexieRepository;
  */
 public interface SpaceRepository extends FabulexieRepository<Space> {
 
-	
+	List<Space> findByGrandPublic(boolean b);
+
+	Long deleteByOwnerId(Long userId);
 }

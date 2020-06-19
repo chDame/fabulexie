@@ -15,7 +15,7 @@
 <div *ngIf="globalError" class="alert alert-danger">{{globalError}}</div>
 <div *ngIf="globalInfo" class="alert alert-success">{{globalInfo}}</div>
 
-<div class="row" >
+<div class="row" *ngIf="docService.currentSpace.right!='READER'">
 	<div class="col">
 	
 	<button type="button" class="btn btn-primary btn-icon-split float-right ml-2" data-toggle="modal" data-target="#addDirectoryModal">

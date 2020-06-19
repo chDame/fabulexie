@@ -85,4 +85,20 @@ public class SpaceService extends AbstractService<Space>{
 		}
 		return accesses.get(0);
 	}
+
+	public void grantPublicSpaceAccess(User u) {
+		List<Space> publicSpaces = spaceRepository.findByGrandPublic(true);
+		for(Space s : publicSpaces) {
+			if (u.getAdmin()!=null && u.getAdmin()) {
+				grantAccess(u, s, AccessEnum.ADMIN);
+			} else {
+				grantAccess(u, s, AccessEnum.READER);
+			}
+		}
+	}
+
+	public void deleteSpaces(Long userId) {
+		spaceAccessRepository.deleteByUserId(userId);
+		spaceRepository.deleteByOwnerId(userId);
+	}
 }

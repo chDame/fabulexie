@@ -22,12 +22,18 @@ import java.util.List;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.fabulexie.converter.CharListConverter;
+import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.base.Rule;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author christophe.dame
@@ -37,12 +43,16 @@ public class LetterRule extends Rule {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;  
-	
+	private Long id;
 
 	@Convert(converter = CharListConverter.class)
 	private List<Character> letters;
 
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="config_id", nullable=false)
+    private UserConfig config;
+	
 	public Long getId() {
 		return id;
 	}
@@ -57,6 +67,14 @@ public class LetterRule extends Rule {
 
 	public void setLetters(List<Character> letters) {
 		this.letters = letters;
+	}
+
+	public UserConfig getConfig() {
+		return config;
+	}
+
+	public void setConfig(UserConfig config) {
+		this.config = config;
 	}
 
 	@Override
