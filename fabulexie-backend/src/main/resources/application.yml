@@ -57,3 +57,4 @@ logging:
 
 application:
     mailer: devntest@fabulexie.fr
+    url: https://localhost:4200/

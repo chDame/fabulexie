@@ -39,6 +39,9 @@ public class MailService {
     
     @Value("${application.mailer}")
     private String mailer;
+    
+    @Value("${application.url}")
+    private String url;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -51,7 +54,7 @@ public class MailService {
     	completableFuture.complete(true);
     }
     
-    public Future<Boolean> mailUserCreated(User user, String pwd, String url, Locale locale) {
+    public Future<Boolean> mailUserCreated(User user, String pwd, Locale locale) {
     	CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
@@ -65,7 +68,7 @@ public class MailService {
         return completableFuture;
     }
     
-    public Future<Boolean> mailInvitation(Invitation invitation, String url, Locale locale) {
+    public Future<Boolean> mailInvitation(Invitation invitation, Locale locale) {
     	CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
@@ -79,7 +82,7 @@ public class MailService {
         return completableFuture;
     }
 
-    public Future<Boolean> mailRequirePwdChange(User user, String code, String url, Locale locale) {
+    public Future<Boolean> mailRequirePwdChange(User user, String code, Locale locale) {
     	CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
@@ -93,7 +96,7 @@ public class MailService {
         return completableFuture;
     }
 
-    public Future<Boolean> mailValidRegistration(User user, String code, String url, Locale locale) {
+    public Future<Boolean> mailValidRegistration(User user, String code, Locale locale) {
     	CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);

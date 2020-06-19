@@ -94,7 +94,7 @@ public class InvitationController extends AbstractController {
 			invitation.setRealtor(true);
 		}
 		Invitation result = invitationService.create(invitation);
-		mailService.mailInvitation(result, getServerHost(), Locale.ENGLISH);
+		mailService.mailInvitation(result,Locale.ENGLISH);
 		if (count!=null) {
 			count.incrementAndGet();
 		}

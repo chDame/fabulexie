@@ -110,7 +110,7 @@ public class AuthenticationController extends AbstractController {
 			String code = authenticationService.generateCodeForPwdChange(email);
 			status = "success";
 
-			mailService.mailRequirePwdChange(user, code, getServerHost(), Locale.ENGLISH);
+			mailService.mailRequirePwdChange(user, code, Locale.ENGLISH);
 		}
 
 		ret.put("status", status);
@@ -167,7 +167,7 @@ public class AuthenticationController extends AbstractController {
 		u.setAdmin(false);
 		userService.create(u);
 		String codeValidation = authenticationService.generateCodeForPwdChange(u.getEmail());
-		mailService.mailValidRegistration(u, codeValidation, getServerHost(), Locale.ENGLISH);
+		mailService.mailValidRegistration(u, codeValidation, Locale.ENGLISH);
 
 		BeanUtils.copyProperties(u, authUser);
 		return authUser;

@@ -51,7 +51,7 @@ public class MailServiceTest extends AbstractMailServiceTest {
     @Test
     public void testMailUserCreated() throws Exception {
         User userCreated = new User("Michel", "Dame", "ch.dame@gmail.com", "pouet");
-        Future<Boolean> completed = mailService.mailUserCreated(userCreated, "pwd", "http://localhost:8080", Locale.ENGLISH);
+        Future<Boolean> completed = mailService.mailUserCreated(userCreated, "pwd", Locale.ENGLISH);
 
         assertThat(completed.get()).isTrue();
         List<MimeMessage> receivedMessages = getMailsTo("ch.dame@gmail.com");
@@ -66,7 +66,7 @@ public class MailServiceTest extends AbstractMailServiceTest {
     public void testMailRequirePwdChange() throws Exception {
         User user = new User("Michel", "Dame", "toto@toto.to", "pouet");
 
-        Future<Boolean> completed = mailService.mailRequirePwdChange(user, "toto", "http://localhost:8080", Locale.ENGLISH);
+        Future<Boolean> completed = mailService.mailRequirePwdChange(user, "toto", Locale.ENGLISH);
 
         assertThat(completed.get()).isTrue();
         List<MimeMessage> receivedMessages = getMailsTo("toto@toto.to");

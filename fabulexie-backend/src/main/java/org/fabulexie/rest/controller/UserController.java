@@ -113,7 +113,7 @@ public class UserController extends AbstractController {
 		if (count!=null) {
 			count.incrementAndGet();
 		}
-		mailService.mailUserCreated(u, password, getServerHost(), Locale.ENGLISH);
+		mailService.mailUserCreated(u, password, Locale.ENGLISH);
 
 		return u;
 	}
