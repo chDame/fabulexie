@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 /**
  * @author christophe.dame
  */
-@Entity
+@Entity(name = "fab_user")
 public class User extends BaseEntity<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

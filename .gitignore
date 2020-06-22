@@ -3,7 +3,6 @@ HELP.md
 **/build/
 **/img/
 **/bin/
-fabulexie-web/src/main/resources/public/
 h2/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
@@ -34,3 +33,4 @@ out/
 
 ### VS Code ###
 .vscode/
+fabulexie-web/src/main/resources/public/

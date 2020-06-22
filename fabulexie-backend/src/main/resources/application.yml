@@ -56,5 +56,6 @@ logging:
     com.plutext.demo.diagnosticscom.plutext.demo.diagnostics: ERROR
 
 application:
-    mailer: devntest@fabulexie.fr
-    url: https://localhost:4200/
+    mailer: no-reply@fabulexie.fr
+    url: https://webapp.fabulexie.fr/
+    storage: ../../fabulexieFiles

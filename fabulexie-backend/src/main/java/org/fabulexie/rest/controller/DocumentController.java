@@ -66,6 +66,7 @@ import org.fabulexie.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -92,7 +93,9 @@ public class DocumentController extends AbstractController {
 
 		private final Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
-		private static final String FILE_PATH = "../../fabulexieFiles/";
+		@Value("${application.storage}")
+		private String file_path;
+	    
 		@Autowired
 		private DocumentService documentService;
 		@Autowired
@@ -125,7 +128,7 @@ public class DocumentController extends AbstractController {
 			if (pagedJs!=null) {
 				return pagedJs;
 			}
-			Scanner s =  new Scanner(DocumentController.class.getClassLoader().getResourceAsStream("./readerjs/paged.js"), "UTF-8");
+			Scanner s =  new Scanner(DocumentController.class.getClassLoader().getResourceAsStream("readerjs/paged.js"), "UTF-8");
 			pagedJs = s.useDelimiter("\\A").next();
 			s.close();
 			return pagedJs;
@@ -218,13 +221,13 @@ public class DocumentController extends AbstractController {
 		}
 		
 		private File getDocxFile(Long docId) {
-			return Paths.get( FILE_PATH+docId+"/file.docx").toFile();
+			return Paths.get( file_path+docId+"/file.docx").toFile();
 		}
 		private File getHtmlFile(Long docId) {
-			return Paths.get( FILE_PATH+docId+"/file.html").toFile();
+			return Paths.get( file_path+docId+"/file.html").toFile();
 		}
 		private File getCover(Long docId) {
-			return Paths.get( FILE_PATH+docId+"/cover.png").toFile();
+			return Paths.get( file_path+docId+"/cover.png").toFile();
 		}
 		
 		private Document createDoc(Document doc, InputStream content) throws IOException, Docx4JException, FontFormatException {
