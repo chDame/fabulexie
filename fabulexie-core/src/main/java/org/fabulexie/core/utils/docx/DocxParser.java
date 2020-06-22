@@ -31,9 +31,23 @@ import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.convert.out.HTMLSettings;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.wml.BooleanDefaultTrue;
+import org.docx4j.wml.CTShd;
+import org.docx4j.wml.Color;
+import org.docx4j.wml.PPr;
+import org.docx4j.wml.RPr;
+import org.docx4j.wml.STShd;
+import org.docx4j.wml.STThemeColor;
+import org.docx4j.wml.Style;
+import org.docx4j.wml.Style.Name;
 import org.docx4j.wml.Styles;
+import org.docx4j.wml.U;
+import org.docx4j.wml.UnderlineEnumeration;
 import org.fabulexie.core.html.parser.HtmlParser;
 import org.fabulexie.model.UserConfig;
+import org.fabulexie.model.rules.LetterRule;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -73,6 +87,9 @@ public class DocxParser {
 		WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
 		Styles styleCopy = new Styles();
 		styleCopy.getStyle().addAll(originalStyle.getStyle());
+
+		completeStyles(styleCopy, ac);
+		
         docxOut.getMainDocumentPart().getStyleDefinitionsPart().createBinderAndJaxbElement(styleCopy);
 		XHTMLImporterImpl xHTMLImporter = new XHTMLImporterImpl(docxOut);
 		
@@ -84,4 +101,49 @@ public class DocxParser {
 		return result;
 	}
 	
+	private static Styles completeStyles(Styles styles, UserConfig ac) {
+		/**
+		 * test
+		 */
+		int i=0;
+		for(LetterRule rule : ac.getLetterRules()) {
+			Style style = new Style();
+			style.setType("character");
+			style.setStyleId("letterRule"+i);
+			style.setName(new Name());
+			style.getName().setVal("letterRule"+i);
+			style.getName().setParent(styles);
+		
+			style.setRPr(new RPr());
+			if (rule.isBold()) {
+				style.getRPr().setB(new BooleanDefaultTrue());
+			}
+			if (rule.isUnderlined()) {
+				style.getRPr().setU(new U());
+				style.getRPr().getU().setVal(UnderlineEnumeration.SINGLE);
+			}
+			if (rule.isItalic()) {
+				style.getRPr().setI(new BooleanDefaultTrue());
+			}
+			if (rule.isUpperCase()) {
+				style.getRPr().setCaps(new BooleanDefaultTrue());
+			}
+			if (rule.getColor()!=null) {
+				style.getRPr().setColor(new Color());
+				style.getRPr().getColor().setVal(rule.getColor().substring(1));
+			}
+			if (rule.getBackgroundColor()!=null) {
+				style.getRPr().setShd(new CTShd());
+				style.getRPr().getShd().setVal(STShd.CLEAR);
+				style.getRPr().getShd().setColor("auto");
+				style.getRPr().getShd().setFill(rule.getBackgroundColor().substring(1));
+			}
+			style.setParent(styles.getStyle());
+			style.setCustomStyle(true);
+			styles.getStyle().add(style);
+			i++;
+		}
+		return styles;
+	}
+
 }

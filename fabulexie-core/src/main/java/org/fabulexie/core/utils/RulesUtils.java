@@ -39,14 +39,39 @@ public class RulesUtils {
 		return false;
 	}
 	
-	public static String apply(String text, LetterRule rule) {
-		String span = getStyledSpan(rule);
+	public static String apply(String text, LetterRule rule, int index) {
+		String span = "<span class='letterRule"+index+"'>";//getStyledSpan(rule);
 		for(Character e : rule.getLetters()) {
 			text = text.replace(String.valueOf(e), "¤¤¤"+e+"¤¤");
 		}
 		text = text.replace("¤¤¤", span);
 		text = text.replace("¤¤", "</span>");
 		return "<span>"+text+"</span>";
+	}
+	
+	public static String getStyledClass(Rule rule, int index) {
+		
+		StringBuilder sb = new StringBuilder(".letterRule"+index+" {");
+		if (rule.getColor()!=null && !rule.getColor().equals("")) {
+			sb.append("color:").append(rule.getColor()).append(";");
+		}
+		if (rule.getBackgroundColor()!=null && !rule.getBackgroundColor().equals("")) {
+			sb.append("background:").append(rule.getBackgroundColor()).append(";");
+		}
+		if (rule.isBold()) {
+			sb.append("font-weight: bold;");
+		}
+		if (rule.isUnderlined()) {
+			sb.append("text-decoration: underline;");
+		}
+		if (rule.isItalic()) {
+			sb.append("font-style: italic;");
+		}
+		if (rule.isUpperCase()) {
+			sb.append("text-transform: uppercase;");
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 	
 	public static String getStyledSpan(Rule rule) {

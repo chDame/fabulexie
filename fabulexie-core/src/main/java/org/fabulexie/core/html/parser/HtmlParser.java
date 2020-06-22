@@ -45,9 +45,17 @@ public class HtmlParser {
 		doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 		doc.outputSettings().escapeMode(EscapeMode.xhtml); //This will ensure the validity
 		doc.outputSettings().charset("UTF-8");
+		doc.outputSettings().prettyPrint(false);
+		doc.outputSettings().indentAmount(0);
 		Elements pages = doc.body().select("div.pagedjs_page");
-
 		pages.attr("style", "display:none");
+		Elements elts = doc.head().getElementsByTag("style");
+		String styles = "";
+		for(int i=0; i < elts.size(); i++) {
+			styles+=elts.get(i).html().replace("&lt;!--", "<!--").replace("--&gt;", "-->");
+		}
+		elts.remove();
+		doc.head().append("<style>"+styles+"</style>");
 		return doc.html();
 	}
  
@@ -109,41 +117,43 @@ public class HtmlParser {
 			//pure html to be displayed
 			Elements imgs = doc.body().select("img");
 			imgs.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
-			/*for (Element img : imgs) {
-				 img.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
-			}*/
 		}
+		int i=0;
+		StringBuffer customStyles = new StringBuffer("<style><!-- ");
 		for (LetterRule rule : ac.getLetterRules()) {
-			applyRules(doc, rule);
+			customStyles.append(RulesUtils.getStyledClass(rule, i));
+			applyRules(doc, rule, i++);
 		}
+		customStyles.append("--></style>");
+		doc.head().append(customStyles.toString());
 	
 		
 		return doc;
 	}
 
-	private static void applyRules(Element paragraph, LetterRule rule) {
+	private static void applyRules(Element paragraph, LetterRule rule, int index) {
 		List<Node> nodes = paragraph.childNodes();
 
 		for (int i = 0; i < nodes.size(); i++) {
 			Node node = nodes.get(i);
 
 			if (node instanceof TextNode && !((TextNode) node).isBlank()) {
-				applyRulesToTextNode((TextNode) node, rule);
+				applyRulesToTextNode((TextNode) node, rule, index);
 				// Element parsedBloc = Jsoup.parse(RulesUtils."<span>"+((TextNode)
 				// node).text().replace("b", "<b>b</b>")+"</span>", "", Parser.xmlParser());
 
 				// node.replaceWith(parsedBloc);
 			} else if (node instanceof Element) {
-				applyRules((Element) node, rule);
+				applyRules((Element) node, rule, index);
 			}
 		}
 	}
 
-	private static void applyRulesToTextNode(TextNode node, LetterRule rule) {
+	private static void applyRulesToTextNode(TextNode node, LetterRule rule, int index) {
 		String text = ((TextNode) node).text();
 
 		if (RulesUtils.isApplicable(text, rule)) {
-			Node parsedBloc = Jsoup.parse(RulesUtils.apply(text, rule), "", Parser.xmlParser());
+			Node parsedBloc = Jsoup.parse(RulesUtils.apply(text, rule, index), "", Parser.xmlParser());
 			node.replaceWith(parsedBloc.childNode(0));
 		}
 	}
