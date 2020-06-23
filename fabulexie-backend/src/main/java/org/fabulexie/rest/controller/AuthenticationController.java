@@ -84,7 +84,7 @@ public class AuthenticationController extends AbstractController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public AuthUser login(@RequestParam String email, @RequestParam String password) {
-		User user = authenticationService.getByEmailAndPwd(email, password);
+		User user = authenticationService.getByEmailAndPwd(email.toLowerCase(), password);
 		return getAuthUser(user);
 	}
 
@@ -103,7 +103,7 @@ public class AuthenticationController extends AbstractController {
 	@RequestMapping(value = "/requirePwdChange", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Map<String, String> requirePwdChange(@RequestParam String email) {
-		User user = userService.getUserByEmail(email);
+		User user = userService.getUserByEmail(email.toLowerCase());
 		Map<String, String> ret = new HashMap<>();
 		String status = "error";
 		if (user != null) {
@@ -122,7 +122,7 @@ public class AuthenticationController extends AbstractController {
 	public AuthUser changePwd(@RequestParam String email, @RequestParam String securityCode,
 			@RequestParam String newPassword) {
 
-		boolean pwdChanged = authenticationService.changePwd(email, securityCode, newPassword);
+		boolean pwdChanged = authenticationService.changePwd(email.toLowerCase(), securityCode, newPassword);
 		if (!pwdChanged) {
 			throw new UnauthorizedException("Invalid request");
 		}
@@ -135,6 +135,7 @@ public class AuthenticationController extends AbstractController {
 	@ResponseStatus(HttpStatus.OK)
 	public AuthUser register(@RequestBody User u, @RequestHeader(required = false, defaultValue = "") String code) {
 		AuthUser authUser = new AuthUser();
+		u.setEmail(u.getEmail().toLowerCase());
 		if (intializationService.isEmpty()) {
 			//create eveyrthing required for the platform to be usable (public space, admin)
 			intializationService.initialise(u);
@@ -176,7 +177,7 @@ public class AuthenticationController extends AbstractController {
 	@RequestMapping(value = "/validUser", method = RequestMethod.GET, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public AuthUser validUser(@RequestParam String email, @RequestParam String code) {
-		boolean result = authenticationService.validate(email, code);
+		boolean result = authenticationService.validate(email.toLowerCase(), code);
 		if (!result) {
 			throw new UnauthorizedException("Account invalid");
 		}
