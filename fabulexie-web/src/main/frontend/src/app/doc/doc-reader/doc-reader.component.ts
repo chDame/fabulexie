@@ -75,6 +75,10 @@ export class DocReaderComponent implements AfterViewInit, OnInit {
 		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/adapt/html';
 	}
   
+	getAdaptedPdf(): string {
+		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/adapt/pdf/';
+	}
+  
 	getAdaptedDocxUrl(): string {
 		return environment.settings.backend+'/documents/'+this.docService.currentDoc.accessToken+'/adapt/docx/';
 	}

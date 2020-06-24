@@ -39,16 +39,16 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.core.cover.CoverGenerator;
+import org.fabulexie.core.exception.ConversionException;
 import org.fabulexie.core.html.parser.HtmlParser;
-import org.fabulexie.core.utils.docx.DocxParser;
+import org.fabulexie.core.utils.DocxConverter;
+import org.fabulexie.core.utils.PdfConverter;
 import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.document.AccessEnum;
@@ -230,22 +230,25 @@ public class DocumentController extends AbstractController {
 			return Paths.get( file_path+docId+"/cover.png").toFile();
 		}
 		
-		private Document createDoc(Document doc, InputStream content) throws IOException, Docx4JException, FontFormatException {
-
-	        documentService.create(doc);
-	        File docx = getDocxFile(doc.getId());
-	        FileUtils.copyInputStreamToFile(content, docx);
-	           
-	        DocxParser.convertDocxToHtml(docx, getHtmlFile(doc.getId()));
-	
-	        BufferedImage bi = CoverGenerator.buildCover(doc.getAuthor(), doc.getTitle());
-			ImageIO.write(bi,"png", getCover(doc.getId()));
-			
-	        doc.setAccessToken(UUID.randomUUID().toString());
-			docTokens.put(doc.getAccessToken(), doc.getId());
-			spaceTokens.put(doc.getAccessToken(), doc.getSpace().getId());
-			userTokens.put(doc.getAccessToken(), doc.getOwnerId());
-	        return doc;
+		private Document createDoc(Document doc, InputStream content) throws TechnicalException {
+			try {
+		        documentService.create(doc);
+		        File docx = getDocxFile(doc.getId());
+		        FileUtils.copyInputStreamToFile(content, docx);
+		           
+		        DocxConverter.convertDocxToHtml(docx, getHtmlFile(doc.getId()));
+		
+		        BufferedImage bi = CoverGenerator.buildCover(doc.getAuthor(), doc.getTitle());
+				ImageIO.write(bi,"png", getCover(doc.getId()));
+				
+		        doc.setAccessToken(UUID.randomUUID().toString());
+				docTokens.put(doc.getAccessToken(), doc.getId());
+				spaceTokens.put(doc.getAccessToken(), doc.getSpace().getId());
+				userTokens.put(doc.getAccessToken(), doc.getOwnerId());
+		        return doc;
+			} catch (ConversionException | IOException | FontFormatException e) {
+	        	throw new TechnicalException("Document creation failed", e);
+			}
 
 		}
 		
@@ -267,11 +270,7 @@ public class DocumentController extends AbstractController {
 				return createDoc(doc, request.getInputStream());
 	        } catch (IOException e) {
 	            throw new TechnicalException("Document upload failed", e);
-	        } catch (Docx4JException e) {
-	        	throw new TechnicalException("Document parsing failed", e);
-			} catch (FontFormatException e) {
-	        	throw new TechnicalException("Cover generation failed", e);
-			}
+	        }
 	    }
 		
 		@PostMapping(value = "/users/{userId}/spaces/{spaceId}/directories/{directoryId}/documents")
@@ -295,11 +294,7 @@ public class DocumentController extends AbstractController {
 				return createDoc(doc, request.getInputStream());
 	        } catch (IOException e) {
 	            throw new TechnicalException("Document upload failed", e);
-	        } catch (Docx4JException e) {
-	        	throw new TechnicalException("Document parsing failed", e);
-			} catch (FontFormatException e) {
-	        	throw new TechnicalException("Cover generation failed", e);
-			}
+	        }
 	    }
 		
 		@GetMapping(value = "/documents/{docToken}/html", produces = "text/html")
@@ -390,19 +385,19 @@ public class DocumentController extends AbstractController {
 				User connected = userService.getById(userId);
 				UserConfig ac = connected.getActiveConfig();
 				
-				File adapted = DocxParser.adaptDocument(getHtmlFile(docId).toPath(), getDocxFile(docId).toPath(), ac);
+				File adapted = DocxConverter.adaptDocument(getHtmlFile(docId).toPath(), getDocxFile(docId).toPath(), ac);
 				InputStream is = new FileInputStream(adapted);
 				return ResponseEntity.ok()
-					.header("content-disposition", "inline; filename=\"" + doc.getName() + "\"")
+					.header("content-disposition", "inline; filename=\"" + doc.getTitle() + ".docx\"")
 		            .contentLength(is.available())
 	                .contentType(MediaType.APPLICATION_OCTET_STREAM)
 	                .body(new InputStreamResource(is));
-			} catch (IOException | Docx4JException | JAXBException e) {
+			} catch (IOException | ConversionException e) {
 				throw new TechnicalException("File could not be adapted", e);
 			}
 	    }
 		
-		/*
+		
 		@GetMapping(value = "/documents/{docToken}/adapt/pdf/", produces = "application/octet-stream")
 	    @ResponseBody
 	    public ResponseEntity<InputStreamResource> getAdaptedPdf(@PathVariable String docToken) {
@@ -420,18 +415,18 @@ public class DocumentController extends AbstractController {
 				User connected = userService.getById(userId);
 				UserConfig ac = connected.getActiveConfig();
 				
-				File adapted = DocxParser.adaptDocument(doc, ac);
+				File adapted = PdfConverter.adaptDocument(getHtmlFile(docId).toPath(), Paths.get(file_path), ac);
 				
-				InputStream is = new FileInputStream("blop.pdf");
+				InputStream is = new FileInputStream(adapted);
 				return ResponseEntity.ok()
-					.header("content-disposition", "inline; filename=\"mon.pdf\"")
+					.header("content-disposition", "inline; filename=\""+doc.getTitle()+".pdf\"")
 		            .contentLength(is.available())
 		            .contentType(MediaType.APPLICATION_PDF)
 	                .body(new InputStreamResource(is));
-			} catch (IOException e) {
+			} catch (IOException | ConversionException e) {
 				throw new TechnicalException("File could not be adapted", e);
 			}
-	    }*/
+	    }
 		
 		@GetMapping(value = "/documents/{docToken}/adapt/reader/{width}/{height}", produces = "text/html")
 		public String getAdaptedReader(@PathVariable String docToken, @PathVariable Double width, @PathVariable Double height) {

@@ -58,4 +58,4 @@ logging:
 application:
     mailer: no-reply@fabulexie.fr
     url: https://webapp.fabulexie.fr/
-    storage: ../../fabulexieFiles
+    storage: ../../fabulexieFiles/

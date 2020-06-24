@@ -21,14 +21,11 @@ package org.fabulexie.core.utils.docx;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import javax.xml.bind.JAXBException;
-
-import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.fabulexie.core.exception.ConversionException;
+import org.fabulexie.core.utils.DocxConverter;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
 import org.junit.jupiter.api.Test;
@@ -38,14 +35,14 @@ import com.google.common.collect.Lists;
 /**
  * @author christophe.dame
  */
-public class DocXParserTests {
+public class DocxConverterTests {
 
 	private Path getPath(String file) throws URISyntaxException {
 		return new File(this.getClass().getClassLoader().getResource(file).toURI()).toPath();
 	}
 	
 	@Test
-	public void adaptDocumentTest() throws Docx4JException, IOException, JAXBException, URISyntaxException {
+	public void adaptDocumentTest() throws URISyntaxException, ConversionException {
 		UserConfig uc = new UserConfig();
 		LetterRule lr = new LetterRule();
 		lr.setBold(true);
@@ -57,8 +54,10 @@ public class DocXParserTests {
 		lr.setLetters(Lists.newArrayList('e'));
 		uc.setLetterRules(Lists.newArrayList(lr));
 		
-		File f = DocxParser.adaptDocument(getPath("cyrano.html"), getPath("cyrano.docx"), uc);
+		File f = DocxConverter.adaptDocument(getPath("cyrano.html"), getPath("cyrano.docx"), uc);
 		assertThat(f).isNotNull();
 	}
+	
+	
 	
 }
