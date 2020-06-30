@@ -53,8 +53,8 @@ public class DocxConverterTests {
 		lr.setItalic(true);
 		lr.setLetters(Lists.newArrayList('e'));
 		uc.setLetterRules(Lists.newArrayList(lr));
-		
-		File f = DocxConverter.adaptDocument(getPath("cyrano.html"), getPath("cyrano.docx"), uc);
+		uc.setOpenDys(true);
+		File f = DocxConverter.adaptDocument(getPath("cyranoShort.html"), getPath("cyrano.docx"), uc);
 		assertThat(f).isNotNull();
 	}
 	

@@ -118,15 +118,31 @@ public class HtmlParser {
 			Elements imgs = doc.body().select("img");
 			imgs.attr("style", "max-width:"+width+"px;max-height:"+height+"px;");
 		}
-		int i=0;
+		if (ac.getExtraLineSpace()!=null && ac.getExtraLineSpace()>0) {
+			//if lineHeight should be increased, existing notations should be removed
+			Elements elts = doc.head().getElementsByTag("style");
+			String styles = "";
+			for(int i=0; i < elts.size(); i++) {
+				styles+=elts.get(i).html().replaceAll("(line-height\\:[\\s]*[0-9]+[^;]*)([;}])", "$2");
+			}
+			elts.remove();
+			doc.head().append("<style>"+styles+"</style>");
+			doc.head().append("<style>html, body { line-height: "+(ac.getExtraLineSpace()+1)+"00%;}</style>");
+		}
+		
 		StringBuffer customStyles = new StringBuffer("<style><!-- ");
+		int i=0;
 		for (LetterRule rule : ac.getLetterRules()) {
 			customStyles.append(RulesUtils.getStyledClass(rule, i));
 			applyRules(doc, rule, i++);
 		}
+		if (ac.getExtraWordSpace()!=null && ac.getExtraWordSpace()>0) {
+			customStyles.append("html, body { word-spacing: "+ac.getExtraWordSpace()+"em; }");
+		}
 		customStyles.append("--></style>");
 		doc.head().append(customStyles.toString());
 	
+		
 		
 		return doc;
 	}

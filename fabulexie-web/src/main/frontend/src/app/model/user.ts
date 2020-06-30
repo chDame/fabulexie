@@ -22,6 +22,9 @@ export class UserConfig {
     id: number;
     name: string;
 	letterRules: LetterRule[];
+	openDys: boolean;
+	extraLineSpace: number;
+	extraWordSpace: number;
 }
 
 export class Rule {

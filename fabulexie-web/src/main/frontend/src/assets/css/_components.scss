@@ -82,6 +82,7 @@ input.datepicker {
 .form-group {
 	position: relative;
 	textarea:focus ~ .floating-label,
+	select:focus ~ .floating-label,
 	input:focus ~ .floating-label,
 	textarea:not(:placeholder-shown) ~ .floating-label,
 	input:not(:placeholder-shown) ~ .floating-label{

@@ -85,6 +85,37 @@ public class PdfConverter {
 		}
 	}
 	
+	public static File adaptDocument(Path htmlOriginal, Path workingDir, UserConfig ac) throws ConversionException {
+		try {
+			
+			Path parent = workingDir.resolve("adapted/"+ac.getId());
+			Path targetPath = parent.resolve(ac.getName()+".pdf");
+			String adaptedHtml;
+			org.jsoup.nodes.Document adapted = HtmlParser.transformFromFile(htmlOriginal, ac);
+			removeHtmlCommentsFromStyles(adapted);
+			
+			adaptedHtml = adapted.html();
+			if (!parent.toFile().exists()) {
+				parent.toFile().mkdirs();
+			}
+			Files.deleteIfExists(targetPath);
+			convertHtmlToPdfWithPages(adaptedHtml, targetPath.toFile());
+			return targetPath.toFile();
+		} catch (IOException e) {
+			throw new ConversionException("Error adapting pdf document", e);
+		}
+	}
+	
+	private static void removeHtmlCommentsFromStyles(org.jsoup.nodes.Document doc) {
+		Elements elts = doc.head().getElementsByTag("style");
+		String styles = "";
+		for(int i=0; i < elts.size(); i++) {
+			styles+=elts.get(i).html().replace("<!--", "").replace("-->", "");
+		}
+		elts.remove();
+		doc.head().append("<style>"+styles+"</style>");
+	}
+	
 	private static void convertHtmlToPdfWithPages(String htmlContent, File pdfTarget) throws ConversionException {
 		String temp = pdfTarget.getParent()+ "/tmp_"+pdfTarget.getName();
         htmlToPdf(htmlContent, new File(temp));
@@ -99,7 +130,8 @@ public class PdfConverter {
 	    try {
 	        final OutputStream file = new FileOutputStream(pdfTarget);
 	        final Document document = new Document(PageSize.A4);
-	        document.setMargins(100f, 100f, 50f, 60f);
+	        document.setMargins(100f, 100f, 40f, 60f);
+	        document.addTitle("Cyrano de Bergerac");
 	        final PdfWriter writer = PdfWriter.getInstance(document, file);
 	        document.open();
 	        final TagProcessorFactory tagProcessorFactory = Tags.getHtmlTagProcessorFactory();
@@ -107,7 +139,7 @@ public class PdfConverter {
 	        tagProcessorFactory.addProcessor(new ImageTagProcessor(), HTML.Tag.IMG);
 
 	        final CssFilesImpl cssFiles = new CssFilesImpl();
-	        cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
+	        //cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
 	        final StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 	        final HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider()));
 	        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(tagProcessorFactory);
@@ -151,36 +183,4 @@ public class PdfConverter {
         output.close();
         filePath.toFile().delete();
     }
-	
-	public static File adaptDocument(Path htmlOriginal, Path workingDir, UserConfig ac) throws ConversionException {
-		try {
-			Path parent = workingDir.resolve("adapted/"+ac.getId());
-			Path targetPath = parent.resolve(ac.getName()+".pdf");
-			String adaptedHtml;
-			org.jsoup.nodes.Document adapted = HtmlParser.transformFromFile(htmlOriginal, ac);
-			removeHtmlCommentsFromStyles(adapted);
-			
-			adaptedHtml = adapted.html();
-
-			if (!parent.toFile().exists()) {
-				parent.toFile().mkdirs();
-				//result.createNewFile();
-			}
-			Files.deleteIfExists(targetPath);
-			convertHtmlToPdfWithPages(adaptedHtml, targetPath.toFile());
-			return targetPath.toFile();
-		} catch (IOException e) {
-			throw new ConversionException("Error adapting pdf document", e);
-		}
-	}
-	
-	private static void removeHtmlCommentsFromStyles(org.jsoup.nodes.Document doc) {
-		Elements elts = doc.head().getElementsByTag("style");
-		String styles = "";
-		for(int i=0; i < elts.size(); i++) {
-			styles+=elts.get(i).html().replace("<!--", "").replace("-->", "");
-		}
-		elts.remove();
-		doc.head().append("<style>"+styles+"</style>");
-	}
 }

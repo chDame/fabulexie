@@ -93,7 +93,6 @@ public class DocxConverter {
 		}
 	}
 	
-
 	public static File adaptDocument(Path htmlOriginal, Path docOriginal, UserConfig ac) throws ConversionException {
 		try {
 			Path targetPath = docOriginal.getParent().resolve("adapted/"+ac.getId()+"/"+ac.getName()+".docx");
@@ -102,29 +101,36 @@ public class DocxConverter {
 				targetDir.mkdirs();
 			}
 			WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(docOriginal.toFile());
-
-	        ObjectFactory factory = Context.getWmlObjectFactory();
+			
 	        Styles originalStyle = (Styles)wordMLPackage.getMainDocumentPart().getStyleDefinitionsPart().getJaxbElement();
 	
 			String adaptedHtml = HtmlParser.transformFromFile(htmlOriginal, ac).html();
 			WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
 			Styles styleCopy = new Styles();
 			styleCopy.getStyle().addAll(originalStyle.getStyle());
-			//docxOut.getHeaderFooterPolicy().getDefaultFooter().g
+	
 			completeStyles(styleCopy, ac);
 			
 	        docxOut.getMainDocumentPart().getStyleDefinitionsPart().createBinderAndJaxbElement(styleCopy);
-			XHTMLImporterImpl xHTMLImporter = new XHTMLImporterImpl(docxOut);
-	        
+			ObjectFactory factory = Context.getWmlObjectFactory();
+            
+	        XHTMLImporterImpl xHTMLImporter = new XHTMLImporterImpl(docxOut);
+			
 			docxOut.getMainDocumentPart().getContent().addAll(xHTMLImporter.convert(adaptedHtml, ""));
+			
+
 			//footer with paging
 			Relationship  relationship = createFooterPageNumPart(docxOut, docxOut.getMainDocumentPart(), factory);  
 			createFooter(docxOut, docxOut.getMainDocumentPart(), factory, relationship);  
 			//end paging
 			File result = targetPath.toFile();
-			docxOut.save(result, Docx4J.FLAG_NONE);
+
+            docxOut.save(result, Docx4J.FLAG_NONE);
+
 			return result;
 		} catch (Docx4JException | IOException | JAXBException e) {
+			throw new ConversionException("Error adapting docx document", e);
+		} catch (Exception e) {
 			throw new ConversionException("Error adapting docx document", e);
 		}
 	}
@@ -172,7 +178,7 @@ public class DocxConverter {
 		return styles;
 	}
 	
-
+	
 	private static Relationship createFooterPageNumPart(  
             WordprocessingMLPackage wordprocessingMLPackage,  
             MainDocumentPart t, ObjectFactory factory) throws InvalidFormatException {  
@@ -181,8 +187,6 @@ public class DocxConverter {
         footerPart.setJaxbElement(createFooterWithPageNr(factory));  
         return t.addTargetPart(footerPart);  
     }
-	
-	
 	
 	private static Ftr createFooterWithPageNr(ObjectFactory factory) {  
         Ftr ftr = factory.createFtr();  

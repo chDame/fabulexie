@@ -49,6 +49,12 @@ public class UserConfig extends BaseEntity<Long> {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
+	private Boolean openDys;
+
+	private Integer extraLineSpace;
+
+	private Integer extraWordSpace;
+	
 	@OneToMany(mappedBy="config",fetch = FetchType.EAGER)
     private List<LetterRule> letterRules;
     
@@ -83,6 +89,28 @@ public class UserConfig extends BaseEntity<Long> {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
+
+	public Boolean getOpenDys() {
+		return openDys;
+	}
+
+	public void setOpenDys(Boolean openDys) {
+		this.openDys = openDys;
+	}
+
+	public Integer getExtraLineSpace() {
+		return extraLineSpace;
+	}
+
+	public void setExtraLineSpace(Integer extraLineSpace) {
+		this.extraLineSpace = extraLineSpace;
+	}
+
+	public Integer getExtraWordSpace() {
+		return extraWordSpace;
+	}
+
+	public void setExtraWordSpace(Integer extraWordSpace) {
+		this.extraWordSpace = extraWordSpace;
+	}
 }
