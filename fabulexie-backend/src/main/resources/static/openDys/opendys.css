@@ -7,21 +7,21 @@
 
 @font-face {
 	font-family: 'opendyslexic';
-	src: url('./OpenDyslexic-Italic.ttf');
+	src: url('./OpenDyslexic-Italic.otf');
 	font-style: italic;
 	font-weight: normal;
 }
 
 @font-face {
 	font-family: 'opendyslexic';
-	src: url('./OpenDyslexic-Bold.ttf');
+	src: url('./OpenDyslexic-Bold.otf');
 	font-weight: bold;
 	font-style: normal;
 } 
 
 @font-face {
 	font-family: 'opendyslexic';
-	src: url('./OpenDyslexic-BoldItalic.ttf');
+	src: url('./OpenDyslexic-BoldItalic.otf');
 	font-weight: bold;
 	font-style: italic;
 } 
