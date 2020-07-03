@@ -155,31 +155,28 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col">
+						<div class="col col-lg-6 col-md-6 col-xs-6">
 							<a class="btn btn-primary btn-icon-split" (click)="addLetterRule()">
 								<span class="icon text-white-50">
 									<i class="fas fa-plus"></i>
 								</span>
-								<span class="text"> Add letter rule</span>
+								<span class="text"> Add rule</span>
 							</a>
-							<a class="btn btn-primary btn-icon-split" (click)="addVoyelRule()">
+						</div>
+						<div class="col col-lg-6 col-md-6 col-xs-6">
+							<div class="dropdown">
+							  <button class="btn btn-primary btn-icon-split dropdown-toggle" type="button" id="prebuiltRules" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<span class="icon text-white-50">
 									<i class="fas fa-plus"></i>
 								</span>
-								<span class="text"> Voyels</span>
-							</a>
-							<a class="btn btn-primary btn-icon-split" (click)="addPunctuationRule()">
-								<span class="icon text-white-50">
-									<i class="fas fa-plus"></i>
-								</span>
-								<span class="text"> Ponctuation Marks</span>
-							</a>
-							<a class="btn btn-primary btn-icon-split" (click)="addUppercaseRule()">
-								<span class="icon text-white-50">
-									<i class="fas fa-plus"></i>
-								</span>
-								<span class="text"> Uppercase</span>
-							</a>
+								Add prebuilt rule
+							  </button>
+							  <div class="dropdown-menu" aria-labelledby="prebuiltRules">
+								<a class="dropdown-item" (click)="addVoyelRule()">Voyels</a>
+								<a class="dropdown-item" (click)="addPunctuationRule()">Ponctuation Marks</a>
+								<a class="dropdown-item" (click)="addUppercaseRule()">Uppercase</a>
+							  </div>
+							</div>
 						</div>
 					</div>
 				</div>

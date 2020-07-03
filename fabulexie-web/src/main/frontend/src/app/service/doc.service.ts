@@ -60,6 +60,14 @@ export class DocService {
 	public addDocument(doc:Document): void {
 		this.docs.push(doc);
 	}
+	
+	public delete(doc:Document): Observable<any> {
+		return this.http.delete<any>(environment.settings.backend+'/users/'+this.authService.user.id+'/spaces/'+this.currentSpace.space.id+'/documents/'+doc.id, {headers: this.authService.myHttpheaders});
+	}
+	
+	public deleteDir(dir:Directory): Observable<any> {
+		return this.http.delete<any>(environment.settings.backend+'/users/'+this.authService.user.id+'/spaces/'+this.currentSpace.space.id+'/directory/'+dir.id, {headers: this.authService.myHttpheaders});
+	}
 
 	public listDocuments(): Observable<Document[]> {
 		let directoryUrl = '';

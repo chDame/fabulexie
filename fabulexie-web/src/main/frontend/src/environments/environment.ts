@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   settings: {
-    backend: "https://localhost:8443"
+    backend: "https://back.fabulexie.fr"
   }
 };
 

@@ -22,8 +22,6 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser
 export class DocBrowserComponent implements OnInit {
 	
 	newDirName: string = null;
-	/*browsing*/
-	documents: Array<Document>;
 	
 	/*adding file*/
 	globalError: string = '';
@@ -32,6 +30,9 @@ export class DocBrowserComponent implements OnInit {
 	uploadInfo: string = '';
 
 	newDocument: Document = new Document();
+	public currentDoc: Document = null;
+	public currentDir: Directory = null;
+    public currentIdx: number;
 	file=null;
 	progress: number = 0;
 	
@@ -66,6 +67,30 @@ export class DocBrowserComponent implements OnInit {
 	  this.router.navigate(['read']);
   }
   
+  /* deletions */
+  public setCurrentDoc(index:number) {
+	this.currentDoc = Object.assign({}, this.docService.docs[index]);
+	this.currentIdx=index;
+  }
+
+  public deleteDoc() {
+	this.docService.delete(this.currentDoc).subscribe(data => {
+		this.globalInfo = 'Document deleted';
+		this.docService.docs.splice(this.currentIdx, 1);
+	});
+  }
+  
+  public setCurrentDir(index:number) {
+	this.currentDir = Object.assign({}, this.docService.subDirs[index]);
+	this.currentIdx=index;
+  }
+
+  public deleteDir() {
+	this.docService.deleteDir(this.currentDir).subscribe(data => {
+		this.globalInfo = 'Directory deleted';
+		this.docService.subDirs.splice(this.currentIdx, 1);
+	});
+  }
   /*adding files*/
   selectFile(event) {
     this.file = (event.target as HTMLInputElement).files[0];

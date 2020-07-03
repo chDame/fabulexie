@@ -20,21 +20,21 @@
 	<div class="readerPagination">
 		<i class="navBtn fas fa-chevron-left" (click)="previousPage()"></i> <span class="pages">page {{currentPage}} / {{nbPages}}</span> <i class="navBtn fas fa-chevron-right" (click)="nextPage()"></i>
 	</div>
-	<div class="options">	
-		<a class="btn btn-primary btn-circle" [href]="getAdaptedHtml()" target="_blank">
-			<i class="fab fa-html5"></i>
-		</a>
-		<a class="btn btn-primary btn-circle" [href]="getAdaptedDocxUrl()" target="_blank">
-			<i class="fas fa-file-word"></i>
-		</a>
-		<a class="btn btn-secondary btn-circle" [href]="getHtml()" target="_blank">
-			<i class="fab fa-html5"></i>
-		</a>
-		<a class="btn btn-secondary btn-circle" [href]="getDocxUrl()" target="_blank">
-			<i class="fas fa-file-word"></i>
-		</a>
-		<a class="btn btn-primary btn-circle" [href]="getAdaptedPdf()" target="_blank">
-			<i class="far fa-file-pdf"></i>
-		</a>
+	<div class="options">
+		
+		<div class="dropdown">
+			<button class="btn btn-primary btn-icon-split dropdown-toggle" type="button" id="prebuiltRules" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="icon text-white-50">
+					<i class="fas fa-download"></i>
+				</span>
+			</button>
+			<div class="dropdown-menu" aria-labelledby="prebuiltRules">
+				<a class="dropdown-item" [href]="getAdaptedHtml()" target="_blank">Html with adaptations</a>
+				<a class="dropdown-item" [href]="getAdaptedDocxUrl()" target="_blank">Docx with adaptations</a>
+				<a class="dropdown-item" [href]="getAdaptedPdf()" target="_blank">PDF with adaptations</a>
+				<a class="dropdown-item" [href]="getHtml()" target="_blank">Original Hml</a>
+				<a class="dropdown-item" [href]="getDocxUrl()" target="_blank">Original docx</a>
+			</div>
+		</div>
 	</div>			
 </div>

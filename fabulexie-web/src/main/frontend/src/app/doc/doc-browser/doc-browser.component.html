@@ -37,39 +37,36 @@
 	<div class="col">
 	
 		<table class="fileBrowser">
-			<tr *ngFor="let dir of docService.subDirs; let i = index" (click)="moveTo(dir)" class="directory">
-				<td>
+			<tr *ngFor="let dir of docService.subDirs; let i = index" class="directory">
+				<td (click)="moveTo(dir)">
 					<i class="browserIcon fas fa-folder"></i>
 				</td>
-				<td><b>{{dir.name}}</b></td>
+				<td (click)="moveTo(dir)"><b>{{dir.name}}</b></td>
+				<td>
+					<a class="btn btn-danger btn-icon-split" (click)="setCurrentDir(i)" data-toggle="modal" data-target="#deleteDirModal">
+						<span class="icon text-white-50">
+						  <i class="fas fa-trash"></i>
+						</span>
+						<span class="text text-white"> Delete</span>
+					</a>
+				</td>
 			</tr>
 		
-			<tr *ngFor="let doc of docService.docs; let i = index" class="file" (click)="openFile(doc)">
-				<td>
+			<tr *ngFor="let doc of docService.docs; let i = index" class="file" >
+				<td (click)="openFile(doc)">
 					<img [src]="getCover(doc)" class="fileCover"/>
 				</td>
-				<td ><b *ngIf="doc.title">{{doc.title}}</b><b *ngIf="!doc.title">{{doc.name}}</b><br/>
+				<td (click)="openFile(doc)"><b *ngIf="doc.title">{{doc.title}}</b><b *ngIf="!doc.title">{{doc.name}}</b><br/>
 					{{doc.description}}
 				</td>
-				<!--
-				<td>	
-					<button type="button" class="btn btn-primary btn-circle" (click)="loadAdaptedHtml(doc.accessToken)">
-						<i class="fas fa-book-reader"></i>
-					</button>
-				</td><td>	
-					<a class="btn btn-primary btn-circle" [href]="getAdaptedDocxUrl(doc.accessToken)" target="_blank">
-						<i class="fas fa-file-word"></i>
-					</a>
-				</td><td>	
-					<button type="button" class="btn btn-secondary btn-circle" (click)="loadHtml(doc.accessToken)">
-						<i class="fas fa-book-reader"></i>
-					</button>
-				</td><td>	
-					<a class="btn btn-secondary btn-circle" [href]="getDocxUrl(doc.accessToken)" target="_blank">
-						<i class="fas fa-file-word"></i>
+				<td>
+					<a class="btn btn-danger btn-icon-split" (click)="setCurrentDoc(i)" data-toggle="modal" data-target="#deleteDocModal">
+						<span class="icon text-white-50">
+						  <i class="fas fa-trash"></i>
+						</span>
+						<span class="text text-white"> Delete</span>
 					</a>
 				</td>
-				-->
 			</tr>
 		</table>
 		</div>
@@ -182,6 +179,59 @@
 						<i class="far fa-times-circle"></i>
 					</span>
 					<span class="text"> Close</span>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteDocModal" tabindex="-1" role="dialog" aria-labelledby="Delete confirmation" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete document</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+            </div>
+            <div class="modal-body" *ngIf="currentDoc!=null">
+                Are you sure you want to delete the document :<br>
+				<b>{{currentDoc.name}}</b>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger btn-icon-split" (click)="deleteDoc()" data-dismiss="modal">
+					<span class="icon text-white-50">
+						 <i class="fas fa-trash"></i>
+					</span>
+					<span class="text"> Delete</span>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteDirModal" tabindex="-1" role="dialog" aria-labelledby="Delete confirmation" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete directory</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+            </div>
+            <div class="modal-body" *ngIf="currentDir!=null">
+                Are you sure you want to delete the directory :<br>
+				<b>{{currentDir.name}}</b>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger btn-icon-split" (click)="deleteDir()" data-dismiss="modal">
+					<span class="icon text-white-50">
+						 <i class="fas fa-trash"></i>
+					</span>
+					<span class="text"> Delete</span>
 				</button>
             </div>
         </div>

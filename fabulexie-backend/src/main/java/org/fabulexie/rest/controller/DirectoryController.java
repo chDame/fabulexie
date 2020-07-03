@@ -19,13 +19,16 @@
 package org.fabulexie.rest.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.fabulexie.model.document.AccessEnum;
 import org.fabulexie.model.document.Directory;
 import org.fabulexie.model.document.Space;
 import org.fabulexie.model.document.SpaceAccess;
 import org.fabulexie.security.FabulexiePrincipal;
+import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.security.annotation.SelfAccessOrAdmin;
 import org.fabulexie.service.DirectoryService;
 import org.fabulexie.service.SpaceService;
@@ -34,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -106,6 +110,21 @@ public class DirectoryController extends AbstractController {
 
         	return directoryService.create(dir);
 	    }
+
+		@DeleteMapping(value = "/users/{userId}/spaces/{spaceId}/directory/{id}")
+		@IsAdmin
+		public Map<String, Object> deleteDir(@PathVariable Long userId, @PathVariable Long spaceId, 
+	    		@PathVariable Long id) {
+			spaceService.checkSpaceAccess(userId, spaceId, Arrays.asList(AccessEnum.WRITER, AccessEnum.ADMIN));
+			Map<String, Object> ret = new HashMap<>();
+			String status = "error";
+
+			if (directoryService.delete(id)) {
+				status = "success";
+			}
+			ret.put("status", status);
+			return ret;
+		}
 		
 		@Override
 		public Logger getLogger() {

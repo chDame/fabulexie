@@ -57,6 +57,7 @@ import org.fabulexie.model.document.Document;
 import org.fabulexie.model.document.Space;
 import org.fabulexie.rest.controller.model.RestfulList;
 import org.fabulexie.security.FabulexiePrincipal;
+import org.fabulexie.security.annotation.IsAdmin;
 import org.fabulexie.security.annotation.IsAuthenticated;
 import org.fabulexie.security.annotation.SelfAccessOrAdmin;
 import org.fabulexie.service.DocumentService;
@@ -72,6 +73,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -296,6 +298,21 @@ public class DocumentController extends AbstractController {
 	            throw new TechnicalException("Document upload failed", e);
 	        }
 	    }
+
+		@DeleteMapping(value = "/users/{userId}/spaces/{spaceId}/documents/{id}")
+		@IsAdmin
+		public Map<String, Object> delete(@PathVariable Long userId, @PathVariable Long spaceId, 
+	    		@PathVariable Long id) {
+			spaceService.checkSpaceAccess(userId, spaceId, Arrays.asList(AccessEnum.WRITER, AccessEnum.ADMIN));
+			Map<String, Object> ret = new HashMap<>();
+			String status = "error";
+
+			if (documentService.delete(id)) {
+				status = "success";
+			}
+			ret.put("status", status);
+			return ret;
+		}
 		
 		@GetMapping(value = "/documents/{docToken}/html", produces = "text/html")
 		public String getHtml(@PathVariable String docToken) {
