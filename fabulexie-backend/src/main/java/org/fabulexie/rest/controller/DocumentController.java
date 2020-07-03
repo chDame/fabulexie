@@ -462,8 +462,14 @@ public class DocumentController extends AbstractController {
 				User connected = userService.getById(userId);
 				UserConfig ac = connected.getActiveConfig();
 				String adapted = HtmlParser.transformHtml(html, ac, width, height);
+				String openDysLink = "";
+				if (ac.getOpenDys()!=null && ac.getOpenDys()) {
+					openDysLink="<link href='/openDys/opendys.css' rel='stylesheet'>";
+				}
 				return adapted
-						.replace("<head>", "<head><style type=\"text/css\">@page {\n" + 
+						.replace("<head>", "<head>"
+								+openDysLink
+								+ "<style type=\"text/css\">@page {\n" + 
 						"	size: "+width+"px "+height+"px;\n" + 
 						"	margin: 0;\n" + 
 						"} body,html {margin: 0;\n" + 
