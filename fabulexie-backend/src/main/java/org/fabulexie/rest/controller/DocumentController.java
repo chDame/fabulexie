@@ -369,7 +369,13 @@ public class DocumentController extends AbstractController {
 				String html = FileUtils.readFileToString(getHtmlFile(docId), "UTF-8");
 				User connected = userService.getById(userId);
 				UserConfig ac = connected.getActiveConfig();
-				return HtmlParser.transformHtml(html, ac, false);
+				String adapted =  HtmlParser.transformHtml(html, ac, false);
+			
+				if (ac.getOpenDys()!=null && ac.getOpenDys()) {
+					adapted = adapted
+					.replace("<head>", "<head><link href='/openDys/opendys.css' rel='stylesheet'>");
+				}
+				return adapted;
 			} catch (IOException e) {
 				throw new TechnicalException("Document could not be adapted", e);
 			}	
