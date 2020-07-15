@@ -2,6 +2,6 @@ export const environment = {
   production: true,
   name: "prod",
   settings: {
-    backend: ""
+    backend: "https://back.fabulexie.fr"
   }
 };

@@ -1,5 +1,8 @@
 import { SafeUrl} from '@angular/platform-browser';
 
+export class RestUser {
+	user: User;
+}
 export class User {
     id: number;
     email: string;

@@ -56,7 +56,7 @@ export class UserListComponent implements OnInit {
 		let userId = this.users[index].id;
 		if (userId!=this.authService.user.id) {
 			this.userService.valid(this.users[index]).subscribe(data => {
-				this.users[index] = data;
+				this.users[index] = data.user;
 			});
 		}
 	}
@@ -65,7 +65,7 @@ export class UserListComponent implements OnInit {
 		let userId = this.users[index].id;
 		if (userId!=this.authService.user.id) {
 			this.userService.admin(this.users[index]).subscribe(data => {
-				this.users[index] = data;
+				this.users[index] = data.user;
 			});
 		}
 	}
@@ -74,7 +74,7 @@ export class UserListComponent implements OnInit {
 		let userId = this.users[index].id;
 		if (userId!=this.authService.user.id) {
 			this.userService.tutor(this.users[index]).subscribe(data => {
-				this.users[index] = data;
+				this.users[index] = data.user;
 			});
 		}
 	}
@@ -83,7 +83,7 @@ export class UserListComponent implements OnInit {
 		let userId = this.users[index].id;
 		if (userId!=this.authService.user.id) {
 			this.userService.unlock(this.users[index]).subscribe(data => {
-				this.users[index] = data;
+				this.users[index] = data.user;
 			});
 		}
 	}

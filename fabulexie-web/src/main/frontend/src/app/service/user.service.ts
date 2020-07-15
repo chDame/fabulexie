@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { User, UserConfig } from '../model/user';
+import { RestUser, User, UserConfig } from '../model/user';
  
 @Injectable()
 export class UserService {
@@ -30,48 +30,48 @@ export class UserService {
 		return this.http.post<User>(environment.settings.backend+'/users', user, {headers: this.authService.myHttpBodyheaders});
 	}
 	
-	public valid(user:User): Observable<User> {
+	public valid(user:User): Observable<RestUser> {
 		let u = new User();
 		u.id = user.id;
 		u.valid = !user.valid;
 		return this.patch(u);
 	}
 	
-	public tutor(user:User): Observable<User> {
+	public tutor(user:User): Observable<RestUser> {
 		let u = new User();
 		u.id = user.id;
 		u.tutor = !user.tutor;
 		return this.patch(u);
 	}
 	
-	public admin(user:User): Observable<User> {
+	public admin(user:User): Observable<RestUser> {
 		let u = new User();
 		u.id = user.id;
 		u.admin = !user.admin;
 		return this.patch(u);
 	}
 	
-	public unlock(user:User): Observable<User> {
+	public unlock(user:User): Observable<RestUser> {
 		let u = new User();
 		u.id = user.id;
 		u.locked = false;
 		return this.patch(u);
 	}
 	
-	public assignConfig(user: User, config: UserConfig): Observable<User> {
+	public assignConfig(user: User, config: UserConfig): Observable<RestUser> {
 		let u = new User();
 		u.id = user.id;
 		u.activeConfig = config;
 		return this.patch(u);
 	}
 	
-	public updateUser(): Observable<User> {
+	public updateUser(): Observable<RestUser> {
 		return this.patch(this.userToUpdate);
 	}
 	
-	public patch(user:User): Observable<User> {
+	public patch(user:User): Observable<RestUser> {
 		console.log('pouet');
-		return this.http.patch<User>(environment.settings.backend+'/users/'+user.id, user, {headers: this.authService.myHttpBodyheaders});
+		return this.http.patch<RestUser>(environment.settings.backend+'/users/'+user.id, user, {headers: this.authService.myHttpBodyheaders});
 	}
 	
 	public delete(userId:number): Observable<any> {

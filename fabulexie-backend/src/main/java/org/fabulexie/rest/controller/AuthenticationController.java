@@ -154,8 +154,8 @@ public class AuthenticationController extends AbstractController {
 				u.setTutor(invitation.getRealtor());
 				u.setValid(true);
 				userService.create(u);
-				spaceService.grantPublicSpaceAccess(u);
 				invitation.setConfirmed(true);
+				spaceService.grantPublicSpaceAccess(u);
 				invitationService.update(invitation);
 				BeanUtils.copyProperties(u, authUser);
 				//since it's a valid invitation, the account is valid and we can autologin the user
@@ -167,6 +167,7 @@ public class AuthenticationController extends AbstractController {
 		u.setValid(false);
 		u.setAdmin(false);
 		userService.create(u);
+		spaceService.grantPublicSpaceAccess(u);
 		String codeValidation = authenticationService.generateCodeForPwdChange(u.getEmail());
 		mailService.mailValidRegistration(u, codeValidation, Locale.ENGLISH);
 
