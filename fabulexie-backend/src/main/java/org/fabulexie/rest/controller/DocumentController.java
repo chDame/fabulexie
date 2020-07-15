@@ -170,24 +170,14 @@ public class DocumentController extends AbstractController {
 		
 		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/documents")
 		@SelfAccessOrAdmin
-	    public List<Document> directories(@PathVariable Long userId, @PathVariable Long spaceId) {
-			spaceService.checkSpaceAccess(userId, spaceId);
-	
-	        List<Document> docs = documentService.findByParentIdAndSpaceId(null, spaceId);
-	   
-	        for(Document doc : docs) {
-				doc.setAccessToken(UUID.randomUUID().toString());
-				docTokens.put(doc.getAccessToken(), doc.getId());
-				spaceTokens.put(doc.getAccessToken(), spaceId);
-				userTokens.put(doc.getAccessToken(), userId);
-			}
-	        return docs;
+	    public List<Document> listDocuments(@PathVariable Long userId, @PathVariable Long spaceId) {
+			return listDirDocuments(userId, spaceId, null);
 		}
 		
 		
 		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/directories/{parentId}/documents")
 		@SelfAccessOrAdmin
-	    public List<Document> SubDirectories(@PathVariable Long userId, @PathVariable Long spaceId, @PathVariable Long parentId) {
+	    public List<Document> listDirDocuments(@PathVariable Long userId, @PathVariable Long spaceId, @PathVariable Long parentId) {
 			spaceService.checkSpaceAccess(userId, spaceId);
 			
 			List<Document> docs = documentService.findByParentIdAndSpaceId(parentId, spaceId);
@@ -201,6 +191,27 @@ public class DocumentController extends AbstractController {
 	        return docs; 
 	    }
 		
+		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/documents/{id}")
+		@SelfAccessOrAdmin
+	    public Document getDocument(@PathVariable Long userId, @PathVariable Long spaceId, @PathVariable Long id) {
+			spaceService.checkSpaceAccess(userId, spaceId);
+	
+	        Document doc = documentService.findByIdAndSpaceId(id, spaceId);
+	   
+	        doc.setAccessToken(UUID.randomUUID().toString());
+			docTokens.put(doc.getAccessToken(), doc.getId());
+			spaceTokens.put(doc.getAccessToken(), spaceId);
+			userTokens.put(doc.getAccessToken(), userId);
+
+	        return doc;
+		}
+		
+		
+		@GetMapping(value = "/users/{userId}/spaces/{spaceId}/directories/{parentId}/documents/{id}")
+		@SelfAccessOrAdmin
+	    public Document getDirDocument(@PathVariable Long userId, @PathVariable Long spaceId, @PathVariable Long parentId, @PathVariable Long id) {
+			return getDocument(userId, spaceId, id);
+	    }
 		
 		private Document buildDoc(String name, String title, String description, String author, Long ownerId, Long spaceId) {
 			String displayedName = name;

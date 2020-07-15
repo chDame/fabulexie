@@ -29,4 +29,6 @@ import org.fabulexie.persistence.common.FabulexieRepository;
 public interface DocumentRepository extends FabulexieRepository<Document> {
 
 	List<Document> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
+
+	Document findByIdAndSpaceId(Long id, Long spaceId);
 }
