@@ -82,7 +82,7 @@ public final class SecurityUtils {
 				.setSubject(user.getEmail())
 				.claim("principal", principal)
 				.claim("authorities",grantedAuthorities)
-				.setExpiration(new Date(System.currentTimeMillis() + 86400000))
+				.setExpiration(new Date(System.currentTimeMillis() + 5*86400000))
 				.signWith(SignatureAlgorithm.HS512,
 						SECRET_KEY.getBytes()).compact();
 

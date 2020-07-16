@@ -18,7 +18,10 @@
  */
 package org.fabulexie.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
@@ -48,8 +51,27 @@ public class UserConfigService extends AbstractService<UserConfig> {
 		return userConfigRepository.findByUserId(userId);
 	}
 
+	private UserConfig clean(UserConfig config) {
+		Set<Character> used = new HashSet<>();
+		used.add(' ');
+		List<LetterRule> rules = new ArrayList<>();
+		for(int i = config.getLetterRules().size()-1;i>=0;i--) {
+			LetterRule rule = config.getLetterRules().get(i);
+			rule.getLetters().removeAll(used);
+			if (!rule.getLetters().isEmpty()) {
+				rules.add(0,rule);
+				used.addAll(rule.getLetters());
+			} else if (rule.getId()!=null) {
+				letterRuleRepository.delete(rule);
+			}
+		}
+		config.setLetterRules(rules);
+		return config;
+	}
+	
 	@Override
 	public UserConfig create(UserConfig config) {
+		config = clean(config);
 		userConfigRepository.save(config);
 		if (config.getLetterRules()!=null) {
 			for(LetterRule rule : config.getLetterRules()) {
@@ -61,6 +83,7 @@ public class UserConfigService extends AbstractService<UserConfig> {
 	}
 	@Override
 	public UserConfig update(UserConfig config) {
+		config = clean(config);
 		userConfigRepository.save(config);
 		if (config.getLetterRules()!=null) {
 			List<LetterRule> delete = letterRuleRepository.findByConfig_id(config.getId());

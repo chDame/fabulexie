@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
+import org.apache.commons.compress.utils.Sets;
 import org.fabulexie.core.exception.ConversionException;
 import org.fabulexie.core.utils.DocxConverter;
 import org.fabulexie.model.UserConfig;
@@ -51,7 +52,7 @@ public class DocxConverterTests {
 		lr.setUpperCase(true);
 		lr.setUnderlined(true);
 		lr.setItalic(true);
-		lr.setLetters(Lists.newArrayList('e'));
+		lr.setLetters(Sets.newHashSet('e'));
 		uc.setLetterRules(Lists.newArrayList(lr));
 		uc.setOpenDys(true);
 		File f = DocxConverter.adaptDocument(getPath("cyranoShort.html"), getPath("cyrano.docx"), uc);

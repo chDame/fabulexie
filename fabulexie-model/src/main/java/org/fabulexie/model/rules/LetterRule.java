@@ -18,7 +18,7 @@
  */
 package org.fabulexie.model.rules;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.fabulexie.converter.CharListConverter;
+import org.fabulexie.converter.CharSetConverter;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.base.Rule;
 
@@ -45,8 +45,8 @@ public class LetterRule extends Rule {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@Convert(converter = CharListConverter.class)
-	private List<Character> letters;
+	@Convert(converter = CharSetConverter.class)
+	private Set<Character> letters;
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -61,11 +61,11 @@ public class LetterRule extends Rule {
 		this.id = id;
 	}
 	
-	public List<Character> getLetters() {
+	public Set<Character> getLetters() {
 		return letters;
 	}
 
-	public void setLetters(List<Character> letters) {
+	public void setLetters(Set<Character> letters) {
 		this.letters = letters;
 	}
 

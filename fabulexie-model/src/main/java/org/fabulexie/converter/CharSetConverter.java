@@ -18,7 +18,7 @@
  */
 package org.fabulexie.converter;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.AttributeConverter;
@@ -27,16 +27,16 @@ import javax.persistence.Converter;
  * @author christophe.dame
  */
 @Converter
-public class CharListConverter implements AttributeConverter<List<Character>, String> {
+public class CharSetConverter implements AttributeConverter<Set<Character>, String> {
 
 	@Override
-	    public String convertToDatabaseColumn(List<Character> chars) {
+	    public String convertToDatabaseColumn(Set<Character> chars) {
 	        return chars.stream().map(String::valueOf).collect(Collectors.joining());
 	    }
 
 	    @Override
-	    public List<Character> convertToEntityAttribute(String string) { 
-	    	return string.chars().mapToObj(e -> (char)e).collect(Collectors.toList()); 
+	    public Set<Character> convertToEntityAttribute(String string) { 
+	    	return string.chars().mapToObj(e -> (char)e).collect(Collectors.toSet()); 
 
 	    } 
 	}
