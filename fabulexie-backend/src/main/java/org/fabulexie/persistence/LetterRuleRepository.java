@@ -20,7 +20,6 @@ package org.fabulexie.persistence;
 
 import java.util.List;
 
-import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
 import org.fabulexie.persistence.common.FabulexieRepository;
 

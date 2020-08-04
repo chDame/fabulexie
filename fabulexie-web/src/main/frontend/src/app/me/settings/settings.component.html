@@ -99,13 +99,82 @@
 								</select>
 								<span class="floating-label">Line spacing</span>
 							</div>
+							
+							<div class="card shadow mb-4" *ngIf="userConfig.syllabeRule">
+								<a href="#syllabeRule" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false">
+									<h6 class="m-0 font-weight-bold text-primary">Syllabe</h6>
+								</a>
+								<div class="collapse" id="syllabeRule">
+									<div class="card-body">
+									
+										<div class="form-group custom-control custom-checkbox">
+										  <input type="checkbox" class="custom-control-input" id="syllabeEnabled" [(ngModel)]="userConfig.syllabeRule.enabled" 
+												name="syllabeRuleEnabled">
+										  <label class="custom-control-label" for="syllabeEnabled">Enabled</label>
+										</div>
+										<div class="form-group">
+					
+											<input type="text" [(ngModel)]="userConfig.syllabeRule.separator" 
+												class="form-control"
+												id="syllabeSeparator"
+												aria-describedby="Letters are required"
+												name="syllabeSeparator"
+												placeholder="Enter letters..."
+												required #syllabeSeparator="ngModel">
+											<span class="floating-label">letters</span>
+											<div *ngIf="syllabeSeparator.dirty && syllabeSeparator.invalid" class="alert alert-danger">Separator is required</div>
+										</div>
+										
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [ngClass]="userConfig.syllabeRule.bold?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'bold')">
+													<i class="fas fa-bold"></i>
+												</button>
+												Bold
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule " [ngClass]="userConfig.syllabeRule.italic?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'italic')">
+													<i class="fas fa-italic"></i>
+												</button>
+												Italic
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule " [ngClass]="userConfig.syllabeRule.underlined?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'underlined')">
+													<i class="fas fa-underline"></i>
+												</button>
+												Underlined
+											</div>
+					
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [ngClass]="userConfig.syllabeRule.upperCase?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'upperCase')">
+													<span><u>A</u>a</span>
+												</button>
+												Uppercase
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [(colorPicker)]="userConfig.syllabeRule.color">
+													<i class="fas fa-pen-fancy" [style.color]="userConfig.syllabeRule.color"></i>
+												</button>
+												text color
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [style.color]="userConfig.syllabeRule.color" [style.background]="userConfig.syllabeRule.backgroundColor" [(colorPicker)]="userConfig.syllabeRule.backgroundColor">
+													<i class="fas fa-fill"></i>
+												</button>
+												Background color
+											</div>
+									</div>
+								</div>
+							</div>
+
+						
 							<div class="card shadow mb-4" *ngFor="let rule of userConfig.letterRules; let i = index">
 								<a href="#letterRule{{i}}" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true">
 									<h6 class="m-0 font-weight-bold text-primary">Letter rule {{rule.lettersString}}</h6>
 								</a>
-								<div class="collapse show" id="letterRule{{i}}">
+								<div class="collapse" id="letterRule{{i}}">
 									<div class="card-body">
-										<div class="form-group">
+										<div class="input-group form-group">
+					
 											<input type="text" [(ngModel)]="rule.lettersString" 
 												class="form-control"
 												id="inputLetters{{i}}"
@@ -114,36 +183,58 @@
 												placeholder="Enter letters..."
 												required #inputLetters="ngModel">
 												<span class="floating-label">letters</span>
-											<div *ngIf="inputLetters.dirty && inputLetters.invalid" class="alert alert-danger">Letters are required</div>
+												<div *ngIf="inputLetters.dirty && inputLetters.invalid" class="alert alert-danger">Letters are required</div>
+									
+											<div class="input-group-append">
+												<button type="button" class="btn btn-danger" (click)="deleteRule(i)">
+													<i class="fas fa-trash"></i>
+												</button>
+											</div>
 										</div>
-										<div class=" btn-group mb-2 ml-1">
-											<button class="btn btn-primary" [ngClass]="rule.bold?'active':''" (click)="toggleRule(rule, 'bold')">
-												<i class="fas fa-bold"></i>
-											</button>
-											<button class="btn btn-primary " [ngClass]="rule.italic?'active':''" (click)="toggleRule(rule, 'italic')">
-												<i class="fas fa-italic"></i>
-											</button>
-											<button class="btn btn-primary " [ngClass]="rule.underlined?'active':''" (click)="toggleRule(rule, 'underlined')">
-												<i class="fas fa-underline"></i>
-											</button>
-											<button class="btn btn-primary" [ngClass]="rule.upperCase?'active':''" (click)="toggleRule(rule, 'upperCase')">
-												UPPERCASE
-											</button>
-											<button class="btn btn-default" [style.color]="rule.color" [style.background]="rule.backgroundColor" [(colorPicker)]="rule.color">
-												<i class="fas fa-pen-fancy"></i>
-											</button>
-											<button class="btn btn-default" [style.color]="rule.color" [style.background]="rule.backgroundColor" [(colorPicker)]="rule.backgroundColor">
-												<i class="fas fa-fill"></i>
-											</button>
-											<button type="button" class="btn btn-danger" (click)="deleteRule(i)">
-												<i class="fas fa-trash"></i>
-											</button>
-										</div>
+										
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [ngClass]="rule.bold?'active':''" (click)="toggleRule(rule, 'bold')">
+													<i class="fas fa-bold"></i>
+												</button>
+												Bold
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule " [ngClass]="rule.italic?'active':''" (click)="toggleRule(rule, 'italic')">
+													<i class="fas fa-italic"></i>
+												</button>
+												Italic
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule " [ngClass]="rule.underlined?'active':''" (click)="toggleRule(rule, 'underlined')">
+													<i class="fas fa-underline"></i>
+												</button>
+												Underlined
+											</div>
+					
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [ngClass]="rule.upperCase?'active':''" (click)="toggleRule(rule, 'upperCase')">
+													<span><u>A</u>a</span>
+												</button>
+												Uppercase
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [(colorPicker)]="rule.color">
+													<i class="fas fa-pen-fancy" [style.color]="rule.color"></i>
+												</button>
+												text color
+											</div>
+											<div class="ruleStyleBlock">
+												<button class="btn btnRule" [style.color]="rule.color" [style.background]="rule.backgroundColor" [(colorPicker)]="rule.backgroundColor">
+													<i class="fas fa-fill"></i>
+												</button>
+												Background color
+											</div>
 									</div>
 								</div>
 							</div>
 
 						</div>
+						
 						<div class="col col-lg-5 col-md-4 col-xs-12">
 							<a class="btn btn-primary btn-icon-split" (click)="preview()">
 								<span class="icon text-white-50">

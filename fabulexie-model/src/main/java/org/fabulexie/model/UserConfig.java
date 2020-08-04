@@ -20,6 +20,7 @@ package org.fabulexie.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.fabulexie.model.rules.LetterRule;
 import org.fabulexie.model.rules.SyllabeRule;
@@ -56,9 +58,13 @@ public class UserConfig extends BaseEntity<Long> {
 
 	private Integer extraWordSpace;
 	
-	private SyllabeRule syllabeRule;
+	@OneToOne(mappedBy="config", 
+			fetch = FetchType.EAGER,
+		    orphanRemoval = true,
+		    cascade = CascadeType.ALL)
+    private SyllabeRule syllabeRule;
 	
-	@OneToMany(mappedBy="config",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="config", fetch = FetchType.EAGER)
     private List<LetterRule> letterRules;
     
 	public Long getId() {

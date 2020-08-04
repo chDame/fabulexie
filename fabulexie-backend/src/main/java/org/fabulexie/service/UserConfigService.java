@@ -23,8 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
+import org.fabulexie.model.rules.SyllabeRule;
 import org.fabulexie.persistence.LetterRuleRepository;
 import org.fabulexie.persistence.UserConfigRepository;
 import org.fabulexie.service.common.AbstractService;
@@ -69,9 +71,20 @@ public class UserConfigService extends AbstractService<UserConfig> {
 		return config;
 	}
 	
+	private void checkSyllabeRule(UserConfig config) {
+		if (config.getSyllabeRule()==null) {
+			config.setSyllabeRule(new SyllabeRule());
+		}
+		if (StringUtils.isBlank(config.getSyllabeRule().getSeparator())) {
+			config.getSyllabeRule().setSeparator("/");
+		}
+		config.getSyllabeRule().setConfig(config);
+	}
+	
 	@Override
 	public UserConfig create(UserConfig config) {
 		config = clean(config);
+		checkSyllabeRule(config);
 		userConfigRepository.save(config);
 		if (config.getLetterRules()!=null) {
 			for(LetterRule rule : config.getLetterRules()) {
@@ -79,11 +92,13 @@ public class UserConfigService extends AbstractService<UserConfig> {
 				letterRuleRepository.save(rule);
 			}
 		}
+		
 		return config;
 	}
 	@Override
 	public UserConfig update(UserConfig config) {
 		config = clean(config);
+		checkSyllabeRule(config);
 		userConfigRepository.save(config);
 		if (config.getLetterRules()!=null) {
 			List<LetterRule> delete = letterRuleRepository.findByConfig_id(config.getId());
@@ -99,6 +114,7 @@ public class UserConfigService extends AbstractService<UserConfig> {
 				letterRuleRepository.deleteById(rule.getId());
 			}
 		}
+
 		return config;
 	}
 

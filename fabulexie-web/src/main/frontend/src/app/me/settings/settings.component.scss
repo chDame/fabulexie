@@ -1,0 +1,30 @@
+@import "vars.scss";
+
+div.ruleStyleBlock {
+	width: 33%;
+	text-align:center;
+	display: inline-block;
+	
+	button.btnRule {
+		border-radius:24px;
+		width:48px;
+		height:48px;
+		border: 2px solid $primary;
+		display: block;
+		
+		&.active {
+			background-color: lighten($primary, 30%);
+		}
+		
+		margin: auto;
+		i {
+			color: $primary;
+		}
+		
+		span {
+			white-space: nowrap;
+			color: $primary;
+			font-weight: 600;
+		}
+	}
+}

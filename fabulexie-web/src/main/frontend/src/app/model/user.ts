@@ -28,10 +28,11 @@ export class UserConfig {
 	openDys: boolean;
 	extraLineSpace: number;
 	extraWordSpace: number;
+	syllabeRule: SyllabeRule;
 }
 
 export class Rule {
-	
+    id: number;
 	name: string;
 	color: string;
 	backgroundColor: string;
@@ -42,8 +43,12 @@ export class Rule {
 }
 
 export class LetterRule extends Rule {
-    id: number;
     name: string;
 	letters: string[];	
 	lettersString: string;
+}
+
+export class SyllabeRule extends Rule {
+    enabled:boolean;
+	separator: string;
 }

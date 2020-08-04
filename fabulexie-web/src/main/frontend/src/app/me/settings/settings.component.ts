@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { UserConfigService } from '../../service/user-config.service';
 import { UserService } from '../../service/user.service';
-import { User, Rule, UserConfig, LetterRule } from '../../model/user';
+import { User, Rule, SyllabeRule, UserConfig, LetterRule } from '../../model/user';
 import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 @Component({
@@ -31,6 +31,11 @@ export class SettingsComponent implements OnInit {
   public newUserConfig() {
 	this.userConfig = new UserConfig();
 	this.userConfig.letterRules = [];
+	this.userConfig.syllabeRule = new SyllabeRule();
+	this.userConfig.syllabeRule.separator = '|';
+	this.userConfig.syllabeRule.color = '#990000';
+	this.userConfig.syllabeRule.bold=true;
+	this.userConfig.syllabeRule.italic=true;
 	this.userConfig.name = 'My new profile';
   }	  
   
