@@ -35,7 +35,7 @@ public class SyllabeRule extends Rule {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	private Boolean enabled;
+	private boolean enabled;
 	
 	private String separator;
 
@@ -55,7 +55,7 @@ public class SyllabeRule extends Rule {
 		this.separator = separator;
 	}
 
-	public Boolean getEnabled() {
+	public Boolean isEnabled() {
 		return enabled;
 	}
 

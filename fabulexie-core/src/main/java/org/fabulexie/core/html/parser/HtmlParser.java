@@ -140,7 +140,7 @@ public class HtmlParser {
 		}
 
 	
-		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().getEnabled()) {
+		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().isEnabled()) {
 			customStyles.append(RulesUtils.getSyllabeClass(ac.getSyllabeRule()));
 			doc = applySyllabes(doc, ac);
 		}
