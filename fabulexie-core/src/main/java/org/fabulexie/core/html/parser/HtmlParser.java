@@ -22,8 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.fabulexie.core.utils.RulesUtils;
+import org.fabulexie.core.utils.SyllabeUtils;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
 import org.jsoup.Jsoup;
@@ -136,13 +138,19 @@ public class HtmlParser {
 			customStyles.append(RulesUtils.getStyledClass(rule, i));
 			applyRules(doc, rule, i++);
 		}
+
+	
+		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().getEnabled()) {
+			customStyles.append(RulesUtils.getSyllabeClass(ac.getSyllabeRule()));
+			doc = applySyllabes(doc, ac);
+		}
+		
 		if (ac.getExtraWordSpace()!=null && ac.getExtraWordSpace()>0) {
 			customStyles.append("html, body { word-spacing: "+ac.getExtraWordSpace()+"em; }");
 		}
 		customStyles.append("--></style>");
-		doc.head().append(customStyles.toString());
-	
 		
+		doc.head().append(customStyles.toString());
 		
 		return doc;
 	}
@@ -172,5 +180,70 @@ public class HtmlParser {
 			Node parsedBloc = Jsoup.parse(RulesUtils.apply(text, rule, index), "", Parser.xmlParser());
 			node.replaceWith(parsedBloc.childNode(0));
 		}
+	}
+	
+	private static Document applySyllabes(Document doc, UserConfig uc) {
+		//prepare separator
+		String separator = "<span class='separator'>"+uc.getSyllabeRule().getSeparator()+"</span>";
+		//compute syllabes indexes
+		String bruteText = doc.text();
+		TreeSet<Integer> syllabeSeparator = new TreeSet<>();
+
+		for(int i=bruteText.length()-4; i>+0;) {
+			String search = bruteText.substring(i, i+4);
+			int sep = SyllabeUtils.cachedCeisure(search);
+			if (sep>0) {
+				syllabeSeparator.add(i+sep);
+				i--;
+			} else {
+				i--;
+			}
+		}
+
+		applySyllabes(doc, syllabeSeparator, 0, bruteText);
+		
+		Document newDoc = Jsoup.parse(doc.outerHtml().replace("¤¤", separator));
+		newDoc.outputSettings().syntax( Document.OutputSettings.Syntax.xml);
+		return newDoc;
+	}
+	
+	private static int applySyllabes(Element paragraph, TreeSet<Integer> syllabeSeparator, int idx, String simpleText) {
+		List<Node> nodes = paragraph.childNodes();
+	
+		for (int i = 0; i < nodes.size() && !syllabeSeparator.isEmpty(); i++) {
+			Node node = nodes.get(i);
+			
+			if (node instanceof TextNode && !((TextNode) node).isBlank() && !((TextNode) node).text().trim().isEmpty()) {
+				idx = applySyllabesToTextNode((TextNode) node, syllabeSeparator, idx, simpleText);
+				
+			} else if (node instanceof Element) {
+				idx = applySyllabes((Element) node, syllabeSeparator, idx, simpleText);
+			}
+		}
+		return idx;
+	}
+
+	private static int applySyllabesToTextNode(TextNode node, TreeSet<Integer> syllabeSeparator, int idx, String simpleText) {
+		String text = ((TextNode) node).text();
+		//resynchro after empty lines
+		if (text.charAt(0)!=simpleText.charAt(idx)) {
+			idx = simpleText.indexOf(text.charAt(0), idx);
+		}
+		int length = text.length();
+		int endNode = idx + length;
+		int sep = syllabeSeparator.first();
+		int added = 0;
+		while (sep>=idx && sep <endNode) {
+			text = text.substring(0, sep+added-idx) + "¤¤" + text.substring(sep+added-idx);
+			added+=2;
+			node.text(text);
+			syllabeSeparator.pollFirst();
+			if (!syllabeSeparator.isEmpty()) {
+				sep  = syllabeSeparator.first();
+			} else {
+				sep = -1;
+			}
+		}
+		return endNode;
 	}
 }

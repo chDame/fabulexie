@@ -29,6 +29,7 @@ import org.fabulexie.core.exception.ConversionException;
 import org.fabulexie.core.utils.DocxConverter;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
+import org.fabulexie.model.rules.SyllabeRule;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
@@ -55,7 +56,11 @@ public class DocxConverterTests {
 		lr.setLetters(Sets.newHashSet('e'));
 		uc.setLetterRules(Lists.newArrayList(lr));
 		uc.setOpenDys(true);
-		File f = DocxConverter.adaptDocument(getPath("cyranoShort.html"), getPath("cyrano.docx"), uc);
+		uc.setSyllabeRule(new SyllabeRule());
+		uc.getSyllabeRule().setEnabled(true);
+		uc.getSyllabeRule().setSeparator("|");
+		uc.getSyllabeRule().setColor("#990000");
+		File f = DocxConverter.adaptDocument(getPath("cyrano.html"), getPath("cyrano.docx"), uc);
 		assertThat(f).isNotNull();
 	}
 	

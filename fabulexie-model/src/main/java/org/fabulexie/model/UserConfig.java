@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.fabulexie.model.rules.LetterRule;
+import org.fabulexie.model.rules.SyllabeRule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -54,6 +55,8 @@ public class UserConfig extends BaseEntity<Long> {
 	private Integer extraLineSpace;
 
 	private Integer extraWordSpace;
+	
+	private SyllabeRule syllabeRule;
 	
 	@OneToMany(mappedBy="config",fetch = FetchType.EAGER)
     private List<LetterRule> letterRules;
@@ -113,4 +116,14 @@ public class UserConfig extends BaseEntity<Long> {
 	public void setExtraWordSpace(Integer extraWordSpace) {
 		this.extraWordSpace = extraWordSpace;
 	}
+
+	public SyllabeRule getSyllabeRule() {
+		return syllabeRule;
+	}
+
+	public void setSyllabeRule(SyllabeRule syllabeRule) {
+		this.syllabeRule = syllabeRule;
+	}
+	
+	
 }

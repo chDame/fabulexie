@@ -19,8 +19,10 @@
 package org.fabulexie.core.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -65,6 +67,7 @@ import org.fabulexie.core.exception.ConversionException;
 import org.fabulexie.core.html.parser.HtmlParser;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.rules.LetterRule;
+import org.fabulexie.model.rules.base.Rule;
 
 
 
@@ -139,45 +142,57 @@ public class DocxConverter {
 
 		int i=0;
 		for(LetterRule rule : ac.getLetterRules()) {
-			Style style = new Style();
-			style.setType("character");
-			style.setStyleId("letterRule"+i);
-			style.setName(new Name());
-			style.getName().setVal("letterRule"+i);
+			Style style = createStyle(rule, "letterRule"+i);
+
 			style.getName().setParent(styles);
-		
-			style.setRPr(new RPr());
-			if (rule.isBold()) {
-				style.getRPr().setB(new BooleanDefaultTrue());
-			}
-			if (rule.isUnderlined()) {
-				style.getRPr().setU(new U());
-				style.getRPr().getU().setVal(UnderlineEnumeration.SINGLE);
-			}
-			if (rule.isItalic()) {
-				style.getRPr().setI(new BooleanDefaultTrue());
-			}
-			if (rule.isUpperCase()) {
-				style.getRPr().setCaps(new BooleanDefaultTrue());
-			}
-			if (rule.getColor()!=null) {
-				style.getRPr().setColor(new Color());
-				style.getRPr().getColor().setVal(rule.getColor().substring(1));
-			}
-			if (rule.getBackgroundColor()!=null) {
-				style.getRPr().setShd(new CTShd());
-				style.getRPr().getShd().setVal(STShd.CLEAR);
-				style.getRPr().getShd().setColor("auto");
-				style.getRPr().getShd().setFill(rule.getBackgroundColor().substring(1));
-			}
 			style.setParent(styles.getStyle());
-			style.setCustomStyle(true);
 			styles.getStyle().add(style);
 			i++;
+		}
+		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().getEnabled()) {
+			Style style = createStyle(ac.getSyllabeRule(), "separator");
+	
+			style.getName().setParent(styles);
+			style.setParent(styles.getStyle());
+			styles.getStyle().add(style);
 		}
 		return styles;
 	}
 	
+	private static Style createStyle(Rule rule, String name) {
+		Style style = new Style();
+		style.setType("character");
+		style.setStyleId(name);
+		style.setName(new Name());
+		style.getName().setVal(name);
+	
+		style.setRPr(new RPr());
+		if (rule.isBold()) {
+			style.getRPr().setB(new BooleanDefaultTrue());
+		}
+		if (rule.isUnderlined()) {
+			style.getRPr().setU(new U());
+			style.getRPr().getU().setVal(UnderlineEnumeration.SINGLE);
+		}
+		if (rule.isItalic()) {
+			style.getRPr().setI(new BooleanDefaultTrue());
+		}
+		if (rule.isUpperCase()) {
+			style.getRPr().setCaps(new BooleanDefaultTrue());
+		}
+		if (rule.getColor()!=null) {
+			style.getRPr().setColor(new Color());
+			style.getRPr().getColor().setVal(rule.getColor().substring(1));
+		}
+		if (rule.getBackgroundColor()!=null) {
+			style.getRPr().setShd(new CTShd());
+			style.getRPr().getShd().setVal(STShd.CLEAR);
+			style.getRPr().getShd().setColor("auto");
+			style.getRPr().getShd().setFill(rule.getBackgroundColor().substring(1));
+		}
+		style.setCustomStyle(true);
+		return style;
+	}
 	
 	private static Relationship createFooterPageNumPart(  
             WordprocessingMLPackage wordprocessingMLPackage,  

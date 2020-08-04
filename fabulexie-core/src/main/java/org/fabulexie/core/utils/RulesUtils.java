@@ -51,7 +51,15 @@ public class RulesUtils {
 	
 	public static String getStyledClass(Rule rule, int index) {
 		
-		StringBuilder sb = new StringBuilder(".letterRule"+index+" {");
+		return getStyledClass(rule, "letterRule"+index);
+	}
+	
+	public static String getSyllabeClass(Rule rule) {
+		return getStyledClass(rule, "separator");
+	}
+	public static String getStyledClass(Rule rule, String classname) {
+		
+		StringBuilder sb = new StringBuilder("."+classname+" {");
 		if (rule.getColor()!=null && !rule.getColor().equals("")) {
 			sb.append("color:").append(rule.getColor()).append(";");
 		}
