@@ -42,7 +42,7 @@
 					<i class="browserIcon fas fa-folder"></i>
 				</td>
 				<td (click)="moveTo(dir)"><b>{{dir.name}}</b></td>
-				<td>
+				<td *ngIf="docService.currentSpace.right!='READER'">
 					<a class="btn btn-danger btn-icon-split" (click)="setCurrentDir(i)" data-toggle="modal" data-target="#deleteDirModal">
 						<span class="icon text-white-50">
 						  <i class="fas fa-trash"></i>
@@ -59,7 +59,7 @@
 				<td (click)="openFile(doc)"><b *ngIf="doc.title">{{doc.title}}</b><b *ngIf="!doc.title">{{doc.name}}</b><br/>
 					{{doc.description}}
 				</td>
-				<td>
+				<td *ngIf="docService.currentSpace.right!='READER'">
 					<a class="btn btn-danger btn-icon-split" (click)="setCurrentDoc(i)" data-toggle="modal" data-target="#deleteDocModal">
 						<span class="icon text-white-50">
 						  <i class="fas fa-trash"></i>
