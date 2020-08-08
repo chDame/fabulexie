@@ -18,12 +18,14 @@
  */
 package org.fabulexie.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.document.AccessEnum;
 import org.fabulexie.model.document.Space;
 import org.fabulexie.model.document.SpaceAccess;
+import org.fabulexie.model.rules.SyllabeRule;
 import org.fabulexie.persistence.SpaceAccessRepository;
 import org.fabulexie.persistence.SpaceRepository;
 import org.fabulexie.persistence.UserConfigRepository;
@@ -85,6 +87,10 @@ public class UserService extends AbstractService<User> {
     
     private void addDefaultConfig(User user) {
     	UserConfig config = new UserConfig();
+    	config.setSyllabeRule(new SyllabeRule());
+    	config.getSyllabeRule().setSeparator("/");
+		config.getSyllabeRule().setConfig(config);
+		config.getSyllabeRule().setColor("#990000");
 		config.setUser(user);
 		config.setName("default");
 		userConfigRepository.save(config);
