@@ -37,6 +37,7 @@ public class Config extends BaseEntity<Long> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;  
 	private String googleClientId;
+	private String googleMobileClientId;
 	private String faceBookAppId;
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String faceBookAppSecret;
@@ -54,6 +55,12 @@ public class Config extends BaseEntity<Long> {
 	}
 	public void setGoogleClientId(String googleClientId) {
 		this.googleClientId = googleClientId;
+	}
+	public String getGoogleMobileClientId() {
+		return googleMobileClientId;
+	}
+	public void setGoogleMobileClientId(String googleMobileClientId) {
+		this.googleMobileClientId = googleMobileClientId;
 	}
 	public String getFaceBookAppId() {
 		return faceBookAppId;
