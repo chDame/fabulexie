@@ -1,5 +1,9 @@
-<IfModule mod_rewrite.c>
-	RewriteEngine On
+	Options +FollowSymlinks
+	RewriteEngine ON
+	RewriteOptions Inherit
+
+	RewriteCond %{SERVER_PORT} 80 
+		RewriteRule ^(.*)$ https://webapp.fabulexie.fr/$1 [R,L]
 
  	# -- Redirection to https (optional):
 	# If you need this, uncomment the next two commands
@@ -12,4 +16,3 @@
 
 	RewriteRule ^.*$ - [NC,L]
 	RewriteRule ^(.*) index.html [NC,L]
-</IfModule>

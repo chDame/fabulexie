@@ -18,7 +18,8 @@
  */
 package org.fabulexie.service;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.User;
 import org.fabulexie.model.UserConfig;
@@ -92,6 +93,7 @@ public class UserService extends AbstractService<User> {
 		config.getSyllabeRule().setConfig(config);
 		config.getSyllabeRule().setColor("#990000");
 		config.setUser(user);
+		config.setLetterRules(new ArrayList<>());
 		config.setName("default");
 		userConfigRepository.save(config);
 		user.setActiveConfig(config);
