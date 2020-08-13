@@ -1,0 +1,28 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+	<h1 class="h3 mb-0 text-gray-800">Space: {{docService.currentSpace.space.name}}</h1>
+</div>
+
+<div class="row justify-content-center">
+	<div class="col-lg-6 col-md-10 col-sm-12">
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<h6 class="m-0 font-weight-bold text-primary">Sharing options</h6>
+             </div>
+			<div class="card-body">
+				<div class="form-group custom-control custom-switch">
+					<input type="checkbox" class="custom-control-input" id="publishedChecked" [(ngModel)]="docService.currentSpace.space.published" name="publishedChecked">
+					<label class="custom-control-label" for="publishedChecked">Published</label>
+				</div>
+				<div class="alert alert-info" *ngIf="!docService.currentSpace.space.published">If space isn't published, no one can see this space except you.</div>
+				
+				<button class="btn btn-primary btn-icon-split">
+					<span class="icon text-white-50">
+						<i class="fas fa-share-alt"></i>
+					</span>
+					<span class="text"> Update sharing</span>
+				</button>
+					
+			</div>
+		</div>
+	</div>
+</div>

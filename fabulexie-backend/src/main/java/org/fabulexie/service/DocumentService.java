@@ -47,4 +47,12 @@ public class DocumentService extends AbstractService<Document> {
 	public Document findByIdAndSpaceId(Long id, Long spaceId) {
 		return documentRepository.findByIdAndSpaceId(id, spaceId);
 	}
+
+	public Long deleteBySpaceId(Long spaceId) {
+		return documentRepository.deleteBySpaceId(spaceId);
+	}
+	
+	public Long deleteByParentId(Long directoryId) {
+		return documentRepository.deleteByParentId(directoryId);
+	}
 }

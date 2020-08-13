@@ -29,4 +29,6 @@ import org.fabulexie.persistence.common.FabulexieRepository;
 public interface DirectoryRepository extends FabulexieRepository<Directory> {
 
 	List<Directory> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
+
+	Long deleteBySpaceId(Long spaceId);
 }

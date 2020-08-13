@@ -97,8 +97,13 @@ public class SpaceService extends AbstractService<Space>{
 		}
 	}
 
-	public void deleteSpaces(Long userId) {
+	public void deleteSpacesByUserId(Long userId) {
 		spaceAccessRepository.deleteByUserId(userId);
 		spaceRepository.deleteByOwnerId(userId);
+	}
+
+	public void deleteSpacesById(Long spaceId) {
+		spaceAccessRepository.deleteBySpaceId(spaceId);
+		spaceRepository.deleteById(spaceId);
 	}
 }

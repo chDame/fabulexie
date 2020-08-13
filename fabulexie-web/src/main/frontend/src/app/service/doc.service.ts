@@ -16,6 +16,8 @@ export class DocService {
 	public breadcrumb: Array<Directory> = [];
 
 	public spaces: Array<SpaceAccess> = [];
+	public sharingSpaces: Array<SpaceAccess> = [];
+	public sharedWithMeSpaces: Array<SpaceAccess> = [];
 	public subDirs: Array<Directory> = [];
 	public docs: Array<Document> = [];
 	
@@ -27,9 +29,42 @@ export class DocService {
 	}
 	
 	public loadSpaces(): void {
+		this.spaces = [];
+		this.sharingSpaces = [];
+		this.sharedWithMeSpaces = [];
 		this.listSpaces().subscribe(data => {
-			this.spaces = data;
-			this.setCurrentSpace(this.spaces[0]);
+			for(let i=0;i<data.length;i++) {
+				if (data[i].space.forSharing && data[i].space.ownerId == this.authService.user.id) {
+					this.sharingSpaces.push(data[i]);
+				} else if (data[i].space.forSharing && data[i].space.ownerId != this.authService.user.id && data[i].space.published) {
+					this.sharedWithMeSpaces.push(data[i]);
+				} else if (!data[i].space.forSharing) {
+					this.spaces.push(data[i]);
+					if (!this.currentSpace) {
+						this.setCurrentSpace(data[i]);
+					}
+				}
+			}
+			//this.spaces = data;
+			//this.setCurrentSpace(this.spaces[0]);
+		});  
+	}
+	
+	public createSharingSpace(spacename: string):void {
+		let space = new Space();
+		space.published = false;
+		space.forSharing = true;
+		space.name = spacename;
+		space.ownerId = this.authService.user.id;
+		this.http.post<SpaceAccess>(environment.settings.backend+'/users/'+this.authService.user.id+'/spaces/', space, {headers: this.authService.myHttpBodyheaders}).subscribe(data => {
+		  this.sharingSpaces.push(data);
+		});  
+	}
+	
+	public deleteCurrentSpace():void {
+		this.http.delete<any>(environment.settings.backend+'/users/'+this.authService.user.id+'/spaces/'+this.currentSpace.space.id, {headers: this.authService.myHttpheaders}).subscribe(data => {
+			this.currentSpace = null;
+		  this.loadSpaces();
 		});  
 	}
 	

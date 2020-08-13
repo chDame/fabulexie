@@ -33,5 +33,7 @@ public interface SpaceAccessRepository extends FabulexieRepository<SpaceAccess> 
 	List<SpaceAccess> findByUserIdAndSpaceId(Long userId, Long spaceId);
 
 	Long deleteByUserId(Long userId);
+
+	Long deleteBySpaceId(Long spaceId);
 	
 }

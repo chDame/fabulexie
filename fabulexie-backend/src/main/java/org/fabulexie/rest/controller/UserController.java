@@ -171,7 +171,7 @@ public class UserController extends AbstractController {
 	public Map<String, Object> delete(@PathVariable Long userId) {
 		Map<String, Object> ret = new HashMap<>();
 		String status = "error";
-		spaceService.deleteSpaces(userId);
+		spaceService.deleteSpacesByUserId(userId);
 		userConfigService.deleteConfigs(userId);
 		if (userService.delete(userId)) {
 			status = "success";

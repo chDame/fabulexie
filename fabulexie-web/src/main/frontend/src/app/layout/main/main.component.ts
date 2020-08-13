@@ -16,6 +16,7 @@ export class MainComponent implements OnInit {
 	public sideBarClass:string = '';
 	
 	spaces: Array<SpaceAccess> = [];
+	newSpaceName: string = '';
 	
 	constructor( public router: Router, 
 		public authService: AuthService,
@@ -49,6 +50,11 @@ export class MainComponent implements OnInit {
 			this.socialAuthService.signOut();
 		}
 		this.authService.logout();
+	}
+	
+	public createSharingSpace():void {
+		this.docService.createSharingSpace(this.newSpaceName);
+		this.newSpaceName = '';
 	}
 
 }

@@ -91,6 +91,10 @@ export class DocBrowserComponent implements OnInit {
 		this.docService.subDirs.splice(this.currentIdx, 1);
 	});
   }
+  
+  public deleteCurrentSpace() {
+	this.docService.deleteCurrentSpace();
+  }
   /*adding files*/
   selectFile(event) {
     this.file = (event.target as HTMLInputElement).files[0];

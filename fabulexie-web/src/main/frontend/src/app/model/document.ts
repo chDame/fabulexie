@@ -6,6 +6,9 @@ export class SpaceAccess {
 export class Space {
     id: number;
     name: string;
+	ownerId: number;
+    forSharing: boolean;
+	published: boolean;
 }
 export class Directory {
     id: number;

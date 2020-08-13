@@ -36,6 +36,7 @@ import { SettingsComponent } from './me/settings/settings.component';
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
 import { DocReaderComponent } from './doc/doc-reader/doc-reader.component';
 import { DocBrowserComponent } from './doc/doc-browser/doc-browser.component';
+import { SpaceConfigComponent } from './doc/space-config/space-config.component';
 
 import { UserService } from './service/user.service';
 import { AuthService } from './service/auth.service';
@@ -67,7 +68,8 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     WebProxyComponent,
     SettingsComponent,
     DocReaderComponent,
-	DocBrowserComponent
+	DocBrowserComponent,
+	SpaceConfigComponent
   ],
   imports: [
     BrowserModule,

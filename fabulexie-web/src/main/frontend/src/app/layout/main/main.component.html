@@ -65,7 +65,7 @@
 
       <!-- Heading -->
       <div class="sidebar-heading">
-			Documents
+			Spaces
       </div>
 
 	  <li *ngFor="let space of docService.spaces" [ngClass]="(this.router.url === '/browse' && docService.currentSpace && docService.currentSpace.space.id == space.space.id)?'nav-item active':'nav-item'">
@@ -74,13 +74,40 @@
 				<span>{{space.space.name}}</span>
 			</a>
       </li>
+	  
+	  <!-- Heading -->
+      <hr class="sidebar-divider" *ngIf="docService.sharedWithMeSpaces && docService.sharedWithMeSpaces.length>0">
+      <div class="sidebar-heading" *ngIf="docService.sharedWithMeSpaces && docService.sharedWithMeSpaces.length>0">
+			Spaces shared with me
+      </div>
 
-	  <li [ngClass]="this.router.url === '/webproxy'?'nav-item active':'nav-item'">
-			<a class="nav-link" routerLink="/webproxy" >
-				<i class="fas fa-map-marked-alt"></i>
-				<span>Web proxy</span>
+	  <li *ngFor="let space of docService.sharedWithMeSpaces" [ngClass]="(this.router.url === '/browse' && docService.currentSpace && docService.currentSpace.space.id == space.space.id)?'nav-item active':'nav-item'">
+			<a class="nav-link" (click)="openSpace(space)" >
+				<i class="fas fa-book-reader"></i>
+				<span>{{space.space.name}}</span>
 			</a>
       </li>
+	  
+	  	  <!-- Heading -->
+      <hr class="sidebar-divider" *ngIf="authService.user.admin || authService.user.tutor">
+      <div class="sidebar-heading" *ngIf="authService.user.admin || authService.user.tutor">
+			Spaces I share
+      </div>
+
+	  <li *ngFor="let space of docService.sharingSpaces" [ngClass]="(this.router.url === '/browse' && docService.currentSpace && docService.currentSpace.space.id == space.space.id)?'nav-item active':'nav-item'">
+			<a class="nav-link" (click)="openSpace(space)" >
+				<i class="fas fa-book-reader"></i>
+				<span>{{space.space.name}}</span>
+			</a>
+      </li>
+	  
+	  <li *ngIf="authService.user.admin || authService.user.tutor" class="nav-item">
+			<a class="nav-link" data-toggle="modal" data-target="#addSharingSpaceModal">
+				<i class="fas fa-plus"></i>
+				<span>Create a space to share</span>
+			</a>
+      </li>
+		
 
 
       <!-- Divider -->
@@ -107,17 +134,6 @@
           <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3" (click)="toggle()">
             <i class="fa fa-bars"></i>
           </button>
-          <!-- Topbar Search 
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                  <i class="fas fa-search fa-sm"></i>
-                </button>
-              </div>
-            </div>
-          </form>-->
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
@@ -168,48 +184,37 @@
 
     </div>
  </div> 
-  <!-- Navigation 
-  <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">Fabulexie Time Management</a>
-      <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Portfolio</a>
-          </li>
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
-          </li>
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card bg-dark my-5">
-        <div class="card-body">
-          <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
-          <ul class="text-center list-inline py-3">
-            <li class="list-inline-item">
-              <a routerLink="/users" class="btn btn-info">List Users</a>
-                </li>
-            <li class="list-inline-item">
-              <a routerLink="/adduser" class="btn btn-info">Add User</a>
-                </li>
-          </ul>
-        </div>
-      </div>
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
 
--->
+<div class="modal fade" id="addSharingSpaceModal" tabindex="-1" role="dialog" aria-labelledby="Add space to share" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add space to share</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+            </div>
+            <div class="modal-body">	
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text">
+							<i class="fas fa-plus"></i>
+						</span>
+					</div>
+					<input type="text" [(ngModel)]="newSpaceName" class="form-control" placeholder="Space name"/>
+				</div>
+				
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				
+				<button type="button" class="btn btn-primary btn-icon-split" [disabled]="!newSpaceName || newSpaceName.length<3" data-dismiss="modal" (click)="createSharingSpace()" onclick="$('#addSharingSpaceModal').modal('hide');"> 
+					<span class="icon text-white-50">
+						<i class="fas fa-plus"></i>
+					</span>
+					<span class="text"> Add Space</span>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>

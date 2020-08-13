@@ -11,6 +11,7 @@ import { ConfigComponent } from './config/config.component';
 import { WebProxyComponent } from './web-proxy/web-proxy.component';
 import { DocReaderComponent } from './doc/doc-reader/doc-reader.component';
 import { DocBrowserComponent } from './doc/doc-browser/doc-browser.component';
+import { SpaceConfigComponent } from './doc/space-config/space-config.component';
 
 const routes: Routes = [
   { path: 'users', component: UserListComponent },
@@ -23,7 +24,8 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent },
   { path: 'webproxy', component: WebProxyComponent },
   { path: 'browse', component: DocBrowserComponent },
-  { path: 'read', component: DocReaderComponent }
+  { path: 'read', component: DocReaderComponent },
+  { path: 'configSpace', component: SpaceConfigComponent }
 ];
 
 @NgModule({

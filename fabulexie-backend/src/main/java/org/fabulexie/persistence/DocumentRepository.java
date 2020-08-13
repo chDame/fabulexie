@@ -31,4 +31,8 @@ public interface DocumentRepository extends FabulexieRepository<Document> {
 	List<Document> findByParentIdAndSpaceId(Long directoryId, Long spaceId);
 
 	Document findByIdAndSpaceId(Long id, Long spaceId);
+	
+	Long deleteByParentId(Long directoryId);
+	
+	Long deleteBySpaceId(Long spaceId);
 }

@@ -18,6 +18,7 @@
  */
 package org.fabulexie.model.document;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,6 +37,10 @@ public class Space extends BaseEntity<Long> {
 	private Long ownerId;
 	private String name;
 	private boolean grandPublic;
+	@Column(columnDefinition = "boolean default false")
+    private boolean forSharing;
+	@Column(columnDefinition = "boolean default true")
+    private boolean published;
 	
 	public Long getId() {
 		return id;
@@ -60,5 +65,17 @@ public class Space extends BaseEntity<Long> {
 	}
 	public void setGrandPublic(boolean grandPublic) {
 		this.grandPublic = grandPublic;
+	}
+	public boolean isForSharing() {
+		return forSharing;
+	}
+	public void setForSharing(boolean forSharing) {
+		this.forSharing = forSharing;
+	}
+	public boolean isPublished() {
+		return published;
+	}
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 }

@@ -43,4 +43,8 @@ public class DirectoryService extends AbstractService<Directory> {
 	public List<Directory> findByParentIdAndSpaceId(Long parentId, Long spaceId) {
 		return directoryRepository.findByParentIdAndSpaceId(parentId, spaceId);
 	}
+
+	public Long deleteBySpaceId(Long spaceId) {
+		return directoryRepository.deleteBySpaceId(spaceId);
+	}
 }
