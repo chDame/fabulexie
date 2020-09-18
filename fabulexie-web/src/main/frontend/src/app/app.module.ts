@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
@@ -21,6 +21,7 @@ import { CreateUserComponent } from './user-admin/create-user/create-user.compon
 import { UpdateUserComponent } from './user-admin/update-user/update-user.component';
 import { InviteUserComponent } from './user-admin/invite-user/invite-user.component';
 import { InvitationsListComponent } from './user-admin/invitations-list/invitations-list.component';
+import { UserSharingComponent } from './user-admin/user-sharing/user-sharing.component';
 import { ConfigComponent } from './config/config.component';
 
 import { MainComponent } from './layout/main/main.component';
@@ -69,13 +70,15 @@ import { ShortnumberPipe } from './shortnumber.pipe';
     SettingsComponent,
     DocReaderComponent,
 	DocBrowserComponent,
-	SpaceConfigComponent
+	SpaceConfigComponent,
+	UserSharingComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+	ReactiveFormsModule,
 	NgbModule,
 	SocialLoginModule,
 	ColorPickerModule

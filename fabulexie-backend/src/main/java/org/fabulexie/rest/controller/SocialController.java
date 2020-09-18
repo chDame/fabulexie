@@ -30,9 +30,11 @@ import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Config;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.model.User;
+import org.fabulexie.model.sharing.SharingUser;
 import org.fabulexie.security.AuthUser;
 import org.fabulexie.service.ConfigService;
 import org.fabulexie.service.InvitationService;
+import org.fabulexie.service.SharingUserService;
 import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.util.SecurityUtils;
@@ -74,6 +76,8 @@ public class SocialController extends AbstractController {
 	private ConfigService configService;
 	@Autowired
 	private SpaceService spaceService;
+	@Autowired
+	private SharingUserService sharingUserService;
 
 	private FacebookConnectionFactory factory =null;
 	
@@ -123,12 +127,18 @@ public class SocialController extends AbstractController {
 						Invitation invitation = invitationService.getByEmail(u.getEmail());
 						if (invitation!=null) {
 							u.setAdmin(invitation.getAdmin());
-							u.setTutor(invitation.getRealtor());
+							u.setTutor(invitation.getTutor());
 							invitation.setConfirmed(true);
 							invitationService.update(invitation);
 						}
 						userService.create(u);
 						spaceService.grantPublicSpaceAccess(u);
+						if (invitation!=null) {
+							SharingUser sharing = new SharingUser();
+							sharing.setOwnerId(invitation.getOwnerId());
+							sharing.setUser(u);
+							sharingUserService.create(sharing);
+						}
 					} else {
 						u.setPhoto(imgSrc);
 						userService.update(u);
@@ -172,12 +182,18 @@ public class SocialController extends AbstractController {
 			Invitation invitation = invitationService.getByEmail(u.getEmail());
 			if (invitation!=null) {
 				u.setAdmin(invitation.getAdmin());
-				u.setTutor(invitation.getRealtor());
+				u.setTutor(invitation.getTutor());
 				invitation.setConfirmed(true);
 				invitationService.update(invitation);
 			}
 			userService.create(u);
 			spaceService.grantPublicSpaceAccess(u);
+			if (invitation!=null) {
+				SharingUser sharing = new SharingUser();
+				sharing.setOwnerId(invitation.getOwnerId());
+				sharing.setUser(u);
+				sharingUserService.create(sharing);
+			}
 		} else {
 			u.setPhoto(imgSrc);
 			userService.update(u);

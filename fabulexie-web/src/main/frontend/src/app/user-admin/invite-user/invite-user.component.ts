@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 import { InvitationService } from '../../service/invitation.service';
 import { Invitation } from '../../model/invitation';
 
@@ -16,6 +17,7 @@ export class InviteUserComponent {
   constructor(
     private route: ActivatedRoute, 
     private router: Router, 
+	public authService: AuthService,
     private invitationService: InvitationService) {
     this.invitation = new Invitation();
   }

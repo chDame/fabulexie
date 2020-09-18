@@ -16,19 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.persistence;
+package org.fabulexie.service;
 
 import java.util.List;
 
-import org.fabulexie.model.Invitation;
-import org.fabulexie.persistence.common.FabulexieRepository;
+import org.fabulexie.model.sharing.SharingUser;
+import org.fabulexie.persistence.SharingUserRepository;
+import org.fabulexie.service.common.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author christophe.dame
  */
-public interface InvitationRepository extends FabulexieRepository<Invitation> {
+@Service
+public class SharingUserService extends AbstractService<SharingUser>{
+	
+    @Autowired
+    private SharingUserRepository sharingUserRepository;
 
-	Invitation findByEmail(String email);
-	List<Invitation> findByOwnerId(Long ownerId);
-
+	@Override
+	protected SharingUserRepository getRepository() {
+		return sharingUserRepository;
+	}
+	
+	public List<SharingUser> findByOwnerId(Long ownerId) {
+		return sharingUserRepository.findByOwnerId(ownerId);
+	}
 }

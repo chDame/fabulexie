@@ -20,13 +20,13 @@
 						<span class="floating-label">Email address</span>
 					<div *ngIf="email.dirty && email.invalid" class="alert alert-danger">Email is required</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group" *ngIf="authService.user.admin">
 				  <div class="custom-control custom-checkbox small">
 					<input type="checkbox" name="tutor" class="custom-control-input" id="tutorCheck" [(ngModel)]="invitation.tutor" >
 					<label class="custom-control-label" for="tutorCheck">Tutor</label>
 				  </div>
 				</div>
-				<div class="form-group">
+				<div class="form-group" *ngIf="authService.user.admin">
 				  <div class="custom-control custom-checkbox small">
 					<input type="checkbox" name="admin" class="custom-control-input" id="adminCheck" [(ngModel)]="invitation.admin" >
 					<label class="custom-control-label" for="adminCheck">Admin</label>

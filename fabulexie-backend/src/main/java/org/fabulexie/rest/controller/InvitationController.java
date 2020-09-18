@@ -26,14 +26,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.TechnicalException;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.rest.controller.model.RestfulList;
 import org.fabulexie.security.annotation.IsAdmin;
+import org.fabulexie.security.annotation.IsTutorOrAdmin;
 import org.fabulexie.service.InvitationService;
 import org.fabulexie.service.mail.MailService;
 import org.fabulexie.util.PersistenceUtil;
+import org.fabulexie.util.SecurityUtils;
 import  org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +69,14 @@ public class InvitationController extends AbstractController {
 	private AtomicLong count = null;
 
 	@GetMapping(value = "/invitations")
-	@IsAdmin
+	@IsTutorOrAdmin
 	public RestfulList<Invitation> list(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
 		RestfulList<Invitation> result = new RestfulList<>();
+		if (StringUtils.isNotBlank(q)) {
+			q = "ownerId: "+SecurityUtils.getConnectedUser().getId()+" AND ("+q+")";
+		} else {
+			q = "ownerId: "+SecurityUtils.getConnectedUser().getId();
+		}
 		Specification<Invitation> invitationSpec = invitationService.getSpecifications(q);
 		result.setTotal(getCount(invitationSpec));
 		if(count*(page-1)>result.getTotal()) {
@@ -87,12 +95,16 @@ public class InvitationController extends AbstractController {
 	}
 
 	@PostMapping(value = "/invitations")
-	@IsAdmin
+	@IsTutorOrAdmin
 	@ResponseStatus(HttpStatus.CREATED)
 	public Invitation create(@RequestBody Invitation invitation) {
-		if (invitation.getAdmin()!=null && invitation.getAdmin()) {
-			invitation.setRealtor(true);
+		if (!SecurityUtils.isAdmin()) {
+			invitation.setAdmin(false);
+			invitation.setTutor(false);
+		} else if (invitation.getAdmin()!=null && invitation.getAdmin()) {
+			invitation.setTutor(true);
 		}
+		invitation.setOwnerId(SecurityUtils.getConnectedUser().getId());
 		Invitation result = invitationService.create(invitation);
 		mailService.mailInvitation(result,Locale.ENGLISH);
 		if (count!=null) {
@@ -102,7 +114,7 @@ public class InvitationController extends AbstractController {
 	}
 
 	@PatchMapping(value = "/invitations/{id}")
-	@IsAdmin
+	@IsTutorOrAdmin
 	public Invitation patch(@PathVariable Long id, @RequestBody Invitation invitation) {
 
 		Invitation existingInvit = invitationService.getById(id);
@@ -112,7 +124,7 @@ public class InvitationController extends AbstractController {
 			}
 			invitation.setId(id);
 			if (invitation.getAdmin()!=null && invitation.getAdmin()) {
-				invitation.setRealtor(true);
+				invitation.setTutor(true);
 			}
 			PersistenceUtil.copyNonNullProperties(invitation, existingInvit);
 			invitationService.update(existingInvit);
@@ -124,12 +136,12 @@ public class InvitationController extends AbstractController {
 	}
 	
 	@PutMapping(value = "/invitations/{id}")
-	@IsAdmin
+	@IsTutorOrAdmin
 	public Invitation update(@PathVariable Long id, @RequestBody Invitation invitation) {
 		invitation.setId(id);
 
 		if (invitation.getAdmin()!=null && invitation.getAdmin()) {
-			invitation.setRealtor(true);
+			invitation.setTutor(true);
 		}
 		Invitation updated = invitationService.update(invitation);
 

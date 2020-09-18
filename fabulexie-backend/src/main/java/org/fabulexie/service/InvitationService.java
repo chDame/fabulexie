@@ -19,6 +19,7 @@
 package org.fabulexie.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
@@ -44,6 +45,10 @@ public class InvitationService extends AbstractService<Invitation> {
 	
     public Invitation getByEmail(String email) {
         return invitationMapper.findByEmail(email);
+    }
+	
+    public List<Invitation> getByOwnerId(Long ownerId) {
+        return invitationMapper.findByOwnerId(ownerId);
     }
 	
 	public Invitation create(Invitation invitation) {

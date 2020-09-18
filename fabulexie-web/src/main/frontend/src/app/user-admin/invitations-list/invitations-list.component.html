@@ -27,8 +27,8 @@
         <tr>
           <th scope="col" (click)="sort('id')" [ngClass]="(invitationService.sortColumn=='id')?'sorting_'+invitationService.sortOrder:''">#</th>
           <th scope="col" (click)="sort('email')" [ngClass]="(invitationService.sortColumn=='email')?'sorting_'+invitationService.sortOrder:''">Email</th>
-          <th scope="col" (click)="sort('admin')" [ngClass]="(invitationService.sortColumn=='admin')?'sorting_'+invitationService.sortOrder:''">Admin</th>
-          <th scope="col" (click)="sort('tutor')" [ngClass]="(invitationService.sortColumn=='tutor')?'sorting_'+invitationService.sortOrder:''">Tutor</th>
+          <th scope="col" *ngIf="authService.user.admin" (click)="sort('admin')" [ngClass]="(invitationService.sortColumn=='admin')?'sorting_'+invitationService.sortOrder:''">Admin</th>
+          <th scope="col" *ngIf="authService.user.admin"(click)="sort('tutor')" [ngClass]="(invitationService.sortColumn=='tutor')?'sorting_'+invitationService.sortOrder:''">Tutor</th>
           <th scope="col" (click)="sort('confirmed')" [ngClass]="(invitationService.sortColumn=='confirmed')?'sorting_'+invitationService.sortOrder:''">Confirmed</th>
 		  <th></th>
         </tr>
@@ -38,7 +38,7 @@
           <th scope="col" class="filterTable"><input type="number" [(ngModel)]="invitationService.filter.id" (keyup.enter)="reload()"/><a class="btn btn-primary" (click)="reload()"><i class="fas fa-filter"></i></a></th>
 		  <th scope="col" class="filterTable"><input type="text" [(ngModel)]="invitationService.filter.email" (keyup.enter)="reload()"/><a class="btn btn-primary" (click)="reload()"><i class="fas fa-filter"></i></a></th>
 
-		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="adminFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		  <th *ngIf="authService.user.admin" scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="adminFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			{{invitationService.filter.admin}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="adminFilterButton">
@@ -46,7 +46,7 @@
 			<a class="dropdown-item" (click)="filterAdmin(true)">true</a>
 			<a class="dropdown-item" (click)="filterAdmin(false)">false</a>
 		  </div></th>
-		  <th scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="tutorFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		  <th *ngIf="authService.user.admin" scope="col" class="filterTable"><button class="btn btn-default dropdown-toggle" type="button" id="tutorFilterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			{{invitationService.filter.tutor}}
 		  </button>
 		  <div class="dropdown-menu" aria-labelledby="tutorFilterButton">
@@ -69,7 +69,7 @@
         <tr *ngFor="let invitation of invitations; let i = index">
           <td>{{ invitation.id }}</td>
           <td>{{ invitation.email }}</td>
-          <td>
+          <td *ngIf="authService.user.admin">
 				<a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.admin" (click)="admin(i)">
                     <i class="fas fa-check"></i>
 				</a>
@@ -77,7 +77,7 @@
 					<i class="fas fa-times"></i>
 				</a>
 		  </td>
-          <td><a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.tutor" (click)="tutor(i)">
+          <td *ngIf="authService.user.admin"><a class="btn btn-success btn-circle btn-sm" *ngIf="invitation.tutor" (click)="tutor(i)">
                     <i class="fas fa-check"></i>
 				</a>
 				<a class="btn btn-warning btn-circle btn-sm" *ngIf="!invitation.tutor" (click)="tutor(i)">

@@ -22,6 +22,11 @@ export class UserService {
 		return this.http.get<any>(environment.settings.backend+'/users?'+params, {headers: this.authService.myHttpheaders});
 	}
  
+	public search(search: string): Observable<any> {
+		let params = 'count=20&page=1&orderBy=email&order=ASC&q=email:"'+search+'*" OR firstname:"'+search+'*" OR lastname:"'+search+'*"';
+		return this.http.get<any>(environment.settings.backend+'/users?'+params, {headers: this.authService.myHttpheaders});
+	}
+ 
 	public get(id:number): Observable<User> {
 		return this.http.get<User>(environment.settings.backend+'/users/'+id, {headers: this.authService.myHttpheaders});
 	}

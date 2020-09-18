@@ -11,10 +11,9 @@
       <hr class="sidebar-divider">
 
       <!-- Divider -->
-      <div class="sidebar-heading" *ngIf="authService.user.admin">
+      <div class="sidebar-heading" *ngIf="authService.user.admin || authService.user.tutor">
         Admin
       </div>
-
       <!-- Nav Item - Dashboard -->
       <li [ngClass]="this.router.url === '/users'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
 			<a class="nav-link" routerLink="/users" id="navLinkUserList">
@@ -29,16 +28,23 @@
 				<span>Add User</span>
 			</a>
       </li>
+
+      <li [ngClass]="this.router.url === '/usersSharing'?'nav-item active':'nav-item'" *ngIf="authService.user.admin || authService.user.tutor">
+			<a class="nav-link" routerLink="/usersSharing" >
+				<i class="fas fa-envelope-open-text"></i>
+				<span>Sharing users</span>
+			</a>
+      </li>
 	  
 	        <!-- Nav Item - Dashboard -->
-      <li [ngClass]="this.router.url === '/invitations'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+      <li [ngClass]="this.router.url === '/invitations'?'nav-item active':'nav-item'" *ngIf="authService.user.admin || authService.user.tutor">
 			<a class="nav-link" routerLink="/invitations" >
 				<i class="fas fa-mail-bulk"></i>
 				<span>List Invitations</span>
 			</a>
       </li>
 
-      <li [ngClass]="this.router.url === '/inviteUser'?'nav-item active':'nav-item'" *ngIf="authService.user.admin">
+      <li [ngClass]="this.router.url === '/inviteUser'?'nav-item active':'nav-item'" *ngIf="authService.user.admin || authService.user.tutor">
 			<a class="nav-link" routerLink="/inviteUser" >
 				<i class="fas fa-envelope-open-text"></i>
 				<span>Send invitation</span>

@@ -1,0 +1,52 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+	<h1 class="h3 mb-0 text-gray-800">Users you're sharing with</h1>
+</div>
+
+
+	
+	<button type="button" class="btn btn-primary btn-icon-split float-right" data-toggle="modal" data-target="#addSharingUserModal">
+		<span class="icon text-white-50">
+			<i class="fas fa-user-plus"></i>
+		</span>
+		<span class="text"> Add user to share content</span>
+	</button>
+
+
+<div class="modal fade" id="addSharingUserModal" tabindex="-1" role="dialog" aria-labelledby="Add sharing user" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add user you're sharing with</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+            </div>
+            <div class="modal-body">	
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text">
+							<i class="fas fa-search"></i>
+						</span>
+					</div>
+					
+					<input type="text" class="form-control" [formControl]="typeahead" placeholder="Type ahead !" (input)="suggest()">
+						<div class="suggestions" *ngIf="suggestions.length">
+						  <p *ngFor="let s of suggestions" (click)="select(s)">{{s.email}}</p>
+						</div>
+					
+				</div>
+				<p *ngIf="selectedUser">Selected : {{selectedUser.firstname}} {{selectedUser.lastname}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				
+				<button type="button" class="btn btn-primary btn-icon-split" [disabled]="!selectedUser" (click)="createUserSharing()" data-dismiss="modal">
+					<span class="icon text-white-50">
+						<i class="fas fa-user-plus"></i>
+					</span>
+					<span class="text"> Add user</span>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>

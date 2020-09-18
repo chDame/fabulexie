@@ -115,7 +115,7 @@ public class UserService extends AbstractService<User> {
     @Override
 	public User update(User u) {
 		User duplicate = getUserByEmail(u.getEmail());
-		if (duplicate!=null && duplicate.getId()!=u.getId()) {
+		if (duplicate!=null && !duplicate.getId().equals(u.getId())) {
 			throw new UnauthorizedException("Account already exists");
 		}
 		return userRepository.save(u);

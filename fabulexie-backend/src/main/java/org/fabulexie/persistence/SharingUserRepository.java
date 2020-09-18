@@ -20,15 +20,14 @@ package org.fabulexie.persistence;
 
 import java.util.List;
 
-import org.fabulexie.model.Invitation;
+import org.fabulexie.model.sharing.SharingUser;
 import org.fabulexie.persistence.common.FabulexieRepository;
 
 /**
  * @author christophe.dame
  */
-public interface InvitationRepository extends FabulexieRepository<Invitation> {
+public interface SharingUserRepository extends FabulexieRepository<SharingUser> {
 
-	Invitation findByEmail(String email);
-	List<Invitation> findByOwnerId(Long ownerId);
+	List<SharingUser> findByOwnerId(Long ownerId);
 
 }

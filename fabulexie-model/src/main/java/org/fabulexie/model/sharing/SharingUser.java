@@ -16,31 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.model;
-
-import java.util.Date;
+package org.fabulexie.model.sharing;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+import org.fabulexie.model.BaseEntity;
+import org.fabulexie.model.User;
 
 /**
  * @author christophe.dame
  */
 @Entity
-public class Invitation extends BaseEntity<Long> {
-
+public class SharingUser extends BaseEntity<Long> {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;  
-	private String email;
-	private String code;
-	private Date emission;
-	private boolean confirmed;
-	private Boolean tutor;
-	private Boolean admin;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 	private Long ownerId;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	private User user;
 
 	public Long getId() {
 		return id;
@@ -50,46 +49,19 @@ public class Invitation extends BaseEntity<Long> {
 		this.id = id;
 	}
 	
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public void setConfirmed(boolean confirmed) {
-		this.confirmed = confirmed;
-	}
-	public Date getEmission() {
-		return emission;
-	}
-	public void setEmission(Date emission) {
-		this.emission = emission;
-	}
-	public boolean isConfirmed() {
-		return confirmed;
-	}
-	public Boolean getTutor() {
-		return tutor;
-	}
-	public void setTutor(Boolean tutor) {
-		this.tutor = tutor;
-	}
-	public Boolean getAdmin() {
-		return admin;
-	}
-	public void setAdmin(Boolean admin) {
-		this.admin = admin;
-	}
 	public Long getOwnerId() {
 		return ownerId;
 	}
+
 	public void setOwnerId(Long ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

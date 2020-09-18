@@ -74,7 +74,7 @@ public class UserConfigController extends AbstractController {
 	@SelfAccessOrTutor
 	public UserConfigResource get(@PathVariable Long userId, @PathVariable Long id) {
 		UserConfig config = userConfigService.getById(id);
-		if (config!=null && config.getUser().getId()==userId) {
+		if (config!=null && config.getUser().getId().equals(userId)) {
 			return new UserConfigResource(config);
 		}
 		return null;
@@ -84,7 +84,7 @@ public class UserConfigController extends AbstractController {
 	@SelfAccessOrTutor
 	public UserConfigResource patch(@PathVariable Long userId, @PathVariable Long id, @RequestBody UserConfig config) {
 		UserConfig existingConfig = userConfigService.getById(id);
-		if (existingConfig==null || existingConfig.getUser().getId()!=userId) {
+		if (existingConfig==null || !existingConfig.getUser().getId().equals(userId)) {
 			return null;
 		}
 		
@@ -102,7 +102,7 @@ public class UserConfigController extends AbstractController {
 	@SelfAccessOrTutor
 	public UserConfigResource put(@PathVariable Long userId, @PathVariable Long id, @RequestBody UserConfig config) {
 		UserConfig existingConfig = userConfigService.getById(id);
-		if (existingConfig==null || existingConfig.getUser().getId()!=userId) {
+		if (existingConfig==null || !existingConfig.getUser().getId().equals(userId)) {
 			return null;
 		}
 		User user = new User();
@@ -119,7 +119,7 @@ public class UserConfigController extends AbstractController {
 		Map<String, Object> ret = new HashMap<>();
 
 		UserConfig existingConfig = userConfigService.getById(id);
-		if (existingConfig==null || existingConfig.getUser().getId()!=userId) {
+		if (existingConfig==null || !existingConfig.getUser().getId().equals(userId)) {
 			ret.put("status", "error");
 		} else {
 			userConfigService.delete(id);

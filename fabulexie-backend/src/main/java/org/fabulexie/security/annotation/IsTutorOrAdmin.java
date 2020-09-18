@@ -16,19 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.fabulexie.persistence;
+package org.fabulexie.security.annotation;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.fabulexie.model.Invitation;
-import org.fabulexie.persistence.common.FabulexieRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  * @author christophe.dame
  */
-public interface InvitationRepository extends FabulexieRepository<Invitation> {
-
-	Invitation findByEmail(String email);
-	List<Invitation> findByOwnerId(Long ownerId);
-
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Operation(security = { @SecurityRequirement(name = "authorization") })
+@PreAuthorize("hasRole('TUTOR') or hasRole('ADMIN')")
+public @interface IsTutorOrAdmin {
 }

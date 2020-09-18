@@ -5,6 +5,7 @@ import { CreateUserComponent } from './user-admin/create-user/create-user.compon
 import { UpdateUserComponent } from './user-admin/update-user/update-user.component';
 import { InviteUserComponent } from './user-admin/invite-user/invite-user.component';
 import { InvitationsListComponent } from './user-admin/invitations-list/invitations-list.component';
+import { UserSharingComponent } from './user-admin/user-sharing/user-sharing.component';
 import { MyProfileComponent } from './me/my-profile/my-profile.component';
 import { SettingsComponent } from './me/settings/settings.component';
 import { ConfigComponent } from './config/config.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'updateUser', component: UpdateUserComponent },
   { path: 'inviteUser', component: InviteUserComponent },
   { path: 'invitations', component: InvitationsListComponent },
+  { path: 'usersSharing', component: UserSharingComponent },
   { path: 'profile', component: MyProfileComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'config', component: ConfigComponent },

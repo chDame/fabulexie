@@ -36,6 +36,7 @@ import org.fabulexie.model.User;
 import org.fabulexie.rest.controller.model.RestfulList;
 import org.fabulexie.rest.controller.model.UserResource;
 import org.fabulexie.security.annotation.IsAdmin;
+import org.fabulexie.security.annotation.IsTutorOrAdmin;
 import org.fabulexie.security.annotation.SelfAccessOrAdmin;
 import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserConfigService;
@@ -79,7 +80,7 @@ public class UserController extends AbstractController {
 	private AtomicLong count = null;
 
 	@GetMapping(value = "/users")
-	@IsAdmin
+	@IsTutorOrAdmin
 	public RestfulList<User> list(@RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "10") int count, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "id") String orderBy, @RequestParam(defaultValue = "ASC") String order) {
 		RestfulList<User> result = new RestfulList<>();
 		Specification<User> specifUser = userService.getSpecifications(q);

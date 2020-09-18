@@ -1,0 +1,11 @@
+div.suggestions {
+    position: absolute;
+    margin-top: 38px;
+    border: 1px solid #EFEFFF;
+    width: calc(100% - 42px);
+    background: white;
+    margin-left: 42px;
+    z-index: 999;
+	p:nth-child(even) {background: #EFEFFF;margin:0;padding: 5px;}
+	p:nth-child(odd) {background: #FFF;margin:0;padding: 5px;}
+}

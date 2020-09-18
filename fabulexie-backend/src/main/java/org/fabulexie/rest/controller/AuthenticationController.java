@@ -28,12 +28,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.common.exception.UnauthorizedException;
 import org.fabulexie.model.Invitation;
 import org.fabulexie.model.User;
+import org.fabulexie.model.sharing.SharingUser;
 import org.fabulexie.security.AuthUser;
 import org.fabulexie.security.FabulexiePrincipal;
 import org.fabulexie.security.annotation.IsAuthenticated;
 import org.fabulexie.service.AuthenticationService;
 import org.fabulexie.service.InitializationFacade;
 import org.fabulexie.service.InvitationService;
+import org.fabulexie.service.SharingUserService;
 import org.fabulexie.service.SpaceService;
 import org.fabulexie.service.UserService;
 import org.fabulexie.service.mail.MailService;
@@ -70,6 +72,8 @@ public class AuthenticationController extends AbstractController {
 	private InvitationService invitationService;
 	@Autowired
 	private InitializationFacade intializationService;
+	@Autowired
+	private SharingUserService sharingUserService;
 	@Autowired
 	private MailService mailService;
 
@@ -151,7 +155,7 @@ public class AuthenticationController extends AbstractController {
 			Invitation invitation = invitationService.getByEmail(u.getEmail());
 			if (invitation!=null && invitation.getCode().equals(code)) {
 				u.setAdmin(invitation.getAdmin());
-				u.setTutor(invitation.getRealtor());
+				u.setTutor(invitation.getTutor());
 				u.setValid(true);
 				userService.create(u);
 				invitation.setConfirmed(true);
@@ -160,6 +164,12 @@ public class AuthenticationController extends AbstractController {
 				BeanUtils.copyProperties(u, authUser);
 				//since it's a valid invitation, the account is valid and we can autologin the user
 				authUser.setToken(SecurityUtils.getJWTToken(u));
+
+				SharingUser sharing = new SharingUser();
+				sharing.setOwnerId(invitation.getOwnerId());
+				sharing.setUser(u);
+				sharingUserService.create(sharing);
+
 				return authUser;
 			}
 		}
