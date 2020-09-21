@@ -28,7 +28,9 @@ export class UserConfig {
 	openDys: boolean;
 	extraLineSpace: number;
 	extraWordSpace: number;
-	syllabeRule: SyllabeRule;
+	syllabe: boolean;
+	oddSyllabeRule: Rule;
+	evenSyllabeRule: Rule;
 }
 
 export class Rule {

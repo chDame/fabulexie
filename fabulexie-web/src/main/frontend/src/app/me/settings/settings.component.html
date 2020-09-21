@@ -101,73 +101,102 @@
 								<span class="floating-label">Line spacing</span>
 							</div>
 							
-							<div class="card shadow mb-4" *ngIf="userConfig.syllabeRule">
-								<a href="#syllabeRule" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false">
-									<h6 class="m-0 font-weight-bold text-primary">Syllabe</h6>
+							<div class="form-group custom-control custom-switch">
+								  <input type="checkbox" class="custom-control-input" id="syllabeEnabled" [(ngModel)]="userConfig.syllabe" name="syllabeRuleEnabled">
+								  <label class="custom-control-label" for="syllabeEnabled">Syllabe</label>
+							</div>
+							<div class="card shadow mb-4" *ngIf="userConfig.syllabe">
+								<a href="#evenSyllabeRule" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false">
+									<h6 class="m-0 font-weight-bold text-primary">Even Syllabe</h6>
 								</a>
-								<div class="collapse" id="syllabeRule">
+								<div class="collapse" id="evenSyllabeRule">
 									<div class="card-body">
-									
-										<div class="form-group custom-control custom-switch">
-										  <input type="checkbox" class="custom-control-input" id="syllabeEnabled" [(ngModel)]="userConfig.syllabeRule.enabled" name="syllabeRuleEnabled">
-										  <label class="custom-control-label" for="syllabeEnabled">Enabled</label>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [ngClass]="userConfig.evenSyllabeRule.bold?'active':''" (click)="toggleRule(userConfig.evenSyllabeRule, 'bold')">
+												<i class="fas fa-bold"></i>
+											</button>
+											Bold
 										</div>
-									
-										
-										<div class="form-group">
-					
-											<input type="text" [(ngModel)]="userConfig.syllabeRule.separator" 
-												class="form-control"
-												id="syllabeSeparator"
-												aria-describedby="Letters are required"
-												name="syllabeSeparator"
-												placeholder="Enter letters..."
-												required #syllabeSeparator="ngModel">
-											<span class="floating-label">letters</span>
-											<div *ngIf="syllabeSeparator.dirty && syllabeSeparator.invalid" class="alert alert-danger">Separator is required</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule " [ngClass]="userConfig.evenSyllabeRule.italic?'active':''" (click)="toggleRule(userConfig.evenSyllabeRule, 'italic')">
+												<i class="fas fa-italic"></i>
+											</button>
+											Italic
 										</div>
-										
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule" [ngClass]="userConfig.syllabeRule.bold?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'bold')">
-													<i class="fas fa-bold"></i>
-												</button>
-												Bold
-											</div>
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule " [ngClass]="userConfig.syllabeRule.italic?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'italic')">
-													<i class="fas fa-italic"></i>
-												</button>
-												Italic
-											</div>
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule " [ngClass]="userConfig.syllabeRule.underlined?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'underlined')">
-													<i class="fas fa-underline"></i>
-												</button>
-												Underlined
-											</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule " [ngClass]="userConfig.evenSyllabeRule.underlined?'active':''" (click)="toggleRule(userConfig.evenSyllabeRule, 'underlined')">
+												<i class="fas fa-underline"></i>
+											</button>
+											Underlined
+										</div>
 					
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule" [ngClass]="userConfig.syllabeRule.upperCase?'active':''" (click)="toggleRule(userConfig.syllabeRule, 'upperCase')">
-													<span><u>A</u>a</span>
-												</button>
-												Uppercase
-											</div>
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule" [(colorPicker)]="userConfig.syllabeRule.color">
-													<i class="fas fa-pen-fancy" [style.color]="userConfig.syllabeRule.color"></i>
-												</button>
-												text color
-											</div>
-											<div class="ruleStyleBlock">
-												<button class="btn btnRule" [style.color]="userConfig.syllabeRule.color" [style.background]="userConfig.syllabeRule.backgroundColor" [(colorPicker)]="userConfig.syllabeRule.backgroundColor">
-													<i class="fas fa-fill"></i>
-												</button>
-												Background color
-											</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [ngClass]="userConfig.evenSyllabeRule.upperCase?'active':''" (click)="toggleRule(userConfig.evenSyllabeRule, 'upperCase')">
+												<span><u>A</u>a</span>
+											</button>
+											Uppercase
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [(colorPicker)]="userConfig.evenSyllabeRule.color">
+												<i class="fas fa-pen-fancy" [style.color]="userConfig.evenSyllabeRule.color"></i>
+											</button>
+											text color
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [style.color]="userConfig.evenSyllabeRule.color" [style.background]="userConfig.evenSyllabeRule.backgroundColor" [(colorPicker)]="userConfig.evenSyllabeRule.backgroundColor">
+												<i class="fas fa-fill"></i>
+											</button>
+											Background color
+										</div>
 									</div>
 								</div>
 							</div>
-
+							<div class="card shadow mb-4" *ngIf="userConfig.syllabe">
+								<a href="#oddSyllabeRule" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="false">
+									<h6 class="m-0 font-weight-bold text-primary">Odd Syllabe</h6>
+								</a>
+								<div class="collapse" id="oddSyllabeRule">
+									<div class="card-body">
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [ngClass]="userConfig.oddSyllabeRule.bold?'active':''" (click)="toggleRule(userConfig.oddSyllabeRule, 'bold')">
+												<i class="fas fa-bold"></i>
+											</button>
+											Bold
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule " [ngClass]="userConfig.oddSyllabeRule.italic?'active':''" (click)="toggleRule(userConfig.oddSyllabeRule, 'italic')">
+												<i class="fas fa-italic"></i>
+											</button>
+											Italic
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule " [ngClass]="userConfig.oddSyllabeRule.underlined?'active':''" (click)="toggleRule(userConfig.oddSyllabeRule, 'underlined')">
+												<i class="fas fa-underline"></i>
+											</button>
+											Underlined
+										</div>
+					
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [ngClass]="userConfig.oddSyllabeRule.upperCase?'active':''" (click)="toggleRule(userConfig.oddSyllabeRule, 'upperCase')">
+												<span><u>A</u>a</span>
+											</button>
+											Uppercase
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [(colorPicker)]="userConfig.oddSyllabeRule.color">
+												<i class="fas fa-pen-fancy" [style.color]="userConfig.oddSyllabeRule.color"></i>
+											</button>
+											text color
+										</div>
+										<div class="ruleStyleBlock">
+											<button class="btn btnRule" [style.color]="userConfig.oddSyllabeRule.color" [style.background]="userConfig.oddSyllabeRule.backgroundColor" [(colorPicker)]="userConfig.oddSyllabeRule.backgroundColor">
+												<i class="fas fa-fill"></i>
+											</button>
+											Background color
+										</div>
+									</div>
+								</div>
+							</div>
 						
 							<div class="card shadow mb-4" *ngFor="let rule of userConfig.letterRules; let i = index">
 								<a href="#letterRule{{i}}" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true">

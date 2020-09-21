@@ -31,11 +31,12 @@ export class SettingsComponent implements OnInit {
   public newUserConfig() {
 	this.userConfig = new UserConfig();
 	this.userConfig.letterRules = [];
-	this.userConfig.syllabeRule = new SyllabeRule();
-	this.userConfig.syllabeRule.separator = '|';
-	this.userConfig.syllabeRule.color = '#990000';
-	this.userConfig.syllabeRule.bold=true;
-	this.userConfig.syllabeRule.italic=true;
+	this.userConfig.syllabe = false;
+	this.userConfig.evenSyllabeRule = new SyllabeRule();
+	this.userConfig.oddSyllabeRule = new SyllabeRule();
+	this.userConfig.evenSyllabeRule.color = '#990000';
+	this.userConfig.evenSyllabeRule.bold=true;
+	this.userConfig.oddSyllabeRule.color = '#000099';
 	this.userConfig.name = 'My new profile';
   }	  
   

@@ -131,18 +131,19 @@ public class HtmlParser {
 			doc.head().append("<style>"+styles+"</style>");
 			doc.head().append("<style>html, body { line-height: "+(ac.getExtraLineSpace()+1)+"00%;}</style>");
 		}
-		
+
+	
 		StringBuffer customStyles = new StringBuffer("<style><!-- ");
+		if (ac.isSyllabe()) {
+			customStyles.append(RulesUtils.getStyledClass(ac.getEvenSyllabeRule(), "syllabe0"));
+			customStyles.append(RulesUtils.getStyledClass(ac.getOddSyllabeRule(), "syllabe1"));
+			doc = applySyllabes(doc, ac);
+		}
+		
 		int i=0;
 		for (LetterRule rule : ac.getLetterRules()) {
 			customStyles.append(RulesUtils.getStyledClass(rule, i));
 			applyRules(doc, rule, i++);
-		}
-
-	
-		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().isEnabled()) {
-			customStyles.append(RulesUtils.getSyllabeClass(ac.getSyllabeRule()));
-			doc = applySyllabes(doc, ac);
 		}
 		
 		if (ac.getExtraWordSpace()!=null && ac.getExtraWordSpace()>0) {
@@ -184,7 +185,7 @@ public class HtmlParser {
 	
 	private static Document applySyllabes(Document doc, UserConfig uc) {
 		//prepare separator
-		String separator = "<span class='separator'>"+uc.getSyllabeRule().getSeparator()+"</span>";
+		//String separator = "<span class='separator'>"+uc.getSyllabeRule().getSeparator()+"</span>";
 		//compute syllabes indexes
 		String bruteText = doc.text();
 		TreeSet<Integer> syllabeSeparator = new TreeSet<>();
@@ -201,8 +202,25 @@ public class HtmlParser {
 		}
 
 		applySyllabes(doc, syllabeSeparator, 0, bruteText);
+		String htmlDraft = doc.outerHtml();
+		//start word
+		htmlDraft = htmlDraft.replaceAll("([^\\p{L}^¤^']{1})([\\p{L}']+)¤¤", "$1<span class=\"syllabe\">$2¤¤");
+		//very first word
+		htmlDraft = htmlDraft.replaceFirst("^([\\p{L}']+)¤¤", "<span class=\"syllabe\">$1¤¤");
 		
-		Document newDoc = Jsoup.parse(doc.outerHtml().replace("¤¤", separator));
+		//end word
+		htmlDraft = htmlDraft.replaceAll("¤¤([\\p{L}']+)([^\\p{L}^¤^']{1})", "¤¤$1</span>$2");
+		//very last word
+		htmlDraft = htmlDraft.replaceFirst("¤¤([\\p{L}']+)$", "¤¤$1</span>");
+		
+		//other elements
+		htmlDraft = htmlDraft.replace("¤¤", "</span><span class=\"syllabe\">");
+		
+		//mark odd and even directly with a number
+		htmlDraft = htmlDraft.replaceAll("(span class=\\\"syllabe)(((?!span class=\\\"syllabe).)+)(span class=\\\"syllabe)", "$10$2$41");
+		
+		//Document newDoc = Jsoup.parse(doc.outerHtml().replace("¤¤", separator));
+		Document newDoc = Jsoup.parse(htmlDraft);
 		newDoc.outputSettings().syntax( Document.OutputSettings.Syntax.xml);
 		return newDoc;
 	}

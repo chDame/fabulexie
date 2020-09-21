@@ -21,6 +21,7 @@ package org.fabulexie.model;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,8 +32,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.fabulexie.model.rules.EvenSyllabeRule;
 import org.fabulexie.model.rules.LetterRule;
-import org.fabulexie.model.rules.SyllabeRule;
+import org.fabulexie.model.rules.OddSyllabeRule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -58,11 +60,21 @@ public class UserConfig extends BaseEntity<Long> {
 
 	private Integer extraWordSpace;
 	
+	@Column(columnDefinition = "boolean default false")
+    private Boolean syllabe = false;
+	
 	@OneToOne(mappedBy="config", 
 			fetch = FetchType.EAGER,
 		    orphanRemoval = true,
 		    cascade = CascadeType.ALL)
-    private SyllabeRule syllabeRule;
+    private EvenSyllabeRule evenSyllabeRule;
+	
+	@OneToOne(mappedBy="config", 
+			fetch = FetchType.EAGER,
+		    orphanRemoval = true,
+		    cascade = CascadeType.ALL)
+    private OddSyllabeRule oddSyllabeRule;
+	
 	
 	@OneToMany(mappedBy="config", fetch = FetchType.EAGER)
     private List<LetterRule> letterRules;
@@ -123,13 +135,28 @@ public class UserConfig extends BaseEntity<Long> {
 		this.extraWordSpace = extraWordSpace;
 	}
 
-	public SyllabeRule getSyllabeRule() {
-		return syllabeRule;
+	public boolean isSyllabe() {
+		return syllabe;
 	}
 
-	public void setSyllabeRule(SyllabeRule syllabeRule) {
-		this.syllabeRule = syllabeRule;
+	public void setSyllabe(boolean syllabe) {
+		this.syllabe = syllabe;
 	}
-	
+
+	public EvenSyllabeRule getEvenSyllabeRule() {
+		return evenSyllabeRule;
+	}
+
+	public void setEvenSyllabeRule(EvenSyllabeRule evenSyllabeRule) {
+		this.evenSyllabeRule = evenSyllabeRule;
+	}
+
+	public OddSyllabeRule getOddSyllabeRule() {
+		return oddSyllabeRule;
+	}
+
+	public void setOddSyllabeRule(OddSyllabeRule oddSyllabeRule) {
+		this.oddSyllabeRule = oddSyllabeRule;
+	}
 	
 }

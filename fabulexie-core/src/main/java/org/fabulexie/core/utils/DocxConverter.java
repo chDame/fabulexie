@@ -147,8 +147,14 @@ public class DocxConverter {
 			styles.getStyle().add(style);
 			i++;
 		}
-		if (ac.getSyllabeRule()!=null && ac.getSyllabeRule().isEnabled()) {
-			Style style = createStyle(ac.getSyllabeRule(), "separator");
+		if (ac.isSyllabe()) {
+			Style style = createStyle(ac.getEvenSyllabeRule(), "syllabe0");
+	
+			style.getName().setParent(styles);
+			style.setParent(styles.getStyle());
+			styles.getStyle().add(style);
+			
+			style = createStyle(ac.getOddSyllabeRule(), "syllabe1");
 	
 			style.getName().setParent(styles);
 			style.setParent(styles.getStyle());

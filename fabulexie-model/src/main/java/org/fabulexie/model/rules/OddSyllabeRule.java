@@ -29,15 +29,11 @@ import org.fabulexie.model.rules.base.Rule;
  * @author christophe.dame
  */
 @Entity
-public class SyllabeRule extends Rule {
+public class OddSyllabeRule extends Rule {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
-	private boolean enabled;
-	
-	private String separator;
 
 	public Long getId() {
 		return id;
@@ -45,21 +41,5 @@ public class SyllabeRule extends Rule {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getSeparator() {
-		return separator;
-	}
-
-	public void setSeparator(String separator) {
-		this.separator = separator;
-	}
-
-	public Boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
 	}
 }

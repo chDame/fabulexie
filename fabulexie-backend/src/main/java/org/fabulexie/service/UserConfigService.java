@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.fabulexie.model.UserConfig;
+import org.fabulexie.model.rules.EvenSyllabeRule;
 import org.fabulexie.model.rules.LetterRule;
-import org.fabulexie.model.rules.SyllabeRule;
+import org.fabulexie.model.rules.OddSyllabeRule;
 import org.fabulexie.persistence.LetterRuleRepository;
 import org.fabulexie.persistence.UserConfigRepository;
 import org.fabulexie.service.common.AbstractService;
@@ -72,13 +72,15 @@ public class UserConfigService extends AbstractService<UserConfig> {
 	}
 	
 	private void checkSyllabeRule(UserConfig config) {
-		if (config.getSyllabeRule()==null) {
-			config.setSyllabeRule(new SyllabeRule());
+		if (config.getOddSyllabeRule()==null) {
+			config.setOddSyllabeRule(new OddSyllabeRule());
 		}
-		if (StringUtils.isBlank(config.getSyllabeRule().getSeparator())) {
-			config.getSyllabeRule().setSeparator("/");
+		if (config.getEvenSyllabeRule()==null) {
+			config.setEvenSyllabeRule(new EvenSyllabeRule());
 		}
-		config.getSyllabeRule().setConfig(config);
+
+		config.getOddSyllabeRule().setConfig(config);
+		config.getEvenSyllabeRule().setConfig(config);
 	}
 	
 	@Override

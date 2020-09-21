@@ -26,7 +26,8 @@ import org.fabulexie.model.UserConfig;
 import org.fabulexie.model.document.AccessEnum;
 import org.fabulexie.model.document.Space;
 import org.fabulexie.model.document.SpaceAccess;
-import org.fabulexie.model.rules.SyllabeRule;
+import org.fabulexie.model.rules.EvenSyllabeRule;
+import org.fabulexie.model.rules.OddSyllabeRule;
 import org.fabulexie.persistence.SpaceAccessRepository;
 import org.fabulexie.persistence.SpaceRepository;
 import org.fabulexie.persistence.UserConfigRepository;
@@ -88,10 +89,12 @@ public class UserService extends AbstractService<User> {
     
     private void addDefaultConfig(User user) {
     	UserConfig config = new UserConfig();
-    	config.setSyllabeRule(new SyllabeRule());
-    	config.getSyllabeRule().setSeparator("/");
-		config.getSyllabeRule().setConfig(config);
-		config.getSyllabeRule().setColor("#990000");
+    	config.setOddSyllabeRule(new OddSyllabeRule());
+		config.getOddSyllabeRule().setConfig(config);
+		config.getOddSyllabeRule().setColor("#990000");
+    	config.setEvenSyllabeRule(new EvenSyllabeRule());
+		config.getEvenSyllabeRule().setConfig(config);
+		config.getEvenSyllabeRule().setColor("#990000");
 		config.setUser(user);
 		config.setLetterRules(new ArrayList<>());
 		config.setName("default");

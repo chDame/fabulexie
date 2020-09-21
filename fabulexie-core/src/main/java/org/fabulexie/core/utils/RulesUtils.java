@@ -53,10 +53,7 @@ public class RulesUtils {
 		
 		return getStyledClass(rule, "letterRule"+index);
 	}
-	
-	public static String getSyllabeClass(Rule rule) {
-		return getStyledClass(rule, "separator");
-	}
+
 	public static String getStyledClass(Rule rule, String classname) {
 		
 		StringBuilder sb = new StringBuilder("."+classname+" {");
