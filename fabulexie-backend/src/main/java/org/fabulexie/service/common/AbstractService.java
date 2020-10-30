@@ -42,6 +42,9 @@ public abstract class AbstractService<T extends BaseEntity<Long>> {
 	}
 	
 	private Pageable getPageable(int count, int page, String orderBy, String order) {
+		if (page<1) {
+			page = 1;
+		}
 		return PageRequest.of(page - 1, count, Direction.valueOf(order), orderBy);
 	}
 

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -115,7 +116,7 @@ public class JpaSearchLuceneBuilder<T> {
      * Builds a JPA Specification from a WildcardQuery.
      */
     private Specification<T> buildQuery(WildcardQuery wildcardQuery) {
-    	return (root, query, builder) -> builder.like(root.get(wildcardQuery.getTerm().field()), wildcardQuery.getTerm().text().replace('*', '%').replace('?', '_'));
+    	return (root, query, builder) -> builder.like(getField(root, wildcardQuery.getTerm().field()), wildcardQuery.getTerm().text().replace('*', '%').replace('?', '_'));
     }
 
     /**
@@ -123,7 +124,7 @@ public class JpaSearchLuceneBuilder<T> {
      */
     private Specification<T> buildQuery(TermQuery termQuery) {
     	return (root, query, builder) -> {
-    		Path<Object> p = root.get(termQuery.getTerm().field());
+    		Path p = getField(root, termQuery.getTerm().field());
     		if (termQuery.getTerm().text().equals("null")) {
     			return builder.isNull(p);
     		}
@@ -154,13 +155,13 @@ public class JpaSearchLuceneBuilder<T> {
         final String upperTermQuery = upperTerm;
         //StringBuilder query = new StringBuilder("(");
         if (lowerTerm!=null && upperTerm!=null) {
-        	return (root, query, builder) -> builder.and(builder.greaterThanOrEqualTo(root.get(rangeQuery.getField()), lowerTermQuery), builder.lessThanOrEqualTo(root.get(rangeQuery.getField()), upperTermQuery));
+        	return (root, query, builder) -> builder.and(builder.greaterThanOrEqualTo(getField(root, rangeQuery.getField()), lowerTermQuery), builder.lessThanOrEqualTo(getField(root, rangeQuery.getField()), upperTermQuery));
         }
         if (lowerTerm!=null) {
-        	return (root, query, builder) -> builder.greaterThanOrEqualTo(root.get(rangeQuery.getField()), lowerTermQuery);
+        	return (root, query, builder) -> builder.greaterThanOrEqualTo(getField(root, rangeQuery.getField()), lowerTermQuery);
         }
         if (upperTerm!=null) {
-        	return (root, query, builder) -> builder.lessThanOrEqualTo(root.get(rangeQuery.getField()), upperTermQuery);
+        	return (root, query, builder) -> builder.lessThanOrEqualTo(getField(root,rangeQuery.getField()), upperTermQuery);
         }
         
         return null;
@@ -191,9 +192,9 @@ public class JpaSearchLuceneBuilder<T> {
         	BooleanClause clause = booleanQuery.clauses().get(i);
         	
         	if (clause.isRequired() == required) {
-        		spec.and(build(clauses.get(i).getQuery()));
+        		spec = spec.and(build(clauses.get(i).getQuery()));
         	} else {
-        		spec.or(build(clauses.get(i).getQuery()));
+        		spec = spec.or(build(clauses.get(i).getQuery()));
         	}
         }
         return spec;
@@ -265,4 +266,19 @@ public class JpaSearchLuceneBuilder<T> {
     private static String formatDate(Date date) {
         return "'"+sqlFormat.format(date)+"'";
     }
+    
+	/**
+	 * Manage terms as foo.bar.doe
+	 */
+	private Path getField(Root<T> root, String field) {
+		if (!field.contains(".")) {
+			return root.get(field);
+		}
+		String[] array = field.split("\\.");
+		Path result = root.get(array[0]);
+		for(int i=1;i<array.length;i++) {
+			result = result.get(array[i]);
+		}
+		return result;
+	}
 }
